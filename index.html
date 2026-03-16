@@ -520,7 +520,7 @@
   <div class="hero-grid"></div>
 
   <div class="hero-content">
-    <div class="hero-tag">Navoiy · Zarafshon mintaqasi</div>
+    <div class="hero-tag">Navoiy · Zarafshon</div>
     <h1 class="hero-title">
       Raqamli
       <span class="line2">Yechimlar</span>
@@ -789,15 +789,41 @@
   reveals.forEach(r => observer.observe(r));
 
   // Form submit
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const btn = e.target.querySelector('.form-submit');
-    btn.textContent = '✓ Yuborildi! Tez orada bog\'lanamiz.';
-    btn.style.background = '#2d7a3a';
+    
+    const ism = e.target.querySelector('input[type="text"]').value;
+    const tel = e.target.querySelector('input[type="tel"]').value;
+    const loyiha = e.target.querySelector('textarea').value;
+
+    const BOT_TOKEN = '8695030307:AAGuRP7kLWHzwzsASgWjO_3RgjnHARa4nhM';
+    const CHAT_ID = '777883449';
+
+    const matn = `🌐 SAYTDAN YANGI BUYURTMA!\n\n👤 Ism: ${ism}\n📞 Telefon: ${tel}\n💬 Loyiha: ${loyiha}`;
+
+    btn.textContent = 'Yuborilmoqda...';
+    btn.disabled = true;
+
+    try {
+      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: matn })
+      });
+
+      btn.textContent = '✓ Yuborildi! Tez orada bog\'lanamiz.';
+      btn.style.background = '#2d7a3a';
+      e.target.reset();
+    } catch {
+      btn.textContent = '❌ Xatolik. Telegram orqali yozing.';
+      btn.style.background = '#7a2d2d';
+    }
+
     setTimeout(() => {
       btn.textContent = 'Yuborish →';
       btn.style.background = '';
-      e.target.reset();
+      btn.disabled = false;
     }, 3000);
   }
 </script>
