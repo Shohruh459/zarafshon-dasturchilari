@@ -391,6 +391,54 @@
     padding: 3px 10px; font-weight: 600;
   }
 
+  /* PORTFOLIO */
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px; margin-top: 60px;
+  }
+  .portfolio-card {
+    background: var(--dark3);
+    border: 1px solid rgba(200,73,10,0.1);
+    overflow: hidden;
+    cursor: none;
+    transition: transform 0.12s ease-out, border-color 0.3s;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .portfolio-card:hover { border-color: rgba(200,73,10,0.3); }
+  .portfolio-preview {
+    aspect-ratio: 16 / 10;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    background:
+      linear-gradient(rgba(200,73,10,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,73,10,0.08) 1px, transparent 1px),
+      linear-gradient(135deg, rgba(200,73,10,0.1), rgba(10,5,0,0.95));
+    background-size: 24px 24px, 24px 24px, 100% 100%;
+    overflow: hidden;
+  }
+  .portfolio-preview-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: rgba(232,168,56,0.55);
+    border: 1px dashed rgba(232,168,56,0.3);
+    padding: 10px 18px;
+    background: rgba(10,5,0,0.5);
+  }
+  .portfolio-body { padding: 28px; transform: translateZ(20px); }
+  .portfolio-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 19px; font-weight: 800;
+    color: var(--cream); margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .portfolio-desc {
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; font-weight: 300;
+    margin-bottom: 18px;
+  }
+
   /* CONTACT */
   .contact { background: var(--dark2); }
   .contact-inner {
@@ -490,7 +538,7 @@
     .nav-links { display: none; }
     .hero, section { padding: 100px 24px 60px; }
     .about-grid, .contact-inner { grid-template-columns: 1fr; }
-    .services-grid { grid-template-columns: 1fr; }
+    .services-grid, .portfolio-grid { grid-template-columns: 1fr; }
     .about-visual { display: none; }
     .stats-bar { padding: 24px; gap: 32px; flex-wrap: wrap; }
     footer { padding: 20px 24px; flex-direction: column; gap: 10px; text-align: center; }
@@ -509,6 +557,7 @@
   <ul class="nav-links">
     <li><a href="#about">Biz haqimizda</a></li>
     <li><a href="#services">Xizmatlar</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
     <li><a href="#contact">Bog'lanish</a></li>
   </ul>
   <a href="#contact" class="btn-primary" style="padding:12px 24px;font-size:12px;">Buyurtma →</a>
@@ -690,9 +739,49 @@
   </div>
 </section>
 
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <span class="section-tag reveal">// 03 — Portfolio</span>
+  <h2 class="section-title reveal">Bajarilgan <br>loyihalar</h2>
+  <p class="section-sub reveal">Har bir mijoz uchun tayyorlangan loyiha shu yerga real skrinshot, tavsif va demo link bilan qo'shib boriladi.</p>
+
+  <div class="portfolio-grid">
+    <div class="portfolio-card reveal" data-tilt>
+      <div class="portfolio-preview">
+        <span class="portfolio-preview-label">Tez orada</span>
+      </div>
+      <div class="portfolio-body">
+        <div class="portfolio-title">Birinchi loyiha</div>
+        <p class="portfolio-desc">Bu yerga birinchi mijoz loyihasi — nomi, qisqacha tavsif va demo havolasi qo'shiladi.</p>
+        <a href="#contact" class="btn-secondary">Ko'rish →</a>
+      </div>
+    </div>
+    <div class="portfolio-card reveal" data-tilt style="transition-delay:0.1s">
+      <div class="portfolio-preview">
+        <span class="portfolio-preview-label">Tez orada</span>
+      </div>
+      <div class="portfolio-body">
+        <div class="portfolio-title">Ikkinchi loyiha</div>
+        <p class="portfolio-desc">Bu yerga ikkinchi mijoz loyihasi — nomi, qisqacha tavsif va demo havolasi qo'shiladi.</p>
+        <a href="#contact" class="btn-secondary">Ko'rish →</a>
+      </div>
+    </div>
+    <div class="portfolio-card reveal" data-tilt style="transition-delay:0.2s">
+      <div class="portfolio-preview">
+        <span class="portfolio-preview-label">Tez orada</span>
+      </div>
+      <div class="portfolio-body">
+        <div class="portfolio-title">Uchinchi loyiha</div>
+        <p class="portfolio-desc">Bu yerga uchinchi mijoz loyihasi — nomi, qisqacha tavsif va demo havolasi qo'shiladi.</p>
+        <a href="#contact" class="btn-secondary">Ko'rish →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- CONTACT -->
 <section class="contact" id="contact">
-  <span class="section-tag reveal">// 03 — Bog'lanish</span>
+  <span class="section-tag reveal">// 04 — Bog'lanish</span>
   <h2 class="section-title reveal">Loyihangizni <br>boshlaylik</h2>
   <p class="section-sub reveal">Fikringizni ayting — bepul konsultatsiya beramiz va narxni aniqlaymiz.</p>
 
@@ -778,6 +867,21 @@
     el.addEventListener('mouseleave', () => {
       ring.style.width = '36px'; ring.style.height = '36px';
       ring.style.borderColor = 'var(--orange)';
+    });
+  });
+
+  // Portfolio kartalari uchun 3D tilt effekti
+  document.querySelectorAll('[data-tilt]').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width;
+      const py = (e.clientY - rect.top) / rect.height;
+      const rotateX = (0.5 - py) * 14;
+      const rotateY = (px - 0.5) * 14;
+      card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
     });
   });
 
