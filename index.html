@@ -100,6 +100,8 @@
     background:
       radial-gradient(ellipse 80% 60% at 70% 50%, rgba(200,73,10,0.12) 0%, transparent 70%),
       radial-gradient(ellipse 40% 40% at 20% 80%, rgba(232,168,56,0.07) 0%, transparent 60%);
+    transition: transform 0.2s ease-out;
+    will-change: transform;
   }
 
   /* Animated grid lines */
@@ -117,7 +119,11 @@
     100% { transform: translateY(60px); }
   }
 
-  .hero-content { position: relative; z-index: 2; max-width: 750px; }
+  .hero-content {
+    position: relative; z-index: 2; max-width: 750px;
+    transition: transform 0.2s ease-out;
+    will-change: transform;
+  }
 
   .hero-tag {
     display: inline-flex; align-items: center; gap: 8px;
@@ -869,6 +875,28 @@
       ring.style.borderColor = 'var(--orange)';
     });
   });
+
+  // Hero uchun sichqoncha bilan boshqariladigan 3D parallaks
+  const heroSection = document.querySelector('.hero');
+  const heroBg = document.querySelector('.hero-bg');
+  const heroContentEl = document.querySelector('.hero-content');
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (heroSection && heroBg && heroContentEl && !prefersReducedMotion) {
+    heroSection.addEventListener('mousemove', (e) => {
+      const rect = heroSection.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width - 0.5;
+      const py = (e.clientY - rect.top) / rect.height - 0.5;
+
+      heroBg.style.transform = `translate(${px * -30}px, ${py * -30}px)`;
+      heroContentEl.style.transform =
+        `perspective(1200px) rotateX(${py * -5}deg) rotateY(${px * 6}deg) translate3d(${px * 10}px, ${py * 10}px, 0)`;
+    });
+    heroSection.addEventListener('mouseleave', () => {
+      heroBg.style.transform = '';
+      heroContentEl.style.transform = '';
+    });
+  }
 
   // Portfolio kartalari uchun 3D tilt effekti
   document.querySelectorAll('[data-tilt]').forEach(card => {
