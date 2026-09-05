@@ -788,29 +788,29 @@
   }, { threshold: 0.12 });
   reveals.forEach(r => observer.observe(r));
 
-  // Form submit
+  // Form submit — proxied through a Cloudflare Worker so no secret ever
+  // ships to the browser. See worker/README.md to deploy the worker and
+  // fill in FORM_ENDPOINT below.
+  const FORM_ENDPOINT = 'https://REPLACE-ME.workers.dev';
+
   async function handleSubmit(e) {
     e.preventDefault();
     const btn = e.target.querySelector('.form-submit');
-    
+
     const ism = e.target.querySelector('input[type="text"]').value;
     const tel = e.target.querySelector('input[type="tel"]').value;
     const loyiha = e.target.querySelector('textarea').value;
-
-    const BOT_TOKEN = '8695030307:AAGuRP7kLWHzwzsASgWjO_3RgjnHARa4nhM';
-    const CHAT_ID = '777883449';
-
-    const matn = `🌐 SAYTDAN YANGI BUYURTMA!\n\n👤 Ism: ${ism}\n📞 Telefon: ${tel}\n💬 Loyiha: ${loyiha}`;
 
     btn.textContent = 'Yuborilmoqda...';
     btn.disabled = true;
 
     try {
-      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      const res = await fetch(FORM_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: CHAT_ID, text: matn })
+        body: JSON.stringify({ ism, tel, loyiha })
       });
+      if (!res.ok) throw new Error('request_failed');
 
       btn.textContent = '✓ Yuborildi! Tez orada bog\'lanamiz.';
       btn.style.background = '#2d7a3a';
