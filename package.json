@@ -1,0 +1,11 @@
+{
+  "name": "zarafshon-dasturchilari",
+  "private": true,
+  "scripts": {
+    "video:simple": "node video/generate-video.js",
+    "video:promo": "node video/promo/render.js"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  }
+}

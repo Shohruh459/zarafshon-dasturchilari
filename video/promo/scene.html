@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Promo scene</title>
+<style>
+  @font-face { font-family: 'Montserrat'; font-weight: 600; src: url(fonts/montserrat-latin-600-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 800; src: url(fonts/montserrat-latin-800-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 900; src: url(fonts/montserrat-latin-900-normal.woff2) format('woff2'); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #07031a; }
+  body { font-family: 'Montserrat', 'Noto Color Emoji', sans-serif; color: #fff; }
+  .abs { position: absolute; }
+  .scene { position: absolute; inset: 0; overflow: hidden; transform-origin: 50% 50%; }
+
+  /* ---------- shared: animated headline words ---------- */
+  .headline { position: absolute; left: 56px; right: 56px; text-align: center; font-weight: 900; line-height: 1.16; letter-spacing: -0.5px; }
+  .headline .w { display: inline-block; will-change: transform, opacity, filter; }
+  .hl { background: linear-gradient(90deg, #ff4fd8, #b36bff 45%, #5ee7ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .gold { background: linear-gradient(90deg, #ffe259, #ffa751); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* ---------- scene 1: neon room ---------- */
+  #s1 { background:
+      radial-gradient(900px 700px at 15% 12%, rgba(140, 60, 255, .55), transparent 70%),
+      radial-gradient(900px 900px at 90% 75%, rgba(30, 130, 255, .45), transparent 70%),
+      linear-gradient(180deg, #120533 0%, #0a0424 55%, #05021a 100%); }
+  .tube { position: absolute; border-radius: 30px; }
+  #ring { position: absolute; left: 290px; top: 880px; width: 500px; height: 500px; border-radius: 50%;
+          border: 14px solid #ff4fd8; box-shadow: 0 0 40px #ff4fd8, 0 0 120px #ff4fd8, inset 0 0 40px #ff4fd8; }
+  .bokeh { position: absolute; border-radius: 50%; filter: blur(6px); }
+  #s1 .shelf { position: absolute; height: 14px; border-radius: 7px; background: #1d1245; box-shadow: 0 -2px 0 #3a2a80; }
+  #floor1 { position: absolute; left: 0; right: 0; bottom: 0; height: 360px;
+            background: linear-gradient(180deg, transparent, rgba(5, 2, 20, .95)); }
+  #emoji1 { position: absolute; left: 0; right: 0; top: 230px; text-align: center; font-size: 130px; }
+  .qm { font-family: 'Montserrat'; font-weight: 900; }
+
+  /* ---------- scene 2: shop / mini app ---------- */
+  #s2 { background:
+      radial-gradient(1000px 700px at 50% 30%, rgba(120, 50, 255, .45), transparent 70%),
+      radial-gradient(800px 600px at 100% 100%, rgba(0, 200, 255, .30), transparent 70%),
+      linear-gradient(180deg, #0c0630, #060320); }
+  #grid { position: absolute; left: -1080px; width: 3240px; top: 1150px; height: 1400px; transform-origin: 50% 0;
+          transform: perspective(700px) rotateX(72deg);
+          background-image: linear-gradient(rgba(94, 231, 255, .55) 3px, transparent 3px), linear-gradient(90deg, rgba(179, 107, 255, .55) 3px, transparent 3px);
+          background-size: 120px 120px;
+          -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 35%); }
+  #horizon { position: absolute; left: 0; right: 0; top: 1130px; height: 60px; background: radial-gradient(50% 50% at 50% 50%, rgba(94, 231, 255, .8), transparent); filter: blur(10px); }
+  .stage3d { position: absolute; perspective: 1200px; }
+  .cube { position: absolute; transform-style: preserve-3d; }
+  .cube .f { position: absolute; inset: 0; border: 3px solid rgba(94, 231, 255, .9); border-radius: 14px;
+             background: linear-gradient(135deg, rgba(179, 107, 255, .35), rgba(94, 231, 255, .12));
+             box-shadow: 0 0 30px rgba(94, 231, 255, .45), inset 0 0 30px rgba(179, 107, 255, .35); }
+  .orb { position: absolute; border-radius: 50%;
+         background: radial-gradient(circle at 35% 30%, #fff 0%, #c9a4ff 12%, #7b3dff 45%, #2a0f6e 80%);
+         box-shadow: 0 0 60px rgba(123, 61, 255, .7); }
+
+  #phoneWrap { position: absolute; left: 280px; top: 520px; width: 520px; height: 1060px; perspective: 1800px; }
+  #phone { position: absolute; inset: 0; border-radius: 76px; background: linear-gradient(145deg, #3b3f58, #111322 40%, #2a2d42);
+           padding: 16px; transform-style: preserve-3d;
+           box-shadow: 0 0 0 3px rgba(255,255,255,.08), 0 40px 120px rgba(0,0,0,.6), 0 0 90px rgba(123, 61, 255, .55); }
+  #screen { position: relative; width: 100%; height: 100%; border-radius: 62px; overflow: hidden; background: #0f1220; }
+  #notch { position: absolute; left: 50%; top: 14px; width: 150px; height: 40px; margin-left: -75px; background: #000; border-radius: 22px; z-index: 20; }
+  #tgHeader { position: absolute; left: 0; right: 0; top: 0; height: 150px; padding: 66px 26px 0; display: flex; align-items: center; gap: 14px;
+              background: rgba(20, 24, 42, .96); z-index: 10; border-bottom: 1px solid rgba(255,255,255,.06); }
+  #tgHeader .x { font-size: 26px; color: #6ab3f3; font-weight: 600; }
+  #tgHeader .ttl { flex: 1; text-align: center; }
+  #tgHeader .ttl b { display: block; font-size: 26px; font-weight: 800; }
+  #tgHeader .ttl span { font-size: 17px; color: #8a93b0; font-weight: 600; }
+  #tgHeader .dots { font-size: 28px; color: #6ab3f3; font-weight: 900; }
+  #feed { position: absolute; left: 0; right: 0; top: 150px; padding: 18px 16px 200px; }
+  .banner { height: 170px; border-radius: 26px; padding: 24px; position: relative; overflow: hidden;
+            background: linear-gradient(120deg, #7b3dff, #ff4fd8 60%, #ffa751); }
+  .banner b { font-size: 32px; font-weight: 900; display: block; line-height: 1.1; }
+  .banner span { font-size: 19px; font-weight: 600; opacity: .9; }
+  .banner .big { position: absolute; right: 18px; bottom: 6px; font-size: 96px; }
+  .chipsRow { display: flex; gap: 10px; margin: 18px 0 16px; }
+  .chipsRow span { padding: 10px 18px; border-radius: 20px; font-size: 18px; font-weight: 800; background: #1c2136; color: #aab3d0; white-space: nowrap; }
+  .chipsRow span.on { background: #2AABEE; color: #fff; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card { background: #181d31; border-radius: 24px; padding: 10px 10px 14px; position: relative; }
+  .card .img { height: 170px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 86px; }
+  .card .nm { font-size: 19px; font-weight: 800; margin: 10px 4px 2px; }
+  .card .pr { font-size: 18px; font-weight: 800; color: #5ee7ff; margin: 0 4px; }
+  .card .add { position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; border-radius: 50%; background: #2AABEE;
+               font-size: 30px; font-weight: 900; line-height: 44px; text-align: center; }
+  .ripple { position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%;
+            background: rgba(255,255,255,.8); opacity: 0; pointer-events: none; }
+  #mainBtn { position: absolute; left: 18px; right: 18px; bottom: 26px; height: 92px; border-radius: 22px; background: #2AABEE; z-index: 12;
+             display: flex; align-items: center; justify-content: center; font-size: 25px; font-weight: 900; overflow: hidden;
+             box-shadow: 0 10px 40px rgba(42, 171, 238, .5); }
+  #sheetDim { position: absolute; inset: 0; background: rgba(0,0,0,.55); z-index: 13; opacity: 0; }
+  #sheet { position: absolute; left: 0; right: 0; bottom: 0; height: 640px; background: #151a2e; border-radius: 40px 40px 0 0; z-index: 14;
+           padding: 18px 26px; }
+  #sheet .handle { width: 70px; height: 7px; border-radius: 4px; background: #3a415e; margin: 0 auto 22px; }
+  #sheet h3 { font-size: 30px; font-weight: 900; }
+  #sheet .sum { font-size: 20px; color: #8a93b0; font-weight: 600; margin: 6px 0 22px; }
+  #sheet .sum b { color: #fff; }
+  .opt { display: flex; align-items: center; gap: 18px; padding: 18px; border-radius: 22px; background: #1d2340; margin-bottom: 14px;
+         border: 3px solid transparent; font-size: 25px; font-weight: 800; }
+  .opt .ic { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 900; }
+  .opt .rd { margin-left: auto; width: 32px; height: 32px; border-radius: 50%; border: 3px solid #4a5277; position: relative; }
+  .opt .rd i { position: absolute; inset: 5px; border-radius: 50%; background: #2AABEE; transform: scale(0); }
+  #payBtn { margin-top: 12px; height: 88px; border-radius: 22px; background: linear-gradient(90deg, #00b4ff, #7b3dff);
+            display: flex; align-items: center; justify-content: center; font-size: 27px; font-weight: 900; position: relative; overflow: hidden; }
+  #success { position: absolute; inset: 0; z-index: 16; background: radial-gradient(circle at 50% 42%, #0f3b2c, #0b1322 70%);
+             display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; }
+  #success svg { width: 220px; height: 220px; }
+  #success b { font-size: 34px; font-weight: 900; margin-top: 26px; }
+  #success span { font-size: 21px; color: #9fe8c7; font-weight: 600; margin-top: 10px; }
+
+  .payPill { position: absolute; display: flex; align-items: center; gap: 16px; padding: 18px 30px 18px 18px; border-radius: 60px;
+             background: rgba(20, 16, 50, .72); border: 2px solid rgba(255,255,255,.18); font-size: 38px; font-weight: 900;
+             backdrop-filter: blur(8px); }
+  .payPill .ic { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 34px; }
+  #toast { position: absolute; left: 610px; top: 610px; padding: 16px 26px; border-radius: 26px; font-size: 30px; font-weight: 900;
+           background: linear-gradient(90deg, #11d18a, #0bb6a6); box-shadow: 0 0 40px rgba(17, 209, 138, .6); white-space: nowrap; }
+  #feat { position: absolute; left: 40px; right: 40px; top: 1640px; display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; }
+  #feat span { padding: 16px 28px; border-radius: 40px; font-size: 36px; font-weight: 800; white-space: nowrap;
+               background: rgba(255,255,255,.08); border: 2px solid rgba(94, 231, 255, .55); box-shadow: 0 0 26px rgba(94, 231, 255, .3); }
+
+  /* ---------- scene 3: CTA ---------- */
+  #s3 { background:
+      radial-gradient(900px 900px at 50% 40%, rgba(123, 61, 255, .6), transparent 70%),
+      radial-gradient(700px 500px at 50% 100%, rgba(255, 79, 216, .35), transparent 70%),
+      #070320; }
+  #rays { position: absolute; left: -500px; top: -250px; width: 2080px; height: 2080px; border-radius: 50%;
+          background: repeating-conic-gradient(from 0deg, rgba(255,255,255,.07) 0deg 6deg, transparent 6deg 18deg);
+          -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 65%); }
+  .spark { position: absolute; border-radius: 50%; background: #fff; }
+  #logo { position: absolute; left: 50%; top: 190px; width: 250px; height: 250px; margin-left: -125px; }
+  #logo .hex { position: absolute; inset: 0; border-radius: 64px; padding: 8px;
+               background: conic-gradient(from 0deg, #ff4fd8, #7b3dff, #5ee7ff, #ffe259, #ff4fd8); }
+  #logo .hex div { width: 100%; height: 100%; border-radius: 56px; background: linear-gradient(145deg, #1a0d45, #0b0628);
+                   display: flex; align-items: center; justify-content: center; font-size: 112px; font-weight: 900; letter-spacing: -6px; }
+  #logoRing { position: absolute; left: 50%; top: 315px; width: 250px; height: 250px; margin: -125px 0 0 -125px; border-radius: 50%; border: 6px solid #b36bff; }
+  #brand { position: absolute; left: 0; right: 0; top: 470px; text-align: center; font-size: 40px; font-weight: 900; letter-spacing: 7px; }
+  #chart { position: absolute; left: 290px; top: 950px; width: 500px; height: 260px; }
+  #chart .bar { position: absolute; bottom: 0; width: 70px; border-radius: 14px 14px 4px 4px; transform-origin: 50% 100%;
+                background: linear-gradient(180deg, #5ee7ff, #7b3dff); box-shadow: 0 0 24px rgba(94, 231, 255, .5); }
+  #x2 { position: absolute; left: 770px; top: 890px; font-size: 92px; font-weight: 900; }
+  #cta { position: absolute; left: 90px; right: 90px; top: 1290px; height: 210px; border-radius: 110px; overflow: hidden;
+         background: linear-gradient(90deg, #ff4fd8, #7b3dff 50%, #00b4ff);
+         display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 50px;
+         font-size: 46px; font-weight: 900; line-height: 1.2; }
+  #cta .shine { position: absolute; top: -50%; width: 160px; height: 200%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.65), transparent); transform: rotate(20deg); }
+  #tap { position: absolute; width: 120px; height: 120px; border-radius: 50%; border: 6px solid #fff; opacity: 0; }
+  #handle { position: absolute; left: 0; right: 0; top: 1560px; text-align: center; font-size: 54px; font-weight: 900; }
+  #handle span { background: linear-gradient(90deg, #5ee7ff, #b36bff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* ---------- global overlays ---------- */
+  #flash { position: absolute; inset: 0; background: radial-gradient(circle, #fff, #b9a4ff 60%, #7b3dff); opacity: 0; mix-blend-mode: screen; z-index: 50; }
+  #sweep { position: absolute; top: -40%; width: 380px; height: 180%; z-index: 51; opacity: 0;
+           background: linear-gradient(90deg, transparent, rgba(94, 231, 255, .8), rgba(255,255,255,.95), rgba(255, 79, 216, .8), transparent); transform: rotate(18deg); }
+  #vignette { position: absolute; inset: 0; z-index: 60; pointer-events: none; background: radial-gradient(ellipse 75% 65% at 50% 50%, transparent 55%, rgba(0,0,0,.65) 100%); }
+</style>
+</head>
+<body>
+
+<!-- ================= SCENE 1: HOOK ================= -->
+<div class="scene" id="s1">
+  <div class="tube" id="tubeL" style="left:40px; top:620px; width:26px; height:760px; background:#5ee7ff; box-shadow:0 0 30px #5ee7ff, 0 0 110px #5ee7ff;"></div>
+  <div class="tube" id="tubeR" style="right:40px; top:520px; width:26px; height:620px; background:#b36bff; box-shadow:0 0 30px #b36bff, 0 0 110px #b36bff;"></div>
+  <div class="tube" id="tubeT" style="left:180px; top:770px; width:0; height:0;"></div>
+  <div class="shelf" style="left:110px; top:1010px; width:170px;"></div>
+  <div class="shelf" style="right:110px; top:1180px; width:170px;"></div>
+  <div class="abs" style="left:140px; top:930px; font-size:70px;">🪴</div>
+  <div class="abs" style="right:130px; top:1100px; font-size:70px;">🎧</div>
+  <div id="ring"></div>
+  <div id="bokeh1"></div>
+
+  <svg id="person" class="abs" style="left:0; top:0" width="1080" height="1920" viewBox="0 0 1080 1920">
+    <defs>
+      <radialGradient id="skin" cx="50%" cy="85%" r="75%">
+        <stop offset="0" stop-color="#f1c3a0"/><stop offset=".6" stop-color="#c98f6b"/><stop offset="1" stop-color="#8d5a43"/>
+      </radialGradient>
+      <linearGradient id="hoodie" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#2b1f63"/><stop offset="1" stop-color="#120b30"/>
+      </linearGradient>
+      <linearGradient id="screenLight" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0" stop-color="#5ee7ff" stop-opacity=".55"/><stop offset="1" stop-color="#5ee7ff" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="qgrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#ff4fd8"/><stop offset="1" stop-color="#5ee7ff"/>
+      </linearGradient>
+      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <!-- body -->
+    <path d="M150,1920 C170,1590 320,1455 540,1445 C760,1455 910,1590 930,1920 Z" fill="url(#hoodie)" stroke="#b36bff" stroke-width="5" stroke-opacity=".7"/>
+    <path d="M470,1455 L540,1560 L610,1455" fill="none" stroke="#5ee7ff" stroke-width="6" stroke-opacity=".6"/>
+    <g id="headG">
+      <ellipse cx="540" cy="1185" rx="200" ry="215" fill="#1f1650" stroke="#b36bff" stroke-width="5" stroke-opacity=".55"/>
+      <rect x="492" y="1300" width="96" height="120" rx="30" fill="#8d5a43"/>
+      <ellipse cx="540" cy="1175" rx="128" ry="152" fill="url(#skin)"/>
+      <ellipse cx="415" cy="1195" rx="22" ry="34" fill="#b57a5a"/>
+      <ellipse cx="665" cy="1195" rx="22" ry="34" fill="#b57a5a"/>
+      <path d="M408,1160 C398,1010 490,975 560,985 C660,992 690,1065 672,1160 C660,1095 606,1060 540,1072 C478,1082 440,1105 408,1160 Z" fill="#1b1030"/>
+      <path id="browL" d="M468,1138 Q495,1112 524,1130" fill="none" stroke="#1b1030" stroke-width="11" stroke-linecap="round"/>
+      <path id="browR" d="M560,1146 Q588,1142 614,1150" fill="none" stroke="#1b1030" stroke-width="11" stroke-linecap="round"/>
+      <g id="eyes">
+        <ellipse cx="496" cy="1185" rx="17" ry="13" fill="#fff"/><ellipse cx="586" cy="1185" rx="17" ry="13" fill="#fff"/>
+        <circle id="pupL" cx="498" cy="1190" r="8" fill="#1b1030"/><circle id="pupR" cx="588" cy="1190" r="8" fill="#1b1030"/>
+      </g>
+      <path d="M538,1200 Q530,1228 546,1232" fill="none" stroke="#8d5a43" stroke-width="6" stroke-linecap="round"/>
+      <path id="mouth" d="M512,1265 Q526,1256 540,1265 Q554,1274 570,1262" fill="none" stroke="#6b3b2c" stroke-width="7" stroke-linecap="round"/>
+      <ellipse cx="540" cy="1260" rx="130" ry="95" fill="#5ee7ff" opacity=".18" style="mix-blend-mode:screen"/>
+    </g>
+    <!-- light from screen onto face -->
+    <path d="M565,1470 L420,1180 L690,1180 L675,1470 Z" fill="url(#screenLight)" style="mix-blend-mode:screen"/>
+    <!-- arm + phone -->
+    <path d="M780,1920 C790,1760 760,1640 690,1575 L620,1620 C680,1690 700,1790 690,1920 Z" fill="#241a55" stroke="#5ee7ff" stroke-width="4" stroke-opacity=".5"/>
+    <g id="phoneBack" transform="rotate(-12 620 1510)">
+      <rect x="555" y="1380" width="140" height="265" rx="26" fill="#12142a" stroke="#5ee7ff" stroke-width="5" filter="url(#glow)"/>
+      <circle cx="590" cy="1418" r="13" fill="#2b2f4d"/><circle cx="590" cy="1450" r="13" fill="#2b2f4d"/>
+      <text x="625" y="1560" text-anchor="middle" font-size="44" fill="#5ee7ff" opacity=".35" font-weight="900" font-family="Montserrat">?</text>
+    </g>
+    <ellipse cx="640" cy="1605" rx="52" ry="40" fill="#c98f6b"/>
+    <ellipse cx="560" cy="1560" rx="30" ry="46" fill="#c98f6b"/>
+    <!-- question marks -->
+    <text id="q1" class="qm" x="330" y="985" font-size="140" fill="url(#qgrad)" filter="url(#glow)" text-anchor="middle">?</text>
+    <text id="q2" class="qm" x="760" y="940" font-size="170" fill="url(#qgrad)" filter="url(#glow)" text-anchor="middle">?</text>
+    <text id="q3" class="qm" x="560" y="850" font-size="110" fill="url(#qgrad)" filter="url(#glow)" text-anchor="middle">?</text>
+  </svg>
+  <div id="floor1"></div>
+
+  <div id="emoji1">📱</div>
+  <div class="headline" id="h1" style="top:410px; font-size:80px;"
+       data-text="Biznesingiz uchun hamon *online* *do'koningiz* yo'qmi?"></div>
+</div>
+
+<!-- ================= SCENE 2: OFFER ================= -->
+<div class="scene" id="s2">
+  <div id="horizon"></div>
+  <div id="grid"></div>
+  <div class="stage3d" style="inset:0">
+    <div class="cube" id="cube1" style="left:70px; top:640px; width:150px; height:150px;"></div>
+    <div class="cube" id="cube2" style="left:880px; top:1420px; width:120px; height:120px;"></div>
+    <div class="cube" id="cube3" style="left:900px; top:560px; width:90px; height:90px;"></div>
+  </div>
+  <div class="orb" id="orb1" style="left:120px; top:1450px; width:110px; height:110px;"></div>
+  <div class="orb" id="orb2" style="left:860px; top:880px; width:70px; height:70px;"></div>
+
+  <div id="phoneWrap">
+    <div id="phone">
+      <div id="screen">
+        <div id="notch"></div>
+        <div id="tgHeader"><span class="x">✕</span><div class="ttl"><b>Zarafshon Shop</b><span>mini app</span></div><span class="dots">⋯</span></div>
+        <div id="feed">
+          <div class="banner"><b>Yangi kolleksiya</b><span>Barcha mahsulotlarga -30%</span><div class="big">🛍️</div></div>
+          <div class="chipsRow"><span class="on">Hammasi</span><span>Kiyim</span><span>Texnika</span><span>Aksessuar</span></div>
+          <div class="grid2" id="products"></div>
+        </div>
+        <div id="mainBtn"><span id="mainTxt">Katalogni ko'rish</span><div class="ripple" id="rip2"></div></div>
+        <div id="sheetDim"></div>
+        <div id="sheet">
+          <div class="handle"></div>
+          <h3>To'lov usuli</h3>
+          <div class="sum">Jami: <b>249 000 so'm</b></div>
+          <div class="opt" id="optClick"><div class="ic" style="background:#00a3ff">C</div>Click<div class="rd"><i id="rdClick"></i></div></div>
+          <div class="opt" id="optPayme"><div class="ic" style="background:#1cc7c1">P</div>Payme<div class="rd"><i></i></div></div>
+          <div class="opt"><div class="ic" style="background:#2d3458">💳</div>Bank kartasi<div class="rd"><i></i></div></div>
+          <div id="payBtn">To'lash • 249 000 so'm<div class="ripple" id="rip3"></div></div>
+        </div>
+        <div id="success">
+          <svg viewBox="0 0 220 220"><circle id="sCirc" cx="110" cy="110" r="96" fill="none" stroke="#11d18a" stroke-width="12" stroke-linecap="round" transform="rotate(-90 110 110)"/>
+            <path id="sCheck" d="M66,114 L98,146 L158,84" fill="none" stroke="#11d18a" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <b>To'lov qabul qilindi!</b><span>Buyurtma #1024 • Click</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="payPill" id="pillClick" style="left:30px; top:1000px;"><div class="ic" style="background:#00a3ff">C</div>Click</div>
+  <div class="payPill" id="pillPayme" style="left:700px; top:1230px;"><div class="ic" style="background:#1cc7c1">P</div>Payme</div>
+  <div id="toast">✓ +249 000 so'm</div>
+
+  <div class="headline" id="h2" style="top:150px; font-size:62px;"
+       data-text="🚀 Biz sizga tayyor *Online* *Do'kon* va *Telegram* *Mini* *App* yaratib beramiz!"></div>
+  <div id="feat"><span>⚡ Avtomatik to'lovlar</span><span>🎨 Zamonaviy dizayn</span><span>🛍️ Qulay katalog</span></div>
+</div>
+
+<!-- ================= SCENE 3: CTA ================= -->
+<div class="scene" id="s3">
+  <div id="rays"></div>
+  <div id="sparks"></div>
+  <div id="logoRing"></div>
+  <div id="logo"><div class="hex"><div><span class="hl">ZD</span></div></div></div>
+  <div id="brand">ZARAFSHON<br><span style="font-size:30px; letter-spacing:10px; color:#c9b6ff">DASTURCHILARI</span></div>
+  <div class="headline" id="h3" style="top:640px; font-size:74px;"
+       data-text="💡 Savdolaringizni #2 #baravar oshiring!"></div>
+  <div id="chart"></div>
+  <div id="x2" class="gold">x2</div>
+  <div id="cta"><div class="shine" id="shine"></div><span style="position:relative">📩 Bepul konsultatsiya uchun Direct'ga yozing!</span></div>
+  <div id="tap"></div>
+  <div id="handle">📍 <span>@ZarafshonDasturchilari</span></div>
+</div>
+
+<div id="flash"></div>
+<div id="sweep"></div>
+<div id="vignette"></div>
+
+<script>
+  // ---------- helpers ----------
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const prog = (t, a, b) => clamp((t - a) / (b - a));
+  const lerp = (a, b, p) => a + (b - a) * p;
+  const eOut = x => 1 - Math.pow(1 - x, 3);
+  const eInOut = x => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  const eBack = x => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+  const $ = id => document.getElementById(id);
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+
+  // Words wrapped in spans; *word* = gradient highlight, #word = gold highlight.
+  function buildHeadline(el) {
+    el.innerHTML = el.dataset.text.split(' ').map(w => {
+      const cls = w.startsWith('*') ? 'w hl' : w.startsWith('#') ? 'w gold' : 'w';
+      return `<span class="${cls}">${w.replace(/[*#]/g, '')}</span>`;
+    }).join(' ');
+    return [...el.querySelectorAll('.w')];
+  }
+  function animWords(words, t, start, gap, dur = 0.4) {
+    words.forEach((w, i) => {
+      const p = prog(t, start + i * gap, start + i * gap + dur);
+      w.style.opacity = p;
+      w.style.transform = `translateY(${(1 - eOut(p)) * 50}px) scale(${lerp(0.6, 1, eBack(p))})`;
+      w.style.filter = `blur(${(1 - p) * 10}px) drop-shadow(0 0 18px rgba(179,107,255,.7))`;
+    });
+  }
+
+  // ---------- build dynamic content ----------
+  const H1 = buildHeadline($('h1')), H2 = buildHeadline($('h2')), H3 = buildHeadline($('h3'));
+
+  const bokeh = [];
+  for (let i = 0; i < 16; i++) {
+    const d = document.createElement('div');
+    const s = 20 + rnd() * 70, hue = rnd() > 0.5 ? '255,79,216' : '94,231,255';
+    d.className = 'bokeh';
+    Object.assign(d.style, { width: s + 'px', height: s + 'px', background: `rgba(${hue},${0.25 + rnd() * 0.35})` });
+    bokeh.push({ el: d, x: rnd() * 1080, y: 500 + rnd() * 1300, sp: 10 + rnd() * 30, ph: rnd() * 6 });
+    $('bokeh1').appendChild(d);
+  }
+
+  const products = [
+    ['👟', 'Krossovka', '349 000', '#ff9a9e,#fad0c4'], ['🕶️', "Ko'zoynak", '129 000', '#e0c3fc,#8ec5fc'],
+    ['⌚', 'Smart soat', '599 000', '#84fab0,#8fd3f4'], ['👜', 'Sumka', '189 000', '#fccb90,#d57eeb'],
+    ['🎧', 'Quloqchin', '249 000', '#a18cd1,#fbc2eb'], ['🧥', 'Kurtka', '459 000', '#f093fb,#f5576c'],
+    ['💻', 'Noutbuk', '7 900 000', '#4facfe,#00f2fe'], ['📷', 'Kamera', '2 350 000', '#43e97b,#38f9d7'],
+  ];
+  $('products').innerHTML = products.map(([e, n, p, g], i) =>
+    `<div class="card" id="card${i}"><div class="img" style="background:linear-gradient(135deg,${g})">${e}</div>
+     <div class="nm">${n}</div><div class="pr">${p} so'm</div><div class="add">+<div class="ripple" id="ripc${i}"></div></div></div>`).join('');
+
+  ['cube1', 'cube2', 'cube3'].forEach(id => {
+    const c = $(id), h = parseFloat(c.style.width) / 2;
+    ['rotateY(0)', 'rotateY(90deg)', 'rotateY(180deg)', 'rotateY(-90deg)', 'rotateX(90deg)', 'rotateX(-90deg)']
+      .forEach(r => { const f = document.createElement('div'); f.className = 'f'; f.style.transform = `${r} translateZ(${h}px)`; c.appendChild(f); });
+  });
+
+  const sparks = [];
+  for (let i = 0; i < 34; i++) {
+    const d = document.createElement('div'), s = 4 + rnd() * 9;
+    d.className = 'spark';
+    Object.assign(d.style, { width: s + 'px', height: s + 'px', boxShadow: `0 0 ${s * 2}px ${rnd() > .5 ? '#ff4fd8' : '#5ee7ff'}` });
+    sparks.push({ el: d, x: rnd() * 1080, y: rnd() * 1920, sp: 80 + rnd() * 160, ph: rnd() * 6 });
+    $('sparks').appendChild(d);
+  }
+
+  const bars = [0.25, 0.4, 0.55, 0.78, 1];
+  $('chart').innerHTML = bars.map((_, i) => `<div class="bar" style="left:${i * 105}px"></div>`).join('') +
+    `<svg class="abs" style="left:0;top:-40px;overflow:visible" width="500" height="300"><path id="arrow" d="M20,270 L140,200 L230,215 L330,120 L470,20"
+      fill="none" stroke="#ffe259" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 12px #ffa751)"/>
+      <path id="arrowHead" d="M430,15 L478,14 L466,60" fill="none" stroke="#ffe259" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const barEls = [...document.querySelectorAll('#chart .bar')];
+  const arrow = $('arrow'), arrowLen = arrow.getTotalLength();
+  arrow.style.strokeDasharray = arrowLen;
+  const sCirc = $('sCirc'), sCheck = $('sCheck');
+  const circLen = sCirc.getTotalLength(), checkLen = sCheck.getTotalLength();
+  sCirc.style.strokeDasharray = circLen; sCheck.style.strokeDasharray = checkLen;
+
+  function rippleAt(el, t, at) {
+    const p = prog(t, at, at + 0.45);
+    el.style.opacity = p > 0 && p < 1 ? (1 - p) * 0.8 : 0;
+    el.style.transform = `scale(${1 + p * 7})`;
+  }
+
+  // ---------- timeline ----------
+  const T1 = 3.0, T2 = 8.0; // scene boundaries (seconds)
+
+  window.renderFrame = function (t) {
+    // ===== Scene 1 (0 - 3.25s) =====
+    const out1 = prog(t, T1 - 0.3, T1 + 0.2);
+    const s1 = $('s1');
+    s1.style.display = out1 < 1 ? 'block' : 'none';
+    s1.style.transform = `scale(${1 + 0.05 * (t / T1) + eInOut(out1) * 0.6})`;
+    s1.style.filter = `blur(${out1 * 18}px)`;
+    s1.style.opacity = 1 - out1;
+    const flick = 0.85 + 0.15 * Math.sin(t * 37) * Math.sin(t * 13);
+    $('tubeL').style.opacity = flick; $('tubeR').style.opacity = 0.9 + 0.1 * Math.sin(t * 5);
+    $('ring').style.opacity = 0.6 + 0.2 * Math.sin(t * 3) * flick;
+    bokeh.forEach(b => {
+      b.el.style.transform = `translate(${b.x + Math.sin(t + b.ph) * 20}px, ${b.y - t * b.sp}px)`;
+    });
+    $('headG').setAttribute('transform', `rotate(${-6 + 3 * Math.sin(t * 2.2)} 540 1330)`);
+    const confused = eOut(prog(t, 0.6, 1.0));
+    $('browL').setAttribute('d', `M468,${1138 - 10 * confused} Q495,${1112 - 16 * confused} 524,${1130 - 8 * confused}`);
+    $('browR').setAttribute('d', `M560,${1146 + 4 * confused} Q588,${1150 + 8 * confused} 614,${1146 + 2 * confused}`);
+    const look = Math.sin(t * 3) * 4;
+    $('pupL').setAttribute('cx', 498 + look); $('pupR').setAttribute('cx', 588 + look);
+    [['q1', 0.8], ['q2', 1.15], ['q3', 1.5]].forEach(([id, at], i) => {
+      const p = eBack(prog(t, at, at + 0.45));
+      const el = $(id);
+      el.style.transformBox = 'fill-box'; el.style.transformOrigin = '50% 100%';
+      el.style.transform = `translateY(${Math.sin(t * 3 + i * 2) * 12}px) rotate(${Math.sin(t * 2 + i) * 10}deg) scale(${p})`;
+      el.style.opacity = clamp(p);
+    });
+    const e1 = eBack(prog(t, 0.1, 0.55));
+    $('emoji1').style.transform = `scale(${e1}) rotate(${Math.sin(t * 4) * 8}deg)`;
+    $('emoji1').style.opacity = clamp(e1);
+    animWords(H1, t, 0.25, 0.14);
+
+    // ===== Scene 2 (2.8 - 8.25s) =====
+    const in2 = prog(t, T1 - 0.2, T1 + 0.35), out2 = prog(t, T2 - 0.3, T2 + 0.2);
+    const s2 = $('s2'), l2 = t - T1;
+    s2.style.display = in2 > 0 && out2 < 1 ? 'block' : 'none';
+    s2.style.opacity = in2 * (1 - out2);
+    s2.style.transform = `scale(${lerp(1.18, 1, eOut(in2)) * (1 + eInOut(out2) * 0.5)})`;
+    s2.style.filter = `blur(${(1 - in2) * 14 + out2 * 18}px)`;
+    $('grid').style.backgroundPosition = `0 ${t * 260}px`;
+    [['cube1', 1], ['cube2', -1.3], ['cube3', 1.6]].forEach(([id, k], i) => {
+      $(id).style.transform = `translateY(${Math.sin(t * 1.6 + i) * 25}px) rotateX(${t * 40 * k + 20}deg) rotateY(${t * 55 * k}deg)`;
+    });
+    $('orb1').style.transform = `translateY(${Math.sin(t * 2) * 30}px)`;
+    $('orb2').style.transform = `translateY(${Math.cos(t * 2.4) * 24}px)`;
+
+    const ph = eOut(prog(l2, 0, 0.8));
+    $('phone').style.transform =
+      `translateY(${(1 - ph) * 700}px) rotateX(${(1 - ph) * 40 + 4}deg) rotateY(${Math.sin(l2 * 1.3) * 9 - (1 - ph) * 25}deg) rotateZ(${(1 - ph) * -8}deg)`;
+    // catalog scroll, add to cart, checkout
+    const sc = eInOut(prog(l2, 0.9, 2.1));
+    $('feed').style.transform = `translateY(${-sc * 470}px)`;
+    rippleAt($('ripc4'), l2, 2.35);
+    const added = l2 >= 2.45;
+    $('card4').style.transform = `scale(${1 - 0.05 * Math.sin(Math.PI * prog(l2, 2.35, 2.6))})`;
+    $('mainTxt').textContent = added ? "Savat (1) • 249 000 so'm" : "Katalogni ko'rish";
+    $('mainBtn').style.transform = `scale(${1 + 0.06 * Math.sin(Math.PI * prog(l2, 2.45, 2.75))})`;
+    rippleAt($('rip2'), l2, 2.85);
+    const sh = eOut(prog(l2, 3.0, 3.4));
+    $('sheet').style.transform = `translateY(${(1 - sh) * 100}%)`;
+    $('sheetDim').style.opacity = sh;
+    const sel = eBack(prog(l2, 3.5, 3.8));
+    $('rdClick').style.transform = `scale(${sel})`;
+    $('optClick').style.borderColor = sel > 0.1 ? '#2AABEE' : 'transparent';
+    rippleAt($('rip3'), l2, 3.85);
+    $('payBtn').style.transform = `scale(${1 - 0.05 * Math.sin(Math.PI * prog(l2, 3.85, 4.05))})`;
+    const ok = prog(l2, 4.05, 4.35);
+    $('success').style.opacity = ok;
+    sCirc.style.strokeDashoffset = circLen * (1 - eOut(prog(l2, 4.1, 4.55)));
+    sCheck.style.strokeDashoffset = checkLen * (1 - eOut(prog(l2, 4.4, 4.7)));
+
+    [['pillClick', 0.6, -1], ['pillPayme', 0.8, 1]].forEach(([id, at, dir], i) => {
+      const p = eBack(prog(l2, at, at + 0.5));
+      const pulse = 1 + 0.08 * Math.sin(Math.PI * prog(l2, 3.5 + i * 0.1, 3.9 + i * 0.1));
+      const el = $(id);
+      el.style.opacity = clamp(p);
+      el.style.transform = `translate(${(1 - clamp(p)) * dir * 200}px, ${Math.sin(t * 2.2 + i * 2) * 18}px) scale(${p * pulse})`;
+      el.style.boxShadow = `0 0 ${30 + 30 * Math.sin(t * 4 + i)}px ${i ? 'rgba(28,199,193,.7)' : 'rgba(0,163,255,.7)'}`;
+    });
+    const tp = eBack(prog(l2, 4.3, 4.7));
+    $('toast').style.opacity = clamp(tp);
+    $('toast').style.transform = `translateY(${(1 - clamp(tp)) * 40 - prog(l2, 4.3, 5) * 30}px) scale(${tp})`;
+
+    animWords(H2, l2, 0.15, 0.09);
+    [...$('feat').children].forEach((c, i) => {
+      const p = eBack(prog(l2, 1.4 + i * 0.35, 1.9 + i * 0.35));
+      c.style.opacity = clamp(p);
+      c.style.transform = `translateY(${(1 - clamp(p)) * 60}px) scale(${p})`;
+    });
+
+    // ===== Scene 3 (7.8 - end) =====
+    const in3 = prog(t, T2 - 0.1, T2 + 0.35), l3 = t - T2;
+    const s3 = $('s3');
+    s3.style.display = in3 > 0 ? 'block' : 'none';
+    s3.style.opacity = in3;
+    // slow camera push-in
+    s3.style.transform = `scale(${lerp(0.9, 1, eOut(in3)) + 0.08 * eInOut(prog(l3, 0, 3.2))})`;
+    s3.style.filter = `blur(${(1 - in3) * 12}px)`;
+    $('rays').style.transform = `rotate(${t * 12}deg)`;
+    sparks.forEach(s => {
+      const y = ((s.y - t * s.sp) % 1920 + 1920) % 1920;
+      s.el.style.transform = `translate(${s.x + Math.sin(t * 2 + s.ph) * 15}px, ${y}px)`;
+      s.el.style.opacity = 0.4 + 0.6 * Math.abs(Math.sin(t * 3 + s.ph));
+    });
+    const lg = eBack(prog(l3, 0.15, 0.7));
+    $('logo').style.transform = `scale(${lg}) rotate(${(1 - clamp(lg)) * -90}deg)`;
+    $('logo').style.filter = `drop-shadow(0 0 ${30 + 20 * Math.sin(t * 4)}px rgba(179,107,255,.9))`;
+    const rg = prog(l3, 0.4, 1.3);
+    $('logoRing').style.transform = `scale(${1 + rg * 1.8})`;
+    $('logoRing').style.opacity = rg > 0 ? (1 - rg) * 0.9 : 0;
+    const br = eOut(prog(l3, 0.45, 0.9));
+    $('brand').style.opacity = br;
+    $('brand').style.letterSpacing = `${lerp(30, 7, br)}px`;
+    animWords(H3, l3, 0.6, 0.12);
+    barEls.forEach((b, i) => {
+      const p = eBack(prog(l3, 1.0 + i * 0.1, 1.45 + i * 0.1));
+      b.style.height = `${bars[i] * 250}px`;
+      b.style.transform = `scaleY(${Math.max(0, p)})`;
+    });
+    arrow.style.strokeDashoffset = arrowLen * (1 - eOut(prog(l3, 1.3, 1.9)));
+    $('arrowHead').style.opacity = prog(l3, 1.8, 1.95);
+    const x2 = eBack(prog(l3, 1.8, 2.2));
+    $('x2').style.transform = `scale(${x2}) rotate(${-10 + 4 * Math.sin(t * 5)}deg)`;
+    $('x2').style.opacity = clamp(x2);
+    const ct = eBack(prog(l3, 1.2, 1.7));
+    const pulse = 1 + 0.035 * Math.sin(Math.max(0, l3 - 1.7) * 6);
+    const tapP = Math.sin(Math.PI * prog(l3, 2.35, 2.55));
+    $('cta').style.opacity = clamp(ct);
+    $('cta').style.transform = `translateY(${(1 - clamp(ct)) * 80}px) scale(${ct * pulse * (1 - 0.05 * tapP)})`;
+    $('cta').style.boxShadow = `0 0 ${50 + 40 * Math.sin(t * 5)}px rgba(255,79,216,.75), 0 0 140px rgba(123,61,255,.6)`;
+    const sw = (l3 * 0.9) % 1;
+    $('shine').style.left = `${lerp(-300, 1100, sw)}px`;
+    const tapR = prog(l3, 2.35, 2.9);
+    $('tap').style.left = `${760 - 60}px`; $('tap').style.top = `${1395 - 60}px`;
+    $('tap').style.opacity = tapR > 0 && tapR < 1 ? 1 - tapR : 0;
+    $('tap').style.transform = `scale(${0.4 + tapR * 1.6})`;
+    const hd = eOut(prog(l3, 1.6, 2.1));
+    $('handle').style.opacity = hd;
+    $('handle').style.transform = `translateY(${(1 - hd) * 50}px)`;
+    $('handle').style.filter = `drop-shadow(0 0 ${14 + 10 * Math.sin(t * 4)}px rgba(94,231,255,.8))`;
+
+    // ===== transitions =====
+    const f1 = 1 - Math.abs(t - T1) / 0.25, f2 = 1 - Math.abs(t - T2) / 0.25;
+    $('flash').style.opacity = clamp(Math.max(f1, f2)) * 0.85;
+    const swp = prog(t, T2 - 0.3, T2 + 0.3);
+    $('sweep').style.opacity = swp > 0 && swp < 1 ? 1 : 0;
+    $('sweep').style.left = `${lerp(-500, 1300, swp)}px`;
+  };
+
+  window.renderFrame(0);
+</script>
+</body>
+</html>
