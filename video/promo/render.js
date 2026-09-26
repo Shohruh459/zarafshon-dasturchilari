@@ -6,6 +6,7 @@
  * Usage:
  *   node video/promo/render.js [output.mp4]
  *   node video/promo/render.js --stills 1.5,5,10   # PNG previews at given seconds
+ *   node video/promo/render.js --no-audio          # skip the soundtrack
  *
  * Environment:
  *   FFMPEG_PATH  path to the ffmpeg binary (default: "ffmpeg" on PATH)
@@ -13,6 +14,7 @@
 const { spawn } = require('child_process');
 const path = require('path');
 const { chromium } = require('playwright');
+const { generateMusic } = require('./music');
 
 const WIDTH = 1080;
 const HEIGHT = 1920;
@@ -43,10 +45,14 @@ async function renderStills(times) {
   await browser.close();
 }
 
-function startFfmpeg(output) {
+function startFfmpeg(output, audio) {
+  const audioArgs = audio
+    ? ['-i', audio, '-map', '0:v', '-map', '1:a', '-c:a', 'aac', '-b:a', '192k', '-af', 'loudnorm=I=-14:TP=-1.5', '-shortest']
+    : [];
   const proc = spawn(ffmpegBin, [
     '-y', '-hide_banner', '-loglevel', 'error',
     '-f', 'image2pipe', '-framerate', String(FPS), '-i', '-',
+    ...audioArgs,
     '-c:v', 'libx264', '-preset', 'slow', '-crf', '18',
     '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
     output,
@@ -58,9 +64,10 @@ function startFfmpeg(output) {
   return { proc, done };
 }
 
-async function renderVideo(output) {
+async function renderVideo(output, withAudio) {
+  const audio = withAudio ? generateMusic(path.join(__dirname, 'music.wav')) : null;
   const { browser, page } = await openPage();
-  const { proc, done } = startFfmpeg(output);
+  const { proc, done } = startFfmpeg(output, audio);
   const total = Math.round(DURATION * FPS);
 
   console.log(`Rendering ${total} frames (${WIDTH}x${HEIGHT} @ ${FPS}fps) -> ${output}`);
@@ -82,7 +89,8 @@ async function renderVideo(output) {
   if (stillsIdx !== -1) {
     await renderStills(args[stillsIdx + 1].split(',').map(Number));
   } else {
-    await renderVideo(path.resolve(args[0] || path.join(__dirname, 'promo.mp4')));
+    const file = args.find((a) => !a.startsWith('--'));
+    await renderVideo(path.resolve(file || path.join(__dirname, 'promo.mp4')), !args.includes('--no-audio'));
   }
 })().catch((err) => {
   console.error(err);
