@@ -79,24 +79,34 @@ def place(src, scale, cx, cy, out_w=W, out_h=H, ox=0, oy=0, interp=cv2.INTER_LAN
     return cv2.warpAffine(src, m, (W, H), flags=interp, borderMode=cv2.BORDER_REFLECT)
 
 
-def exterior(t, push=(0.0, 0.07), t0=0.0, t1=T_ROOM + FADE, center=(344, 760)):
-    """Breeze + slow dolly-in over the exterior photo."""
+def breezy_exterior(t):
+    """The exterior photo at source resolution with only the plants swaying."""
     wind = (np.sin(2 * np.pi * (0.32 * t) + xx * 0.012 + yy * 0.006) * 0.7
             + np.sin(2 * np.pi * (0.53 * t) + xx * 0.031 - yy * 0.017) * 0.3)
     dx = plant_amp * wind
     dy = plant_amp * 0.25 * np.sin(2 * np.pi * 0.41 * t + xx * 0.02)
-    moved = cv2.remap(ext_src, (xx - dx).astype(np.float32), (yy - dy).astype(np.float32), cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
+    return cv2.remap(ext_src, (xx - dx).astype(np.float32), (yy - dy).astype(np.float32), cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
+
+
+def exterior(t, push=(0.0, 0.07), t0=0.0, t1=T_ROOM + FADE, center=(344, 760)):
+    """Breeze + slow dolly-in over the exterior photo."""
+    moved = breezy_exterior(t)
     base = W / ew  # fill the width; the frame then crops rows ~150-1380 (keeps the corner mark out)
     k = ease((t - t0) / (t1 - t0))
     return place(moved, base * (1 + push[0] + (push[1] - push[0]) * k), *center)
 
 
-def room(t):
-    """Bedroom photo at full width over its own blurred copy; drift, then push toward the bed."""
+def curtained_room(t):
+    """The bedroom photo at source resolution with only the curtains and window light moving."""
     sway = np.sin(2 * np.pi * 0.28 * t + ryy * 0.015) * 0.7 + np.sin(2 * np.pi * 0.47 * t + ryy * 0.03) * 0.3
     moved = cv2.remap(room_src, (rxx - curtain_amp * sway).astype(np.float32), ryy, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
     light = 1 + 0.035 * np.sin(2 * np.pi * t / 5.5) + 0.015 * np.sin(2 * np.pi * t / 2.3)
-    moved = np.clip(moved * (1 + (light - 1) * window_light) , 0, 255).astype(np.uint8)
+    return np.clip(moved * (1 + (light - 1) * window_light), 0, 255).astype(np.uint8)
+
+
+def room(t):
+    """Bedroom photo at full width over its own blurred copy; drift, then push toward the bed."""
+    moved = curtained_room(t)
 
     # scene 2 (4-8s): gentle drift; scene 3 (8-12s): push toward the near bed
     drift = ease((t - (T_ROOM - FADE)) / (T_BED - T_ROOM + FADE))

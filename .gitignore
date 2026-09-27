@@ -8,3 +8,6 @@ video/registon/audio.wav
 video/registon/still-*.png
 video/registon/plate-*.png
 __pycache__/
+video/registon2/assets/seq/
+video/registon2/audio.wav
+video/registon2/still-*.png
