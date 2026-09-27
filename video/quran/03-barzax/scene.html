@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Ikki dengiz orasidagi to'siq</title>
+<style>
+  @font-face { font-family: 'Amiri Quran'; src: url(../fonts/amiri-quran-arabic-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 300; src: url(../../registon/fonts/montserrat-latin-300-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 400; src: url(../../registon/fonts/montserrat-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 500; src: url(../../registon/fonts/montserrat-latin-500-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 600; src: url(../../registon/fonts/montserrat-latin-600-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 800; src: url(../../promo/fonts/montserrat-latin-800-normal.woff2) format('woff2'); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+  body { font-family: 'Montserrat', sans-serif; color: #fff; --sea: #9fe0f0; --fresh: #e3d9a4; --med: #8ff0c8; --pale: #eef7f8; }
+  /* shaded at half resolution and scaled up: keeps software WebGL fast */
+  #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  #vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 85% 70% at 50% 50%, transparent 55%, rgba(0,0,0,.5) 100%); }
+
+  /* Reels safe area: x 120-960, y 220-1500 */
+  .txt { position: absolute; left: 110px; right: 110px; text-align: center; opacity: 0; text-shadow: 0 2px 18px rgba(0,0,0,.85), 0 0 2px rgba(0,0,0,.9); }
+  .mask { display: inline-block; overflow: hidden; vertical-align: bottom; padding: 0 .04em; }
+  .mask > span { display: inline-block; }
+  .panel { padding: 28px 10px 40px; border-radius: 60px; background: radial-gradient(ellipse 72% 62% at 50% 50%, rgba(0,10,16,.62), rgba(0,10,16,0) 100%); }
+  #hook { top: 300px; font-weight: 600; font-size: 64px; line-height: 1.2; }
+  #hook .l2 { display: block; margin-top: 22px; font-weight: 300; font-size: 44px; color: var(--pale); }
+  .arabic { font-family: 'Amiri Quran', serif; direction: rtl; color: #f6fbfc; line-height: 2.05; text-shadow: 0 0 26px rgba(160,225,240,.35), 0 2px 12px rgba(0,0,0,.9); }
+  #ayah { top: 250px; }
+  #ayah .arabic { font-size: 80px; }
+  .meaning { font-weight: 400; font-size: 40px; line-height: 1.42; margin-top: 20px; }
+  .ref { font-weight: 500; font-size: 27px; letter-spacing: .3em; padding-left: .3em; color: var(--sea); margin-top: 24px; }
+
+  .lbl { position: absolute; opacity: 0; font-weight: 600; font-size: 36px; line-height: 1.25; text-shadow: 0 2px 14px rgba(0,0,0,.9); }
+  .lbl small { display: block; font-weight: 300; font-size: 28px; color: #e2eef0; margin-top: 4px; }
+  .lbl.fresh { color: var(--fresh); } .lbl.sea { color: var(--sea); } .lbl.med { color: var(--med); }
+  .axis { position: absolute; right: 130px; opacity: 0; font-weight: 500; font-size: 24px; color: rgba(230,245,248,.85); text-shadow: 0 2px 8px rgba(0,0,0,.9); }
+  .axis::before { content: ''; position: absolute; right: -26px; top: 14px; width: 18px; height: 2px; background: rgba(230,245,248,.7); }
+  .fact { top: 1330px; }
+  .fact .what { font-weight: 500; font-size: 38px; line-height: 1.32; }
+  .fact .note { font-weight: 300; font-size: 30px; line-height: 1.35; margin-top: 12px; color: #d8e9ec; }
+  #fresQuote { top: 240px; padding: 20px 0; border-radius: 40px; background: rgba(0,15,25,.45); font-weight: 300; font-size: 38px; line-height: 1.4; }
+  #fresQuote .ref { font-size: 24px; }
+
+  #close { top: 560px; }
+  #close .arabic { font-size: 110px; }
+  #close .meaning { font-size: 44px; }
+  #close .brand { margin-top: 64px; font-weight: 600; font-size: 30px; letter-spacing: .3em; padding-left: .3em; }
+  #close .end { font-weight: 300; font-size: 36px; margin-top: 16px; color: var(--sea); }
+  #flash { position: absolute; inset: 0; background: #eefaff; opacity: 0; }
+</style>
+</head>
+<body>
+<canvas id="gl" width="540" height="960"></canvas>
+<div id="vignette"></div>
+
+<div class="txt" id="hook"></div>
+<div class="txt panel" id="ayah"><div class="arabic" id="ar"></div><div class="meaning" id="mean"></div><div class="ref" id="ref"></div></div>
+
+<!-- estuary cross-section -->
+<div class="txt" id="fresQuote"><span id="fq"></span><div class="ref" id="fqRef"></div></div>
+<div class="lbl fresh" id="lFresh" style="left:150px; top:560px"></div>
+<div class="lbl sea" id="lSalt" style="left:520px; top:1080px"></div>
+<div class="lbl" id="lHalo" style="left:150px; top:870px"></div>
+<div class="txt fact" id="estFact"><div class="what" id="estW"></div></div>
+
+<!-- Gibraltar cross-section -->
+<div class="lbl sea" id="lAtl" style="left:140px; top:470px"></div>
+<div class="lbl med" id="lMed" style="left:600px; top:470px"></div>
+<div class="lbl" id="lSill" style="left:420px; top:700px"></div>
+<div class="axis" id="ax0" style="top:370px">0 m</div>
+<div class="axis" id="ax300" style="top:600px">300 m</div>
+<div class="axis" id="ax1000" style="top:1135px">1000 m</div>
+<div class="txt fact" id="gibFact"><div class="what" id="gibW"></div><div class="note" id="gibN"></div></div>
+<div class="txt fact" id="meddyFact"><div class="what" id="medW"></div><div class="note" id="medN"></div></div>
+
+<div class="txt" id="close"><div class="arabic" id="closeAr"></div><div class="meaning" id="closeM"></div><div class="brand">ZARAFSHON DASTURCHILARI</div><div class="end">Alloh bilguvchiroq</div></div>
+<div id="flash"></div>
+
+<script type="x-shader/x-fragment" id="frag">
+precision highp float;
+uniform vec2 uRes;
+uniform float uTime, uMode, uCamH, uPitch, uFwd, uMeddy, uFade;
+varying vec2 vUv;
+
+const vec3 SUN = vec3(-.35, .55, -.75);
+
+float hash(vec2 p) { p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
+float noise(vec2 p) {
+  vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);
+  return mix(mix(hash(i), hash(i + vec2(1, 0)), f.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), f.x), f.y);
+}
+float fbm(vec2 p) { float v = 0., a = .5; mat2 m = mat2(1.6, 1.2, -1.2, 1.6); for (int i = 0; i < 5; i++) { v += a * noise(p); p = m * p; a *= .5; } return v; }
+
+// ---------------- aerial: a river plume meeting the sea ----------------
+float coastZ(float x) { return -900. + .28 * x + 160. * (fbm(vec2(x * .003, 1.3)) - .5); }
+float riverX(float z) { return 45. * sin(z * .004) + 22. * sin(z * .011 + 1.); }
+vec3 skyHaze(vec3 rd) { return mix(vec3(.50, .60, .70), vec3(.22, .40, .66), pow(max(rd.y, 0.), .5)); }
+
+vec3 aerial(vec2 uv) {
+  vec3 ro = vec3(0., uCamH, uFwd);
+  vec3 fw = normalize(vec3(.12, sin(uPitch), -cos(uPitch)));
+  vec3 rt = normalize(cross(fw, vec3(0, 1, 0))), up = cross(rt, fw);
+  vec3 rd = normalize(fw * 1.7 + rt * uv.x + up * uv.y);
+  if (rd.y >= -.01) return skyHaze(rd);
+  float t = -ro.y / rd.y; vec2 w = (ro + rd * t).xz;
+  float zc = coastZ(w.x);
+  vec3 col;
+  if (w.y < zc) {                                                      // land
+    float rx = riverX(w.y), width = 55. + 90. * smoothstep(zc - 500., zc, w.y);
+    float g = fbm(w * .006), d = fbm(w * .02 + 4.);
+    col = mix(vec3(.05, .10, .035), vec3(.17, .14, .08), smoothstep(.35, .7, g)) * (.75 + .5 * d);
+    col = mix(col, vec3(.55, .48, .34), smoothstep(40., 0., zc - w.y));   // beach
+    float inRiver = smoothstep(width, width - 8., abs(w.x - rx));
+    col = mix(col, vec3(.19, .15, .075) * (.9 + .2 * fbm(w * .05 + uTime * .2)), inRiver);
+  } else {                                                             // sea
+    vec2 m = vec2(riverX(zc), zc);
+    vec2 d = w - m - vec2(260., 0.) + (vec2(fbm(w * .004 + uTime * .015), fbm(w * .004 + 7.3 - uTime * .012)) - .5) * vec2(420., 300.);
+    float plume = exp(-pow(d.x / 900., 2.) - pow(max(d.y, 0.) / 380., 2.));
+    float front = smoothstep(.34, .40, plume);
+    float nearCoast = exp(-(w.y - zc) / 260.);
+    vec3 sea = mix(vec3(.008, .055, .15), vec3(.02, .15, .20), nearCoast);
+    vec3 river = vec3(.19, .15, .075) * (.8 + .4 * fbm(w * .012 + uTime * .05));
+    col = mix(sea, river, front);
+    // small waves: normal from noise, sky reflection and sun glint
+    vec2 q = w * .05 + vec2(uTime * .3, uTime * .1);
+    float n0 = fbm(q), nx = fbm(q + vec2(.05, 0)), nz = fbm(q + vec2(0, .05));
+    vec3 n = normalize(vec3((n0 - nx) * 3., 1., (n0 - nz) * 3.));
+    float fres = .03 + .6 * pow(1. - max(dot(n, -rd), 0.), 5.);
+    col = mix(col, skyHaze(reflect(rd, n)), fres);
+    col += vec3(1., .95, .85) * pow(max(dot(reflect(rd, n), normalize(SUN)), 0.), 180.) * .8;
+    // the front itself: a line of foam and debris where the waters meet
+    float edge = exp(-abs(plume - .37) * 90.) * (.5 + .5 * fbm(w * .03 + uTime * .1));
+    col = mix(col, vec3(.70, .68, .62), edge * .5);
+  }
+  return mix(col, skyHaze(vec3(rd.x, .05, rd.z)) * .9, 1. - exp(-t * .00008));
+}
+
+// ---------------- particles helper for the sections ----------------
+float dots(vec2 q, float vx, float vy, float dens, float seed) {
+  vec2 g = vec2((q.x - vx * uTime) * 34., (q.y - vy * uTime) * 60.);
+  vec2 id = floor(g), f = fract(g) - .5;
+  float h = hash(id + seed);
+  if (h < dens) return 0.;
+  vec2 o = vec2(hash(id + 1.7 + seed), hash(id + 3.1 + seed)) - .5;
+  return smoothstep(.16, .0, length((f - o * .6) * vec2(1., 1.8)));
+}
+
+// ---------------- estuary: fresh water over a salt wedge ----------------
+vec3 estuary(vec2 q) {
+  float t = uTime, ys = .80 + .006 * sin(q.x * 40. - t * 2.);
+  if (q.y > ys) return mix(vec3(.62, .72, .80), vec3(.30, .47, .68), (q.y - ys) / (1. - ys));
+  float yb = .30 - .18 * q.x + .01 * sin(q.x * 13.);
+  if (q.y < yb) return vec3(.13, .10, .07) * (.8 + .4 * fbm(q * 40.));      // sea bed
+  float yh = .32 + .30 * q.x + .006 * sin(q.x * 18. - t * 1.6) * smoothstep(.0, .3, q.x) + .02 * (fbm(vec2(q.x * 4. - t * .3, t * .1)) - .5);
+  float depth = (ys - q.y) / (ys - yb);
+  vec3 fresh = vec3(.34, .36, .22) * (1. - .45 * depth);
+  vec3 salt = vec3(.03, .16, .32) * (1. - .35 * depth);
+  float mixw = .014 + .01 * fbm(vec2(q.x * 20. - t, q.y * 50.));
+  float s = smoothstep(yh + mixw, yh - mixw, q.y);                           // 0 fresh .. 1 salt
+  vec3 col = mix(fresh, salt, s);
+  col += vec3(.35, .55, .55) * exp(-abs(q.y - yh) / .006) * .35;             // the halocline
+  // river water runs out to sea on top; salt water creeps landward underneath
+  float d = s < .5 ? dots(q, .10, 0., .86, 1.) : dots(q, -.035, 0., .86, 5.);
+  col += (s < .5 ? vec3(.9, .85, .6) : vec3(.6, .85, 1.)) * d * .5;
+  return col;
+}
+
+// ---------------- Strait of Gibraltar: two-layer exchange ----------------
+float seabedDepth(float x) {                // metres; Atlantic on the left, the Camarinal sill (~300 m) mid-way
+  float atl = mix(1500., 300., pow(clamp(x / .5, 0., 1.), 1.5));   // continental slope up to the sill
+  float med = mix(300., 1150., smoothstep(.5, .8, x));
+  return x < .5 ? atl : med;
+}
+vec3 gibraltar(vec2 q) {
+  float t = uTime, ys = .80;
+  if (q.y > ys + .004 * sin(q.x * 50. - t * 2.)) return mix(vec3(.62, .72, .80), vec3(.30, .47, .68), (q.y - ys) / (1. - ys));
+  float depth = (ys - q.y) / ys * 2000.;
+  float bed = seabedDepth(q.x);
+  if (depth > bed) return vec3(.07, .06, .05) * (.8 + .4 * fbm(q * 40.));
+  vec3 atl = vec3(.04, .20, .36) * exp(-depth * .0012);
+  vec3 medc = vec3(.07, .30, .25) * (1.15 - depth * .0004);
+  // where Mediterranean water is: below the interface on the Med side, down the slope, then a tongue at ~1000 m
+  float iface = mix(120., 190., smoothstep(.5, .65, q.x));
+  float med = q.x > .5 ? smoothstep(iface - 15., iface + 15., depth) : 0.;
+  float slope = (q.x <= .5 && bed < 1080.) ? smoothstep(140., 90., bed - depth) : 0.;
+  float wisp = fbm(vec2(q.x * 8. + t * .08, depth * .004));
+  float tongueW = 150. * (.55 + .45 * q.x / .5);
+  float tongue = q.x < .42 ? smoothstep(tongueW, tongueW * .6, abs(depth - 1000. + (wisp - .5) * 160.)) * smoothstep(0., .25, q.x + .05 * wisp) : 0.;
+  float mm = clamp(max(max(med, slope), tongue * .9), 0., 1.);
+  // a Meddy: a lens of Mediterranean water spinning on its own, far out in the Atlantic
+  vec2 mc = vec2(.16, ys - 1000. / 2000. * ys);
+  vec2 rp = (q - mc) * vec2(1., 1.6);
+  float r = length(rp);
+  float meddy = smoothstep(.075, .06, r) * uMeddy;
+  float ang = atan(rp.y, rp.x) + t * 1.5 - r * 30.;
+  mm = max(mm, meddy * (.75 + .25 * sin(ang * 3.)));
+  vec3 col = mix(atl, medc, mm);
+  col += vec3(.55, 1., .8) * exp(-abs(r - .068) / .004) * uMeddy * .6;
+  // flow tracers: Atlantic water in on top (to the right), Mediterranean water out below (to the left)
+  float d = mm > .5 ? dots(q, q.x <= .5 && slope > .5 ? -.05 : -.04, q.x <= .5 && slope > .5 ? -.03 : 0., .85, 9.) : (depth < 260. ? dots(q, .06, 0., .85, 3.) : dots(q, .01, 0., .93, 6.));
+  col += (mm > .5 ? vec3(.6, 1., .8) : vec3(.6, .85, 1.)) * d * .45;
+  return col;
+}
+
+void main() {
+  vec2 uv = (vUv - .5) * vec2(uRes.x / uRes.y, 1.) * 2.;
+  vec3 col = uMode < .5 ? aerial(uv) : (uMode < 1.5 ? estuary(vUv) : gibraltar(vUv));
+  col = col / (1. + col * .35);
+  col = pow(col, vec3(1. / 2.2)) * uFade;
+  col += (hash(vUv * 900. + fract(uTime * 7.)) - .5) * .018;
+  gl_FragColor = vec4(col, 1.);
+}
+</script>
+
+<script type="importmap">{ "imports": { "three": "../../registon2/lib/three.module.js" } }</script>
+<script type="module">
+  import * as THREE from 'three';
+  import { clamp, prog, lerp, eOut, eInOut, textAnimator, loadAyat } from '../common/anim.js';
+
+  // Arabic: Uthmani text from ../ayat.json. Uzbek meanings follow Tafsiri Hilol —
+  // CHECK THE WORDING AGAINST THE BOOK before publishing.
+  const ayat = await loadAyat();
+  const TEXT = {
+    hook1: 'Ikki suv uchrashadi — o‘rtasida chegara',
+    hook2: 'Qur’on buni 1400 yil avval aytgan',
+    mean: '«U ikki dengizni qo‘yib yubordi, ular uchrashib turadi. Ikkisining orasida to‘siq bor, (bir-biriga) haddan oshmaydilar.»',
+    ref: 'RAHMON SURASI · 19–20',
+    fq: '«...bunisi chuchuk, tashnalikni qondiruvchi, bunisi sho‘r, achchiq. Ikkisining orasiga to‘siq qildi...»',
+    fqRef: 'FURQON SURASI · 53',
+    lFresh: 'Chuchuk suv<small>daryodan — yengilroq, ustda oqadi</small>',
+    lSalt: 'Sho‘r suv<small>dengizdan — zichroq, ostda</small>',
+    lHalo: 'Galoklin<small>sho‘rlik keskin o‘zgaradigan oraliq qatlam</small>',
+    estW: 'Aralashish juda sekin kechadi — chegara saqlanib turadi',
+    lAtl: 'Atlantika<small>~36 g/l tuz</small>',
+    lMed: 'O‘rta dengiz<small>~38 g/l tuz</small>',
+    lSill: 'Gibraltar<small>bo‘g‘oz ostonasi ~300 m</small>',
+    gibW: 'O‘rta dengiz suvi pastdan chiqib, ~1000 m chuqurlikda Atlantikaga tarqaladi',
+    gibN: 'va o‘z sho‘rligini minglab kilometr saqlaydi',
+    medW: '1978: “Meddi” girdoblari kashf etildi',
+    medN: 'O‘rta dengiz suvidan iborat bu girdoblar Atlantikada yillab yashaydi',
+    closeM: '«...(bir-biriga) haddan oshmaydilar.»',
+  };
+  const $ = (id) => document.getElementById(id);
+  $('hook').innerHTML = `<span>${TEXT.hook1}</span><span class="l2">${TEXT.hook2}</span>`;
+  $('ar').innerHTML = `${ayat['55:19']}<br>${ayat['55:20']}`;
+  $('closeAr').textContent = ayat['55:20'].split(' ').slice(-2).join(' ');   // «لَّا يَبۡغِيَانِ»
+  for (const k of ['mean', 'ref', 'fq', 'fqRef', 'estW', 'gibW', 'gibN', 'medW', 'medN', 'closeM']) $(k).textContent = TEXT[k];
+  for (const k of ['lFresh', 'lSalt', 'lHalo', 'lAtl', 'lMed', 'lSill']) $(k).innerHTML = TEXT[k];
+
+  // Timeline (seconds). Keep in sync with audio.js.
+  const T = { ayah: 3.5, estuary: 10.5, gib: 17.5, meddy: 21.5, close: 25.5, end: 30 };
+
+  const renderer = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: false, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1); renderer.setSize(540, 960, false);
+  const U = {
+    uRes: { value: new THREE.Vector2(540, 960) }, uTime: { value: 0 }, uMode: { value: 0 }, uCamH: { value: 900 },
+    uPitch: { value: -0.8 }, uFwd: { value: 0 }, uMeddy: { value: 0 }, uFade: { value: 1 },
+  };
+  const scene = new THREE.Scene();
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
+    uniforms: U, fragmentShader: $('frag').textContent,
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
+  })));
+  const cam = new THREE.Camera();
+
+  const show = textAnimator(['hook', 'ayah', 'fresQuote', 'estFact', 'gibFact', 'meddyFact', 'close']);
+  function label(id, t, tin, tout) {
+    const el = $(id), p = eOut(prog(t, tin, tin + 0.5));
+    el.style.opacity = p * (1 - prog(t, tout - 0.3, tout));
+    el.style.transform = `translateY(${(1 - p) * 24}px)`;
+  }
+
+  window.renderFrame = function (t) {
+    U.uTime.value = t;
+    if (t < T.estuary || t >= T.close) {
+      // drone: high and oblique at first, lowering toward the front line; a wide view again at the end
+      U.uMode.value = 0;
+      const k = t < T.estuary ? eInOut(prog(t, 0, T.estuary)) : 0;
+      U.uCamH.value = t < T.estuary ? lerp(1250, 820, k) : lerp(1000, 1100, prog(t, T.close, T.end));
+      U.uPitch.value = t < T.estuary ? lerp(-0.95, -0.72, k) : -0.9;
+      U.uFwd.value = t < T.estuary ? lerp(150, -150, k) : lerp(0, -60, prog(t, T.close, T.end));
+      U.uFade.value = t < T.estuary ? 1 - prog(t, T.estuary - 0.35, T.estuary) : prog(t, T.close, T.close + 0.5);
+    } else if (t < T.gib) {
+      U.uMode.value = 1;
+      U.uFade.value = prog(t, T.estuary, T.estuary + 0.4) * (1 - prog(t, T.gib - 0.35, T.gib));
+    } else {
+      U.uMode.value = 2;
+      U.uFade.value = prog(t, T.gib, T.gib + 0.4) * (1 - prog(t, T.close - 0.35, T.close));
+      U.uMeddy.value = eOut(prog(t, T.meddy, T.meddy + 1.2));
+    }
+    renderer.render(scene, cam);
+
+    show('hook', t, 0.35, T.ayah, 0.08);
+    show('ayah', t, T.ayah + 0.3, T.estuary, 0.04);
+
+    show('fresQuote', t, T.estuary + 0.3, T.gib, 0.04);
+    label('lFresh', t, T.estuary + 0.8, T.gib);
+    label('lSalt', t, T.estuary + 1.2, T.gib);
+    label('lHalo', t, T.estuary + 1.8, T.gib);
+    show('estFact', t, T.estuary + 3.2, T.gib);
+
+    label('lAtl', t, T.gib + 0.4, T.close);
+    label('lMed', t, T.gib + 0.7, T.close);
+    label('lSill', t, T.gib + 1.0, T.close);
+    ['ax0', 'ax300', 'ax1000'].forEach((id) => label(id, t, T.gib + 0.4, T.close));
+    show('gibFact', t, T.gib + 1.4, T.meddy - 0.1);
+    show('meddyFact', t, T.meddy + 0.3, T.close);
+
+    show('close', t, T.close + 0.4, T.end + 1, 0.06);
+    $('flash').style.opacity = clamp(1 - Math.abs(t - T.estuary) / 0.18) * 0.35;
+  };
+  window.sceneReady = true;
+  window.renderFrame(0);
+</script>
+</body>
+</html>

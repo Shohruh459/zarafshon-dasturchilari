@@ -28,6 +28,9 @@ AYAT = {                         # key -> (surah, ayah, first word index, last w
     '17:85-fragment': (17, 85, 8, None),     # «وَمَآ أُوتِيتُم مِّنَ ٱلۡعِلۡمِ إِلَّا قَلِيلٗا»
     '24:40': (24, 40, 0, None),
     '24:40-fragment': (24, 40, 0, 22),       # up to «لَمۡ يَكَدۡ يَرَىٰهَاۗ»
+    '55:19': (55, 19, 0, None),
+    '55:20': (55, 20, 0, None),
+    '25:53': (25, 53, 0, None),
 }
 
 here = os.path.dirname(os.path.abspath(__file__))
