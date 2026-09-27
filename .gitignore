@@ -11,3 +11,6 @@ __pycache__/
 video/registon2/assets/seq/
 video/registon2/audio.wav
 video/registon2/still-*.png
+video/intros/intro_*.wav
+video/intros/intro_*.mp4
+video/intros/still-*.png
