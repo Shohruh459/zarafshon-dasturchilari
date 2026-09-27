@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Registon overlay</title>
+<style>
+  @font-face { font-family: 'Montserrat'; font-weight: 300; src: url(fonts/montserrat-latin-300-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 400; src: url(fonts/montserrat-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 500; src: url(fonts/montserrat-latin-500-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 600; src: url(fonts/montserrat-latin-600-normal.woff2) format('woff2'); }
+
+  /* Transparent page: this layer is composited over plate.mp4 by FFmpeg. */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: transparent; }
+  body { font-family: 'Montserrat', sans-serif; color: #fff; --stone: #e2cda6; }
+
+  /* Everything stays inside the Reels safe area: x 120-960, y 220-1500. */
+  .block { position: absolute; left: 120px; right: 120px; text-align: center; }
+  .line { display: block; will-change: transform, opacity, filter; text-shadow: 0 2px 18px rgba(0, 0, 0, .35), 0 1px 3px rgba(0, 0, 0, .35); }
+  .rule { display: block; height: 2px; margin: 26px auto; background: var(--stone); transform-origin: 50% 50%; }
+
+  #s1 { top: 285px; }
+  #s1 .line { font-weight: 600; font-size: 64px; line-height: 1.2; letter-spacing: .07em; }
+  #s1 .line.small { font-weight: 500; font-size: 36px; letter-spacing: .34em; color: #fff; margin-bottom: 10px; }
+
+  #s2 { top: 1236px; }
+  #s2 .brand { font-weight: 500; font-size: 86px; letter-spacing: .22em; padding-left: .22em; line-height: 1.05; }
+  #s2 .kind { font-weight: 500; font-size: 34px; letter-spacing: .42em; padding-left: .42em; color: var(--stone); margin-top: 10px; }
+  #s2 .rule { width: 110px; margin: 24px auto 20px; }
+  #s2 .sub { font-weight: 300; font-size: 40px; letter-spacing: .04em; }
+
+  #s3 { top: 1262px; }
+  #s3 .line { font-weight: 600; font-size: 70px; line-height: 1.2; letter-spacing: .07em; }
+
+  #s4 { top: 610px; }
+  #s4 .brand { font-weight: 300; font-size: 104px; letter-spacing: .26em; padding-left: .26em; line-height: 1; }
+  #s4 .rule { width: 140px; margin: 40px auto 46px; }
+  .row { display: flex; align-items: center; justify-content: center; gap: 18px; }
+  .row svg { flex: none; }
+  #s4 .place { font-weight: 400; font-size: 44px; letter-spacing: .12em; }
+  #s4 .phone { font-weight: 600; font-size: 60px; letter-spacing: .03em; margin-top: 34px; font-variant-numeric: tabular-nums; }
+  #s4 .call { display: inline-block; margin-top: 54px; padding: 22px 44px; border: 2px solid rgba(226, 205, 166, .9); border-radius: 60px;
+              font-weight: 500; font-size: 34px; letter-spacing: .06em; background: rgba(0, 0, 0, .18); }
+</style>
+</head>
+<body>
+
+<div class="block" id="s1">
+  <span class="line small">KARMANADA</span>
+  <span class="line">MEHMONXONA</span>
+  <span class="line">IZLAYAPSIZMI?</span>
+</div>
+
+<div class="block" id="s2">
+  <span class="line brand">REGISTON</span>
+  <span class="line kind">MEHMONXONASI</span>
+  <span class="rule"></span>
+  <span class="line sub">Qulay va sokin muhit</span>
+</div>
+
+<div class="block" id="s3">
+  <span class="line">SIZ UCHUN</span>
+  <span class="line">QULAY MASKAN</span>
+</div>
+
+<div class="block" id="s4">
+  <span class="line brand">REGISTON</span>
+  <span class="rule"></span>
+  <span class="line row place">
+    <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#e2cda6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+    Karmana
+  </span>
+  <span class="line row phone">
+    <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#e2cda6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg>
+    +998 95 611 55 41
+  </span>
+  <span class="line"><span class="call">Murojaat uchun qo‘ng‘iroq qiling</span></span>
+</div>
+
+<script>
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const prog = (t, a, b) => clamp((t - a) / (b - a));
+  const ease = (x) => 1 - Math.pow(1 - x, 3); // ease-out cubic: calm, no overshoot
+  const $ = (s) => document.querySelector(s);
+
+  // Timeline (seconds). Keep in sync with plate.py and audio.js.
+  // [selector, fade-in start, fade-out start]; each child line is staggered.
+  const BLOCKS = [
+    ['#s1', 0.5, 3.35, 0.28],
+    ['#s2', 4.45, 7.45, 0.25],
+    ['#s3', 8.45, 11.4, 0.3],
+    ['#s4', 12.3, 99, 0.3],
+  ];
+  const IN = 0.9, OUT = 0.5;
+
+  window.renderFrame = function (t) {
+    for (const [sel, tin, tout, stagger] of BLOCKS) {
+      const block = $(sel);
+      const out = ease(prog(t, tout, tout + OUT));
+      block.style.opacity = 1 - out;
+      block.style.transform = `translateY(${-14 * out}px)`;
+      [...block.children].forEach((el, i) => {
+        const p = ease(prog(t, tin + i * stagger, tin + i * stagger + IN));
+        if (el.classList.contains('rule')) {
+          el.style.transform = `scaleX(${p})`;
+          el.style.opacity = p;
+          return;
+        }
+        el.style.opacity = p;
+        el.style.transform = `translateY(${(1 - p) * 26}px)`;
+        el.style.filter = `blur(${(1 - p) * 6}px)`;
+      });
+    }
+  };
+  window.renderFrame(0);
+</script>
+</body>
+</html>

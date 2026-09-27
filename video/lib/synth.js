@@ -145,7 +145,7 @@ function createSynth(DURATION) {
     return out;
   }
 
-  function mixdown(kicks = []) {
+  function mixdown(kicks = [], fadeOut = 0.35) {
     const wet = reverb(send);
     // Side-chain style ducking of the music bus on every kick time passed in.
     const L = new Float32Array(N), R = new Float32Array(N);
@@ -155,7 +155,7 @@ function createSynth(DURATION) {
       while (k + 1 < kicks.length && kicks[k + 1] <= t) k++;
       const since = kicks.length ? t - kicks[k] : -1;
       const duck = since >= 0 ? 1 - 0.55 * Math.exp(-since / 0.09) : 1;
-      const fade = Math.min(1, (DURATION - t) / 0.35);
+      const fade = Math.min(1, (DURATION - t) / fadeOut);
       L[i] = (drums.L[i] + music.L[i] * duck + fx.L[i] + wet.L[i] * 0.6) * fade;
       R[i] = (drums.R[i] + music.R[i] * duck + fx.R[i] + wet.R[i] * 0.6) * fade;
     }
