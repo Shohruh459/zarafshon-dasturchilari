@@ -9,8 +9,11 @@
  *
  *   const { renderScene } = require('../../lib/render');
  *   renderScene({ page: 'quran/01-kengayish/scene.html', duration: 30, out, audio });
+ *
+ * With `background` (a 1080x1920 30 fps video), the page is captured with a
+ * transparent background and laid over that video.
  */
-const { spawn } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
@@ -43,28 +46,36 @@ async function open(page) {
   return { server, browser, tab, close: async () => { await browser.close(); server.close(); } };
 }
 
+const ffmpeg = process.env.FFMPEG_PATH || 'ffmpeg';
+
 /** Writes PNG previews next to `outDir`/still-<t>s.png. */
-async function renderStills({ page, times, outDir }) {
+async function renderStills({ page, times, outDir, background = null }) {
   const s = await open(page);
   for (const t of times) {
     await s.tab.evaluate((t) => window.renderFrame(t), t);
     const file = path.join(outDir, `still-${t}s.png`);
-    await s.tab.screenshot({ path: file });
+    if (background) {
+      const png = await s.tab.screenshot({ type: 'png', omitBackground: true });
+      spawnSync(ffmpeg, ['-y', '-loglevel', 'error', '-ss', String(t), '-i', background, '-f', 'image2pipe', '-i', '-',
+        '-filter_complex', '[0:v][1:v]overlay', '-frames:v', '1', file], { input: png, stdio: ['pipe', 'inherit', 'inherit'] });
+    } else {
+      await s.tab.screenshot({ path: file });
+    }
     console.log('wrote', file);
   }
   await s.close();
 }
 
 /** Renders `duration` seconds of `page` to `out` (MP4), muxing `audio` (WAV path) if given. */
-async function renderScene({ page, duration, out, audio = null, loudness = -15 }) {
+async function renderScene({ page, duration, out, audio = null, loudness = -15, background = null }) {
   const s = await open(page);
-  const audioArgs = audio
-    ? ['-i', audio, '-map', '0:v', '-map', '1:a', '-c:a', 'aac', '-b:a', '192k', '-af', `loudnorm=I=${loudness}:TP=-1.5,aresample=48000`, '-shortest']
-    : [];
-  const ff = spawn(process.env.FFMPEG_PATH || 'ffmpeg', [
+  const ff = spawn(ffmpeg, [
     '-y', '-hide_banner', '-loglevel', 'error',
     '-f', 'image2pipe', '-framerate', String(FPS), '-i', '-',
-    ...audioArgs,
+    ...(background ? ['-i', background] : []),
+    ...(audio ? ['-i', audio] : []),
+    '-filter_complex', background ? '[1:v][0:v]overlay=shortest=1[v]' : '[0:v]null[v]', '-map', '[v]',
+    ...(audio ? ['-map', `${background ? 2 : 1}:a`, '-c:a', 'aac', '-b:a', '192k', '-af', `loudnorm=I=${loudness}:TP=-1.5,aresample=48000`, '-shortest'] : []),
     '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
     out,
   ], { stdio: ['pipe', 'inherit', 'inherit'] });
@@ -76,7 +87,7 @@ async function renderScene({ page, duration, out, audio = null, loudness = -15 }
   console.log(`Rendering ${total} frames -> ${out}`);
   for (let i = 0; i < total; i++) {
     await s.tab.evaluate((t) => window.renderFrame(t), i / FPS);
-    const png = await s.tab.screenshot({ type: 'png' });
+    const png = await s.tab.screenshot({ type: 'png', omitBackground: !!background });
     if (!ff.stdin.write(png)) await new Promise((r) => ff.stdin.once('drain', r));
     if (i % FPS === 0) process.stdout.write(`\r  ${Math.round((i / total) * 100)}%`);
   }

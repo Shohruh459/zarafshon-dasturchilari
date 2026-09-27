@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Asalari</title>
+<style>
+  @font-face { font-family: 'Amiri Quran'; src: url(../fonts/amiri-quran-arabic-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 300; src: url(../../registon/fonts/montserrat-latin-300-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 400; src: url(../../registon/fonts/montserrat-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 500; src: url(../../registon/fonts/montserrat-latin-500-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 600; src: url(../../registon/fonts/montserrat-latin-600-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 800; src: url(../../promo/fonts/montserrat-latin-800-normal.woff2) format('woff2'); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* transparent: the page is laid over plate.mp4 (see plate.js) */
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: transparent; }
+  body { font-family: 'Montserrat', sans-serif; color: #fff; --gold: #f6c453; --pale: #fbf3df; }
+  .scrim { position: absolute; left: 0; right: 0; opacity: 0; }
+  #scrimTop { top: 0; height: 1150px; background: linear-gradient(rgba(12,7,0,.78), rgba(12,7,0,.5) 55%, rgba(12,7,0,0)); }
+  #scrimBot { bottom: 0; height: 900px; background: linear-gradient(rgba(12,7,0,0), rgba(12,7,0,.72) 45%, rgba(12,7,0,.85)); }
+  #card { position: absolute; left: 0; top: 620px; width: 1080px; height: 608px; opacity: 0;
+          box-shadow: 0 0 0 2px rgba(246,196,83,.35), 0 30px 80px rgba(0,0,0,.6); }
+  #vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 90% 75% at 50% 50%, transparent 60%, rgba(0,0,0,.45) 100%); }
+
+  /* Reels safe area: x 120-960, y 220-1500 */
+  .txt { position: absolute; left: 110px; right: 110px; text-align: center; opacity: 0; text-shadow: 0 2px 18px rgba(0,0,0,.85), 0 0 2px rgba(0,0,0,.9); }
+  .mask { display: inline-block; overflow: hidden; vertical-align: bottom; padding: 0 .04em; }
+  .mask > span { display: inline-block; }
+  #hook { top: 300px; font-weight: 600; font-size: 62px; line-height: 1.2; }
+  #hook .l2 { display: block; margin-top: 24px; font-weight: 300; font-size: 44px; color: var(--pale); }
+  #hook b { color: var(--gold); font-weight: 600; }
+  .arabic { font-family: 'Amiri Quran', serif; direction: rtl; color: #fffaf0; line-height: 2.05; text-shadow: 0 0 26px rgba(246,196,83,.35), 0 2px 12px rgba(0,0,0,.9); }
+  .ayah { top: 240px; }
+  .ayah .arabic { font-size: 70px; }
+  .meaning { font-weight: 400; font-size: 39px; line-height: 1.42; margin-top: 16px; }
+  .ref { font-weight: 500; font-size: 26px; letter-spacing: .3em; padding-left: .3em; color: var(--gold); margin-top: 22px; }
+
+  #fem { top: 250px; }
+  #fem .arabic { font-size: 84px; color: var(--gold); word-spacing: .35em; }
+  #fem .what { margin-top: 18px; font-weight: 500; font-size: 36px; line-height: 1.35; }
+  .fact { top: 1270px; }
+  .fact .what { font-weight: 500; font-size: 37px; line-height: 1.32; }
+  .fact .what b { color: var(--gold); font-weight: 600; }
+  .fact .note { font-weight: 300; font-size: 29px; line-height: 1.35; margin-top: 12px; color: #efe6d2; }
+
+  #colAyah { top: 230px; }
+  #colAyah .arabic { font-size: 72px; }
+  #colAyah .meaning { margin-top: 4px; }
+  #swatches { position: absolute; left: 150px; right: 150px; top: 1275px; display: flex; justify-content: space-between; }
+  #swatches i { width: 96px; height: 96px; border-radius: 50%; opacity: 0;
+                box-shadow: inset 0 -10px 22px rgba(0,0,0,.25), inset 0 10px 18px rgba(255,255,255,.35), 0 6px 22px rgba(0,0,0,.5); }
+  #colFact { top: 1405px; }
+  #colFact .what { font-size: 32px; }
+
+  #shifo { top: 250px; }
+  #shifo .arabic { font-size: 104px; }
+  #shifoFact { top: 1180px; }
+
+  .panel { padding: 30px 10px 44px; border-radius: 60px; background: radial-gradient(ellipse 75% 65% at 50% 50%, rgba(14,8,0,.6), rgba(14,8,0,0) 100%); }
+  #close { top: 500px; }
+  #close .arabic { font-size: 82px; }
+  #close .meaning { font-size: 42px; }
+  #close .brand { margin-top: 60px; font-weight: 600; font-size: 30px; letter-spacing: .3em; padding-left: .3em; }
+  #close .end { font-weight: 300; font-size: 36px; margin-top: 16px; color: var(--gold); }
+  #flash { position: absolute; inset: 0; background: #fff8e6; opacity: 0; }
+</style>
+</head>
+<body>
+<div class="scrim" id="scrimTop"></div>
+<div class="scrim" id="scrimBot"></div>
+<div id="card"></div>
+<div id="vignette"></div>
+
+<div class="txt" id="hook"></div>
+<div class="txt ayah" id="a68"><div class="arabic" id="a68ar"></div><div class="meaning" id="a68m"></div><div class="ref">NAHL SURASI · 68</div></div>
+<div class="txt ayah" id="a69"><div class="arabic" id="a69ar"></div><div class="meaning" id="a69m"></div><div class="ref">NAHL SURASI · 69</div></div>
+
+<div class="txt" id="fem"><div class="arabic" id="femAr"></div><div class="what" id="femW"></div></div>
+<div class="txt fact" id="femFact"><div class="what" id="ffW"></div><div class="note" id="ffN"></div></div>
+
+<div class="txt" id="colAyah"><div class="arabic" id="colAr"></div><div class="meaning" id="colM"></div></div>
+<div id="swatches"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="txt fact" id="colFact"><div class="what" id="cfW"></div></div>
+
+<div class="txt" id="shifo"><div class="arabic" id="shAr"></div><div class="meaning" id="shM"></div></div>
+<div class="txt fact" id="shifoFact"><div class="what" id="sfW"></div><div class="note" id="sfN"></div></div>
+
+<div class="txt panel" id="close"><div class="arabic" id="closeAr"></div><div class="meaning" id="closeM"></div><div class="brand">ZARAFSHON DASTURCHILARI</div><div class="end">Alloh bilguvchiroq</div></div>
+<div id="flash"></div>
+
+<script type="module">
+  import { clamp, prog, eOut, textAnimator, loadAyat } from '../common/anim.js';
+
+  // Arabic: Uthmani text from ../ayat.json. Uzbek meanings follow Tafsiri Hilol —
+  // CHECK THE WORDING AGAINST THE BOOK before publishing.
+  const ayat = await loadAyat();
+  const TEXT = {
+    hook1: 'Qur’on asalariga <b>«ayol»</b> shaklida murojaat qiladi',
+    hook2: 'Nega? Javob — uyaning ichida',
+    a68m: '«Robbing asalariga: “Tog‘lardan, daraxtlardan va (odamlar) ko‘taradigan narsalardan uylar tutgin”, deb vahiy qildi.»',
+    a69m: '«So‘ngra barcha mevalardan yegin va Robbingning (senga) oson qilingan yo‘llaridan yurgin...»',
+    femW: '“uy tut” · “ye” · “yur” — uchala buyruq ham arabchada muannas (ayol) shaklida',
+    ffW: 'Uya quradigan, gul shirasini yig‘adigan va asal tayyorlaydigan <b>ishchi asalarilar — barchasi urg‘ochi</b>',
+    ffN: 'Erkak asalarilar (trutenlar) na uy quradi, na asal yig‘adi',
+    colM: '«...Uning qornidan turli rangdagi sharob chiqadi...»',
+    cfW: 'Asalning rangi gul shirasiga bog‘liq: deyarli rangsizdan to‘q jigarranggacha',
+    shM: '«...unda odamlar uchun shifo bor.»',
+    sfW: 'Asal mikroblarga qarshi: shakar ko‘p, suv kam, muhiti kislotali (pH ≈ 3,2–4,5) va o‘zidan <b>vodorod peroksid</b> hosil qiladi',
+    sfN: 'Bugun tibbiy asal jarohat bog‘ichlarida ham qo‘llanadi',
+    closeM: '«Albatta, bunda tafakkur qiladigan qavm uchun oyat-belgi bor.»',
+  };
+  const $ = (id) => document.getElementById(id);
+  const cut = (s) => s.replace(/[\u06D6-\u06DC]$/, '');   // a pause mark at the end of a fragment is left out
+  $('hook').innerHTML = `<span>${TEXT.hook1}</span><span class="l2">${TEXT.hook2}</span>`;
+  $('a68ar').textContent = ayat['16:68'];
+  $('a69ar').textContent = cut(ayat['16:69-a']);
+  $('femAr').textContent = [ayat['16:68-ittakhidhi'], ayat['16:69-kuli'], ayat['16:69-fasluki']].join('  ·  ');
+  $('colAr').textContent = ayat['16:69-b'];
+  $('shAr').textContent = cut(ayat['16:69-c']);
+  $('closeAr').textContent = ayat['16:69-d'];
+  for (const k of ['a68m', 'a69m', 'femW', 'ffN', 'colM', 'cfW', 'shM', 'sfN', 'closeM']) $(k).textContent = TEXT[k];
+  for (const k of ['ffW', 'sfW']) $(k).innerHTML = TEXT[k];
+
+  // Honey from pale (acacia) to dark (buckwheat): swatches, light to dark.
+  const HONEY = ['#f7eaa6', '#f1cf5c', '#e5a52b', '#c77a18', '#8f4c0e', '#4f2508'];
+  const sw = [...document.querySelectorAll('#swatches i')];
+  sw.forEach((el, i) => { el.style.background = `radial-gradient(circle at 35% 30%, #fff8 0, ${HONEY[i]} 38%, ${HONEY[i]} 100%)`; });
+
+  // Timeline (seconds): the shot cuts of plate.js. Keep in sync with audio.js.
+  const T = { ayah68: 3.5, ayah69: 8.5, fem: 12.5, colors: 19, shifo: 24.5, close: 29.5, end: 34 };
+  const CUTS = [T.ayah68, T.ayah69, T.fem, T.colors, T.shifo, T.close];
+
+  const show = textAnimator(['hook', 'a68', 'a69', 'fem', 'femFact', 'colAyah', 'colFact', 'shifo', 'shifoFact', 'close']);
+  const between = (t, a, b, f = 0.3) => prog(t, a, a + f) * (1 - prog(t, b - f, b));
+
+  window.renderFrame = function (t) {
+    const card = t >= T.fem && t < T.shifo;
+    $('scrimTop').style.opacity = card ? 0 : between(t, 0, T.end, 0.2) * (t < T.ayah68 ? 0.8 : 1);
+    $('scrimBot').style.opacity = t >= T.shifo && t < T.close ? between(t, T.shifo, T.close) : (t >= T.close ? 0.6 : 0);
+    $('card').style.opacity = card ? 1 : 0;
+
+    show('hook', t, 0.3, T.ayah68, 0.08);
+    show('a68', t, T.ayah68 + 0.2, T.ayah69, 0.03);
+    show('a69', t, T.ayah69 + 0.2, T.fem, 0.03);
+
+    show('fem', t, T.fem + 0.2, T.colors, 0.05);
+    show('femFact', t, T.fem + 2.4, T.colors, 0.04);
+
+    show('colAyah', t, T.colors + 0.2, T.shifo, 0.05);
+    sw.forEach((el, i) => {
+      const p = eOut(prog(t, T.colors + 1.6 + i * 0.12, T.colors + 2.1 + i * 0.12));
+      el.style.opacity = p * (1 - prog(t, T.shifo - 0.3, T.shifo));
+      el.style.transform = `scale(${0.6 + 0.4 * p})`;
+    });
+    show('colFact', t, T.colors + 2.6, T.shifo, 0.04);
+
+    show('shifo', t, T.shifo + 0.2, T.close, 0.06);
+    show('shifoFact', t, T.shifo + 1.8, T.close, 0.035);
+
+    show('close', t, T.close + 0.3, T.end + 1, 0.06);
+
+    // a soft light dip on every cut
+    const d = Math.min(...CUTS.map((c) => Math.abs(t - c)));
+    $('flash').style.opacity = clamp(1 - d / 0.15) * 0.22;
+  };
+  window.sceneReady = true;
+  window.renderFrame(0);
+</script>
+</body>
+</html>

@@ -47,7 +47,7 @@ export function textAnimator(ids) {
       w.style.transform = `translateY(${(1 - p) * 110}%)`;
     });
     const ar = el.querySelector('.arabic');
-    if (ar) { const p = eInOut(prog(t, tin, tin + 1.6)); ar.style.clipPath = `inset(0 0 0 ${(1 - p) * 100}%)`; }
+    if (ar) { const p = eInOut(prog(t, tin, tin + 1.6)); ar.style.clipPath = `inset(-50% 0 -50% ${(1 - p) * 100}%)`; }  // vertical slack keeps the marks above/below the line
     const big = el.querySelector('.big');
     if (big) { const p = eOut(prog(t, tin, tin + 0.5)); big.style.transform = `translateX(${(1 - p) * -40}px)`; big.style.opacity = p; }
   };
