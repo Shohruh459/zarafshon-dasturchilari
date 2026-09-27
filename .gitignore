@@ -7,3 +7,4 @@ video/registon/plate.mp4
 video/registon/audio.wav
 video/registon/still-*.png
 video/registon/plate-*.png
+__pycache__/
