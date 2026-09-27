@@ -14,3 +14,5 @@ video/registon2/still-*.png
 video/intros/intro_*.wav
 video/intros/intro_*.mp4
 video/intros/still-*.png
+video/quran/*/audio.wav
+video/quran/*/still-*.png
