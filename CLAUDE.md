@@ -52,7 +52,7 @@ Instagram Reels videolari (1080x1920, 30 fps) koddan yasaladi. Foydalanuvchi bil
 - Gap paytida tabiiy tovushlar `sidechaincompress` bilan pasaytiriladi.
 
 **Qismlar:**
-1. Kengayish — Zoriyot 47
+1. Kengayish — Zoriyot 47 va Isro 85 (fragment)
 2. Zulmatlar — Nur 40
 3. Barzax — Rahmon 19–20 va Furqon 53
 4. Asalari — Nahl 68–69; Madina va Sardor versiyalari bor
