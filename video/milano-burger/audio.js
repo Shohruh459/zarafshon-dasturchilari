@@ -3,18 +3,23 @@
  * Original soundtrack for the "Achchiq burger" reel, scored to scene.html: a
  * whoosh and a thump for every layer flying in on the eighth notes, a riser into
  * a heavy slam when the burger assembles (twice), a punchy 120 BPM beat, pops for
- * the ingredient labels and a sizzle under everything. No voice-over.
+ * the ingredient labels and a sizzle under everything, with the restaurant's own
+ * voice-over lines (voice/*.wav, loudness-matched) on top; the music ducks under them.
  *
  * Usage:  node video/milano-burger/audio.js [out.wav]
  */
+const fs = require('fs');
 const path = require('path');
 const { createSynth } = require('../lib/synth');
+const { mixVoice } = require('../lib/voiceover');
 
 const DURATION = 13;
 const BEAT = 0.5; // 120 BPM
 // Timeline, kept in sync with scene.html.
 const T = { fly: 0.25, slam1: 3.0, explode: 5.5, slam2: 8.5, pack: 9.0 };
 const HIT = 0.35;
+// voice-over file -> start time: with the hook text, the title after the first slam, the delivery line
+const VOICE = { hook: 0.1, title: T.slam1 + HIT + 0.1, delivery: T.pack + 1.3 };
 
 const synth = createSynth(DURATION);
 const { music, fx, drums, note, noiseHit, kick, clap, hat, impact, riser, whoosh, pop, bells } = synth;
@@ -80,7 +85,10 @@ bells(T.pack + 1.3, [81, 84, 88, 93], 0.07, 0.1);
 kick(DURATION - 1.2, 0.8); kicks.push(DURATION - 1.2);
 
 function generateAudio(file) {
-  synth.writeWav(file, synth.mixdown(kicks, 0.8));
+  const sfx = file.replace(/\.wav$/, '-music.wav');
+  synth.writeWav(sfx, synth.mixdown(kicks, 0.8));
+  mixVoice({ sfx, out: file, dir: path.join(__dirname, 'voice'), starts: VOICE, duration: DURATION, ext: 'wav' });
+  fs.unlinkSync(sfx);
   return file;
 }
 

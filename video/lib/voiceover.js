@@ -3,16 +3,16 @@
  * WAV: each line starts at its time in `starts`, and the effects duck under
  * the voice with a side-chain compressor.
  *
- *   mixVoice({ sfx, out, dir, starts: { hook: 0.3, ayah: 5.3 }, duration });
+ *   mixVoice({ sfx, out, dir, starts: { hook: 0.3, ayah: 5.3 }, duration, ext: 'mp3' });
  */
 const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-function mixVoice({ sfx, out, dir, starts, duration }) {
-  const keys = Object.keys(starts).filter((k) => fs.existsSync(path.join(dir, `${k}.mp3`)));
+function mixVoice({ sfx, out, dir, starts, duration, ext = 'mp3' }) {
+  const keys = Object.keys(starts).filter((k) => fs.existsSync(path.join(dir, `${k}.${ext}`)));
   if (!keys.length) { fs.copyFileSync(sfx, out); return out; }
-  const inputs = keys.flatMap((k) => ['-i', path.join(dir, `${k}.mp3`)]);
+  const inputs = keys.flatMap((k) => ['-i', path.join(dir, `${k}.${ext}`)]);
   const lines = keys.map((k, i) => `[${i + 1}:a]aresample=44100,aformat=channel_layouts=stereo,adelay=${Math.round(starts[k] * 1000)}:all=1[l${i}]`);
   execFileSync(process.env.FFMPEG_PATH || 'ffmpeg', [
     '-y', '-hide_banner', '-loglevel', 'error', '-i', sfx, ...inputs,
