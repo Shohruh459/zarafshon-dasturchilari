@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Kengayib borayotgan koinot</title>
+<style>
+  @font-face { font-family: 'Amiri Quran'; src: url(../fonts/amiri-quran-arabic-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 300; src: url(../../registon/fonts/montserrat-latin-300-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 400; src: url(../../registon/fonts/montserrat-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 500; src: url(../../registon/fonts/montserrat-latin-500-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 600; src: url(../../registon/fonts/montserrat-latin-600-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 800; src: url(../../promo/fonts/montserrat-latin-800-normal.woff2) format('woff2'); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #02030a; }
+  body { font-family: 'Montserrat', sans-serif; color: #fff; --gold: #e6c887; --gold2: #f7e3b0; }
+  #stage { position: absolute; inset: 0; }
+  #nebula { position: absolute; left: -60px; top: -100px; width: 1200px; height: 2120px; filter: blur(18px); opacity: .9; }
+  #gl, #fx2d { position: absolute; inset: 0; width: 1080px; height: 1920px; }
+  #grain { position: absolute; inset: 0; width: 1080px; height: 1920px; opacity: 0; mix-blend-mode: overlay; }
+  #vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 85% 70% at 50% 50%, transparent 55%, rgba(0,0,0,.6) 100%); }
+
+  /* Reels safe area: x 120-960, y 220-1500 */
+  .txt { position: absolute; left: 110px; right: 110px; text-align: center; text-shadow: 0 2px 20px rgba(0,0,0,.8), 0 0 2px rgba(0,0,0,.9); opacity: 0; }
+  .mask { display: inline-block; overflow: hidden; vertical-align: bottom; padding: 0 .04em; }
+  .mask > span { display: inline-block; }
+
+  #hook { top: 700px; font-weight: 600; font-size: 64px; line-height: 1.25; letter-spacing: .02em; }
+  #hook .l2 { display: block; margin-top: 26px; font-weight: 300; font-size: 50px; color: var(--gold2); letter-spacing: .06em; }
+
+  .arabic { font-family: 'Amiri Quran', serif; direction: rtl; color: var(--gold2); line-height: 2.0;
+            text-shadow: 0 0 30px rgba(230,200,135,.45), 0 2px 12px rgba(0,0,0,.9); }
+  #ayah1, #ayah2 { padding: 30px 10px 40px; border-radius: 60px; background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(2,3,10,.72), rgba(2,3,10,0) 100%); }
+  #ayah1 { top: 230px; }
+  #ayah1 .arabic { font-size: 88px; }
+  .meaning { font-weight: 400; font-size: 44px; line-height: 1.4; margin-top: 30px; }
+  .ref { font-weight: 500; font-size: 28px; letter-spacing: .3em; padding-left: .3em; color: var(--gold); margin-top: 28px; }
+  .rule { display: block; width: 120px; height: 2px; margin: 34px auto 0; background: var(--gold); }
+
+  .era { top: 1080px; }
+  .era .year { font-weight: 800; font-size: 170px; line-height: 1; letter-spacing: .02em; color: var(--gold2);
+               text-shadow: 0 0 40px rgba(230,200,135,.35), 0 4px 20px rgba(0,0,0,.8); }
+  .era .what { font-weight: 500; font-size: 46px; line-height: 1.32; margin-top: 26px; }
+  .era .note { font-weight: 300; font-size: 34px; line-height: 1.35; margin-top: 18px; color: #d8dcef; }
+
+  #ayah2 { top: 520px; }
+  #ayah2 .arabic { font-size: 84px; }
+  #sign { top: 1330px; }
+  #sign .brand { font-weight: 600; font-size: 30px; letter-spacing: .3em; padding-left: .3em; }
+  #sign .end { font-weight: 300; font-size: 38px; margin-top: 18px; color: var(--gold2); }
+
+  #flash { position: absolute; inset: 0; background: #fff8e6; opacity: 0; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="nebula" width="540" height="960"></canvas>
+  <canvas id="gl" width="1080" height="1920"></canvas>
+  <canvas id="fx2d" width="1080" height="1920"></canvas>
+  <canvas id="grain" width="360" height="640"></canvas>
+  <div id="vignette"></div>
+</div>
+
+<div class="txt" id="hook"></div>
+<div class="txt" id="ayah1"><div class="arabic" id="ar1"></div><div class="meaning" id="mean1"></div><div class="ref" id="ref1"></div><span class="rule"></span></div>
+<div class="txt era" id="e1917"><div class="year">1917</div><div class="what" id="w1917"></div><div class="note" id="n1917"></div></div>
+<div class="txt era" id="e1927"><div class="year">1927</div><div class="what" id="w1927"></div></div>
+<div class="txt era" id="e1929"><div class="year">1929</div><div class="what" id="w1929"></div></div>
+<div class="txt era" id="e1998"><div class="year">1998</div><div class="what" id="w1998"></div><div class="note" id="n1998"></div></div>
+<div class="txt" id="ayah2"><div class="arabic" id="ar2"></div><div class="meaning" id="mean2"></div><div class="ref" id="ref2"></div></div>
+<div class="txt" id="sign"><div class="brand">ZARAFSHON DASTURCHILARI</div><div class="end">Alloh bilguvchiroq</div></div>
+<div id="flash"></div>
+
+<script type="importmap">{ "imports": { "three": "../../registon2/lib/three.module.js" } }</script>
+<script type="module">
+  import * as THREE from 'three';
+
+  // ---------------- text ----------------
+  // Arabic: Uthmani text from ../ayat.json (King Fahd Complex, via quran-json).
+  // Uzbek meanings follow Tafsiri Hilol — CHECK THE WORDING AGAINST THE BOOK before publishing.
+  const ayat = (await (await fetch('../ayat.json')).json()).ayat;
+  const TEXT = {
+    hook1: '1400 yil avval nozil bo‘lgan oyat',
+    hook2: 'va XX asr ilmi',
+    mean1: '«Va osmonni quvvat ila bino qildik. Va, albatta, Biz kengaytiruvchimiz.»',
+    ref1: 'ZORIYOT SURASI · 47',
+    w1917: 'Olimlar koinotni o‘zgarmas deb hisoblardi',
+    n1917: 'Albert Eynshteyn ham shunday modelni taklif qilgan',
+    w1927: 'Jorj Lemetr: koinot kengaymoqda',
+    w1929: 'Edvin Xabbl kuzatuvlari: galaktikalar bizdan uzoqlashmoqda',
+    w1998: 'Kengayish tezlashayotgani aniqlandi',
+    n1998: '2011 · Fizika bo‘yicha Nobel mukofoti',
+    mean2: '«...sizlarga ilmdan ozgina narsagina berilgan.»',
+    ref2: 'ISRO SURASI · 85',
+  };
+  const $ = (id) => document.getElementById(id);
+  $('hook').innerHTML = `<span class="l1">${TEXT.hook1}</span><span class="l2">${TEXT.hook2}</span>`;
+  // break before «وَإِنَّا لَمُوسِعُونَ» so the phrase stays together on its own line
+  { const w = ayat['51:47'].split(' '); $('ar1').innerHTML = w.slice(0, 3).join(' ') + '<br>' + w.slice(3).join(' '); }
+  $('ar2').textContent = ayat['17:85-fragment'];
+  for (const k of ['mean1', 'ref1', 'w1917', 'n1917', 'w1927', 'w1929', 'w1998', 'n1998', 'mean2', 'ref2']) $(k).textContent = TEXT[k];
+
+  // ---------------- helpers ----------------
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const prog = (t, a, b) => clamp((t - a) / (b - a));
+  const lerp = (a, b, p) => a + (b - a) * p;
+  const eOut = (x) => 1 - Math.pow(1 - x, 3);
+  const eInOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  function rng(seed) { let s = seed; return () => ((s = (s * 16807) % 2147483647) / 2147483647); }
+  const gauss = (r) => { let u = 0; for (let i = 0; i < 4; i++) u += r(); return (u - 2) / 0.58; };
+
+  // Timeline (seconds). Keep in sync with audio.js.
+  const T = { hook: 0, ayah: 3.5, archive: 10.5, lemaitre: 14, hubble: 18, accel: 22, close: 26, end: 30 };
+
+  // ---------------- nebula backdrop (value-noise fBm, drawn once) ----------------
+  {
+    const c = $('nebula'), g = c.getContext('2d'), W = c.width, H = c.height;
+    const r = rng(21), N = 64, grid = Array.from({ length: N * N }, r);
+    const vn = (x, y) => {
+      const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+      const at = (i, j) => grid[((j % N + N) % N) * N + ((i % N + N) % N)];
+      const sx = xf * xf * (3 - 2 * xf), sy = yf * yf * (3 - 2 * yf);
+      return lerp(lerp(at(xi, yi), at(xi + 1, yi), sx), lerp(at(xi, yi + 1), at(xi + 1, yi + 1), sx), sy);
+    };
+    const fbm = (x, y) => { let v = 0, a = 0.5; for (let o = 0; o < 5; o++) { v += a * vn(x, y); x *= 2; y *= 2; a *= 0.5; } return v; };
+    const img = g.createImageData(W, H);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const n1 = fbm(x / 90, y / 90), n2 = fbm(x / 60 + 40, y / 60 + 17);
+      const d = Math.pow(clamp((n1 - 0.45) * 2.4), 2), e = Math.pow(clamp((n2 - 0.5) * 2.6), 2);
+      const i = (y * W + x) * 4;
+      img.data[i] = 30 * d + 70 * e; img.data[i + 1] = 20 * d + 30 * e; img.data[i + 2] = 80 * d + 60 * e; img.data[i + 3] = 255;
+    }
+    g.putImageData(img, 0, 0);
+  }
+
+  // ---------------- galaxy sprites (procedural textures) ----------------
+  function galaxyTexture(seed, kind) {
+    const S = 256, c = document.createElement('canvas'); c.width = c.height = S;
+    const g = c.getContext('2d'), r = rng(seed);
+    g.translate(S / 2, S / 2);
+    if (kind === 'spiral') {
+      const arms = 2 + Math.floor(r() * 2), wind = 3 + r() * 2.5;
+      g.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < 3800; i++) {
+        const k = Math.floor(r() * arms), t = Math.pow(r(), 0.7);
+        const ang = (k / arms) * Math.PI * 2 + t * wind + gauss(r) * 0.28 / (t + 0.25);
+        const rad = t * 108 + gauss(r) * 5;
+        const x = Math.cos(ang) * rad, y = Math.sin(ang) * rad;
+        const core = Math.exp(-t * 4);
+        const pink = r() < 0.03;
+        const col = pink ? [255, 120, 170] : [lerp(150, 255, core), lerp(185, 225, core), lerp(255, 170, core)];
+        g.fillStyle = `rgba(${col.map(Math.round).join(',')},${0.08 + 0.25 * (1 - t)})`;
+        g.beginPath(); g.arc(x, y, pink ? 1.8 : 1.1 + r() * 1.4, 0, Math.PI * 2); g.fill();
+      }
+    }
+    const core = g.createRadialGradient(0, 0, 0, 0, 0, kind === 'spiral' ? 40 : 110);
+    core.addColorStop(0, 'rgba(255,244,220,1)');
+    core.addColorStop(0.25, kind === 'spiral' ? 'rgba(255,215,160,.55)' : 'rgba(255,220,170,.5)');
+    core.addColorStop(1, 'rgba(255,200,150,0)');
+    g.globalCompositeOperation = 'lighter';
+    g.fillStyle = core; g.beginPath(); g.arc(0, 0, 120, 0, Math.PI * 2); g.fill();
+    const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace;
+    return tx;
+  }
+  const TEX = [];
+  for (let i = 0; i < 7; i++) TEX.push(galaxyTexture(100 + i * 7, i < 5 ? 'spiral' : 'elliptical'));
+
+  // ---------------- three.js scene ----------------
+  const renderer = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: true, alpha: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1); renderer.setSize(1080, 1920, false);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, 1080 / 1920, 0.1, 2000);
+
+  // stars
+  const stars = (() => {
+    const r = rng(5), n = 3500, pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) {
+      const th = r() * Math.PI * 2, ph = Math.acos(2 * r() - 1), R = 600 + r() * 300;
+      pos.set([R * Math.sin(ph) * Math.cos(th), R * Math.cos(ph), R * Math.sin(ph) * Math.sin(th)], i * 3);
+      const b = 0.35 + r() * 0.65, w = r();
+      col.set([b * (w > 0.85 ? 1 : 0.85), b * 0.9, b * (w > 0.85 ? 0.75 : 1)], i * 3);
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    const p = new THREE.Points(geo, new THREE.PointsMaterial({ size: 2.2, vertexColors: true, sizeAttenuation: false, transparent: true }));
+    scene.add(p); return p;
+  })();
+
+  function makeGalaxy(r, size) {
+    const m = new THREE.SpriteMaterial({ map: TEX[Math.floor(r() * TEX.length)], blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, rotation: r() * Math.PI * 2 });
+    const s = new THREE.Sprite(m);
+    const incl = 0.35 + r() * 0.65;
+    s.scale.set(size, size * incl, 1);
+    s.userData.base = [size, size * incl];
+    return s;
+  }
+
+  // deep field for the ayah scene: galaxies scattered along the view direction
+  const field = new THREE.Group(); scene.add(field);
+  { const r = rng(77); for (let i = 0; i < 420; i++) { const g = makeGalaxy(r, 3 + r() * 9); g.position.set((r() - 0.5) * 120, (r() - 0.5) * 220, -20 - r() * 420); field.add(g); } }
+
+  // expansion diagram: a grid of space with galaxies riding its nodes
+  const grid = new THREE.Group(); scene.add(grid);
+  const NG = 12, SP = 8; // nodes per side (x2+1), spacing
+  const gridLines = (() => {
+    const pts = [];
+    for (let i = -NG; i <= NG; i++) { pts.push(i, 0, -NG, i, 0, NG, -NG, 0, i, NG, 0, i); }
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+    const l = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0x5fb8ff, transparent: true, opacity: 0.36 }));
+    grid.add(l); return l;
+  })();
+  const nodeGalaxies = [];
+  { const r = rng(9);
+    for (let i = -NG; i <= NG; i++) for (let j = -NG; j <= NG; j++) {
+      if (r() > 0.34) continue;
+      const g = makeGalaxy(r, 2.2 + r() * 2.4);
+      g.userData.node = [i + (r() - 0.5) * 0.3, j + (r() - 0.5) * 0.3];
+      nodeGalaxies.push(g); grid.add(g);
+    }
+  }
+
+  // scale factor of space in the diagram: static until 1927, then growing, then accelerating
+  function scaleFactor(t) {
+    if (t < T.lemaitre) return 1;
+    const u = t - T.lemaitre;
+    return 1 + 0.06 * u + (t > T.accel ? 0.09 * Math.pow(t - T.accel, 2.2) : 0);
+  }
+
+  // ---------------- 2D overlay: the opening burst ----------------
+  const fx = $('fx2d').getContext('2d');
+  const burst = (() => { const r = rng(3); return Array.from({ length: 420 }, () => ({ a: r() * Math.PI * 2, v: 0.2 + r() * 1.1, w: 0.6 + r() * 2.2, hue: r() })); })();
+  function drawBurst(t) {
+    fx.clearRect(0, 0, 1080, 1920);
+    const p = prog(t, 0.35, 3.6);
+    // hide the canvas outright when idle: a cleared-but-visible 2D canvas can keep showing its last frame
+    $('fx2d').style.display = p > 0 && p < 1 ? 'block' : 'none';
+    if (p <= 0 || p >= 1) return;
+    const cx = 540, cy = 960, fade = 1 - prog(t, 2.6, 3.6);
+    // core flare
+    const fl = Math.exp(-Math.pow((t - 0.5) / 0.25, 2)) + 0.25 * (1 - p);
+    const gr = fx.createRadialGradient(cx, cy, 0, cx, cy, 520 * (0.3 + fl));
+    gr.addColorStop(0, `rgba(255,248,230,${0.95 * fl})`); gr.addColorStop(0.2, `rgba(255,210,150,${0.45 * fl})`); gr.addColorStop(1, 'rgba(255,190,120,0)');
+    fx.fillStyle = gr; fx.fillRect(0, 0, 1080, 1920);
+    // streaks racing outward
+    fx.lineCap = 'round';
+    for (const s of burst) {
+      const d = eOut(p) * 1500 * s.v, len = 40 + 260 * s.v * (1 - p);
+      const x0 = cx + Math.cos(s.a) * d, y0 = cy + Math.sin(s.a) * d * 1.1;
+      const x1 = cx + Math.cos(s.a) * Math.max(0, d - len), y1 = cy + Math.sin(s.a) * Math.max(0, d - len) * 1.1;
+      fx.strokeStyle = s.hue > 0.7 ? `rgba(255,214,160,${0.8 * fade})` : `rgba(200,220,255,${0.8 * fade})`;
+      fx.lineWidth = s.w; fx.beginPath(); fx.moveTo(x1, y1); fx.lineTo(x0, y0); fx.stroke();
+    }
+  }
+
+  // ---------------- film grain for the 1917 archive look ----------------
+  const grainCtx = $('grain').getContext('2d');
+  function drawGrain(t) {
+    const r = rng(1 + Math.floor(t * 30)), img = grainCtx.createImageData(360, 640);
+    for (let i = 0; i < img.data.length; i += 4) { const v = 128 + (r() - 0.5) * 180; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255; }
+    grainCtx.putImageData(img, 0, 0);
+    grainCtx.fillStyle = 'rgba(0,0,0,.5)';
+    for (let k = 0; k < 2; k++) grainCtx.fillRect(Math.floor(r() * 360), 0, 1, 640); // scratches
+  }
+
+  // ---------------- text animation ----------------
+  function words(el) {
+    const walk = (node) => {
+      for (const n of [...node.childNodes]) {
+        if (n.nodeType === 3 && n.textContent.trim()) {
+          const f = document.createDocumentFragment();
+          n.textContent.split(/(\s+)/).forEach((w) => {
+            if (!w.trim()) { f.append(w); return; }
+            const m = document.createElement('span'); m.className = 'mask';
+            const s = document.createElement('span'); s.textContent = w; m.append(s); f.append(m);
+          });
+          n.replaceWith(f);
+        } else if (n.nodeType === 1 && !n.classList.contains('arabic') && !n.classList.contains('year')) walk(n);
+      }
+    };
+    walk(el);
+    return [...el.querySelectorAll('.mask > span')];
+  }
+  const W = {};
+  for (const id of ['hook', 'ayah1', 'e1917', 'e1927', 'e1929', 'e1998', 'ayah2', 'sign']) W[id] = words($(id));
+  function show(id, t, tin, tout, stagger = 0.06) {
+    const el = $(id), o = prog(t, tin, tin + 0.05) * (1 - prog(t, tout - 0.35, tout));
+    el.style.opacity = o;
+    if (o <= 0) return;
+    W[id].forEach((w, i) => { const p = eOut(prog(t, tin + 0.15 + i * stagger, tin + 0.65 + i * stagger)); w.style.transform = `translateY(${(1 - p) * 110}%)`; });
+    const ar = el.querySelector('.arabic');
+    if (ar) { const p = eInOut(prog(t, tin, tin + 1.4)); ar.style.clipPath = `inset(0 0 0 ${(1 - p) * 100}%)`; ar.style.webkitClipPath = ar.style.clipPath; }
+    const yr = el.querySelector('.year');
+    if (yr) { const p = eOut(prog(t, tin, tin + 0.6)); yr.style.transform = `scale(${lerp(1.35, 1, p)})`; yr.style.filter = `blur(${(1 - p) * 10}px)`; yr.style.opacity = p; }
+    const rule = el.querySelector('.rule');
+    if (rule) rule.style.transform = `scaleX(${eOut(prog(t, tin + 1.6, tin + 2.2))})`;
+  }
+
+  // ---------------- frame ----------------
+  window.renderFrame = function (t) {
+    const inField = t < T.archive || t >= T.close;
+    const inGrid = t >= T.archive - 0.4 && t < T.close + 0.6;
+    // camera
+    if (t < T.archive) {
+      const k = prog(t, T.hook, T.archive);
+      camera.position.set(Math.sin(t * 0.2) * 4, Math.cos(t * 0.15) * 3, lerp(40, -60, eInOut(k)));
+      camera.lookAt(camera.position.x * 0.5, camera.position.y * 0.5, camera.position.z - 100);
+    } else if (t < T.close) {
+      const k = prog(t, T.archive, T.close);
+      const ang = lerp(-0.35, 0.35, k);
+      camera.position.set(Math.sin(ang) * 75, lerp(58, 64, k), Math.cos(ang) * 75);
+      camera.lookAt(0, 0, 0);
+    } else {
+      const k = prog(t, T.close, T.end);
+      camera.position.set(0, 0, lerp(-60, -110, eOut(k)));
+      camera.lookAt(0, 0, camera.position.z - 100);
+    }
+    field.visible = inField;
+    field.children.forEach((g) => { g.material.opacity = t < T.archive ? prog(t, 1.6, 3.8) * (1 - prog(t, T.archive - 0.4, T.archive)) : prog(t, T.close, T.close + 1.2); });
+    grid.visible = inGrid;
+    const a = scaleFactor(t);
+    const gAlpha = prog(t, T.archive - 0.4, T.archive + 0.2) * (1 - prog(t, T.close, T.close + 0.6));
+    gridLines.scale.set(SP * a, 1, SP * a);
+    gridLines.material.opacity = 0.36 * gAlpha;
+    nodeGalaxies.forEach((g) => {
+      const [i, j] = g.userData.node;
+      g.position.set(i * SP * a, 0.5, j * SP * a);
+      // light from farther galaxies is stretched more: warmer tint with distance and expansion
+      const red = clamp((a - 1) * 0.35 * Math.hypot(i, j) / NG * 2);
+      g.material.color.setRGB(1, lerp(1, 0.55, red), lerp(1, 0.4, red));
+      g.material.opacity = gAlpha;
+    });
+    stars.material.opacity = t < 0.6 ? 0 : prog(t, 0.6, 2.2);
+    renderer.render(scene, camera);
+
+    drawBurst(t);
+    // 1917 archive: sepia, grain, flicker
+    const arch = prog(t, T.archive - 0.1, T.archive + 0.2) * (1 - prog(t, T.lemaitre - 0.2, T.lemaitre + 0.3));
+    const flick = 1 - 0.08 * arch * Math.abs(Math.sin(t * 47) * Math.sin(t * 13));
+    $('stage').style.filter = arch > 0 ? `sepia(${arch}) saturate(${1 - 0.3 * arch}) contrast(${1 + 0.15 * arch}) brightness(${flick})` : 'none';
+    $('grain').style.opacity = 0.55 * arch;
+    if (arch > 0) drawGrain(t);
+    $('nebula').style.transform = `translateY(${t * -6}px) scale(${1 + t * 0.004})`;
+
+    show('hook', t, 0.55, T.ayah + 0.1, 0.09);
+    show('ayah1', t, T.ayah + 0.4, T.archive, 0.07);
+    show('e1917', t, T.archive + 0.3, T.lemaitre);
+    show('e1927', t, T.lemaitre + 0.3, T.hubble);
+    show('e1929', t, T.hubble + 0.2, T.accel);
+    show('e1998', t, T.accel + 0.3, T.close);
+    show('ayah2', t, T.close + 0.3, T.end + 1, 0.07);
+    show('sign', t, T.close + 2.0, T.end + 1);
+    const f = Math.max(1 - Math.abs(t - T.archive) / 0.2, 1 - Math.abs(t - T.lemaitre) / 0.25);
+    $('flash').style.opacity = clamp(f) * 0.55;
+  };
+  window.sceneReady = true;
+  window.renderFrame(0);
+</script>
+</body>
+</html>

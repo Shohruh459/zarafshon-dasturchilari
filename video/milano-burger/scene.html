@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Achchiq burger</title>
+<style>
+  @font-face { font-family: 'Montserrat'; font-weight: 500; src: url(../registon/fonts/montserrat-latin-500-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 600; src: url(../registon/fonts/montserrat-latin-600-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 800; src: url(../promo/fonts/montserrat-latin-800-normal.woff2) format('woff2'); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #0b0604; }
+  body { font-family: 'Montserrat', sans-serif; color: #fff; --red: #e2231a; --green: #1f8a3b; --gold: #ffc247; --cream: #fff4e3; }
+  #bg { position: absolute; inset: -80px; background: url(assets/bg.jpg) center / cover; filter: brightness(.45) saturate(1.2); }
+  #glow { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 40% at 50% 52%, rgba(255,140,40,.28), rgba(0,0,0,0) 70%); }
+  #vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 70% at 50% 50%, transparent 50%, rgba(0,0,0,.7) 100%); }
+  #cam { position: absolute; inset: 0; transform-origin: 540px 1000px; }
+  #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 1000px; }
+  .layer, #particles { position: absolute; left: 0; top: 0; transform-origin: 50% 50%; will-change: transform; }
+  .layer { filter: drop-shadow(0 18px 22px rgba(0,0,0,.55)); }
+  .dot { position: absolute; left: 0; top: 0; border-radius: 50%; }
+
+  /* Reels safe area: x 120-960, y 220-1500 */
+  .txt { position: absolute; left: 90px; right: 90px; text-align: center; opacity: 0; text-shadow: 0 6px 30px rgba(0,0,0,.75); }
+  #hook { top: 240px; font-weight: 800; font-size: 84px; line-height: 1.05; }
+  #hook span { color: var(--gold); }
+  #title { top: 230px; font-weight: 800; font-size: 104px; line-height: 1; letter-spacing: .01em; }
+  #title small { display: block; font-weight: 600; font-size: 44px; margin-top: 14px; color: var(--cream); letter-spacing: .02em; }
+  #title .hot { color: var(--red); text-shadow: 0 0 40px rgba(255,60,20,.6), 0 6px 30px rgba(0,0,0,.75); }
+  .tag { position: absolute; opacity: 0; font-weight: 700; font-size: 34px; padding: 10px 24px 12px; border-radius: 40px; background: rgba(255,255,255,.95); color: #2a160c;
+         box-shadow: 0 10px 30px rgba(0,0,0,.45); white-space: nowrap; }
+  .tag::before { content: ''; display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: var(--red); margin-right: 12px; vertical-align: 2px; }
+  #price { position: absolute; left: 690px; top: 1010px; width: 280px; height: 280px; border-radius: 50%; background: var(--red); opacity: 0;
+           display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 20px 60px rgba(226,35,26,.55), inset 0 -12px 0 rgba(0,0,0,.15); }
+  #price b { font-weight: 800; font-size: 72px; line-height: 1; }
+  #price span { font-weight: 700; font-size: 36px; }
+  #contact { position: absolute; left: 90px; right: 90px; top: 1372px; opacity: 0; text-align: center; }
+  #contact .num { font-weight: 800; font-size: 60px; text-shadow: 0 4px 20px rgba(0,0,0,.8); white-space: nowrap; }
+  #contact .sub { font-weight: 600; font-size: 30px; color: var(--cream); margin-top: 6px; text-shadow: 0 3px 14px rgba(0,0,0,.8); }
+  #logo { position: absolute; left: 400px; top: 1262px; width: 280px; background: #fff; border-radius: 20px; padding: 10px 18px; opacity: 0; box-shadow: 0 16px 40px rgba(0,0,0,.5); }
+  #logo img { width: 100%; display: block; }
+  #flash { position: absolute; inset: 0; background: #fff3dc; opacity: 0; }
+</style>
+</head>
+<body>
+<div id="cam">
+  <div id="bg"></div>
+  <div id="glow"></div>
+  <div id="stage"><img id="particles" src="assets/particles.png" alt=""></div>
+  <div id="vignette"></div>
+</div>
+
+<div class="txt" id="hook">Achchiq narsa<br><span>yoqadimi?</span></div>
+<div class="txt" id="title"><span class="hot">ACHCHIQ</span> BURGER<small>xalapenyo bilan</small></div>
+<div id="price"><b>48 000</b><span>so‘m</span></div>
+<div id="logo"><img src="../milano/assets/logo.png" alt=""></div>
+<div id="contact"><div class="num">+998 93 873 40 00</div><div class="sub">Zarafshon bo‘ylab yetkazib berish</div></div>
+<div id="flash"></div>
+
+<script type="module">
+  import { clamp, prog, lerp, eOut, eInOut } from '../quran/common/anim.js';
+  const $ = (id) => document.getElementById(id);
+  const eIn = (x) => x * x * x;
+  const eBack = (x) => { const c = 1.9; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+
+  // Timeline (seconds) on the 120 BPM grid of audio.js. Keep in sync with audio.js.
+  // fly-in on eighth notes, slam, show, explode with labels, slam again, pack shot.
+  const T = { fly: 0.25, slam1: 3.0, explode: 5.5, slam2: 8.5, pack: 9.0, end: 13 };
+  const HIT = 0.35;   // a slam takes this long; the layers land at slam + HIT
+
+  const meta = await (await fetch('assets/layers.json')).json();
+  const S = 1.1, OX = (1080 - meta.width * S) / 2, OY = 30;   // exploded layout: the photo as it is, scaled
+  // assembled layout: stacked top to bottom, each layer overlapping the one below by OV source px
+  const OV = [150, 125, 110, 120, 95, 110, 150];
+  const L = meta.layers.map((m, i) => ({ ...m, el: null }));
+  let top = 0;
+  L.forEach((l, i) => { l.ay = top; top += l.h - (OV[i] || 0); });
+  const stackH = top, AY = 1000 / S - stackH / 2 - 60 / S;   // centre the stack a little above the middle
+  L.forEach((l) => { l.ay += AY; });
+
+  // fly-in: bottom bun first from below, then alternating sides, top bun from above
+  const ORDER = [7, 6, 5, 4, 3, 2, 1, 0];
+  const FROM = { 7: [0, 1400, 0], 6: [-1300, 200, -30], 5: [1300, 100, 25], 4: [0, -1500, 0], 3: [-1300, -100, -20],
+                 2: [1300, -150, 30], 1: [-1300, -200, -35], 0: [0, -1600, 0] };
+  const LABELS = { 1: ['Xalapenyo', 'r'], 2: ['Qovurilgan piyoz', 'l'], 3: ['Eritilgan pishloq', 'r'], 4: ['Kotlet', 'l'],
+                   5: ['Pomidor', 'r'], 6: ['Salat va sous', 'l'] };
+
+  const stage = $('stage');
+  L.forEach((l, i) => {
+    const img = document.createElement('img');
+    img.className = 'layer'; img.src = `assets/${l.name}.png`;
+    img.style.width = `${l.w * S}px`; img.style.height = `${l.h * S}px`;
+    img.style.zIndex = 20 - i;   // upper layers in front
+    stage.appendChild(img); l.el = img;
+    if (LABELS[i]) {
+      const tag = document.createElement('div'); tag.className = 'tag'; tag.textContent = LABELS[i][0];
+      document.body.appendChild(tag); l.tag = tag; l.side = LABELS[i][1];
+    }
+  });
+  const P = $('particles'); P.style.width = `${meta.width * S}px`;
+
+  // bursts of sesame seeds and sauce drops on each slam (deterministic)
+  let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const DOTS = Array.from({ length: 60 }, (_, k) => {
+    const d = document.createElement('div'); d.className = 'dot';
+    const sesame = k % 3 !== 0, w = sesame ? 10 + rnd() * 6 : 12 + rnd() * 14;
+    d.style.width = `${w}px`; d.style.height = `${sesame ? w * 0.55 : w}px`;
+    d.style.background = sesame ? '#f3dfb6' : '#e8b27a';
+    d.style.zIndex = 30; stage.appendChild(d);
+    return { el: d, a: rnd() * Math.PI * 2, v: 500 + rnd() * 900, spin: rnd() * 720 - 360, up: 300 + rnd() * 500 };
+  });
+
+  /** 0 = exploded (photo layout), 1 = assembled; per-layer so the slam can ripple top to bottom. */
+  function assembled(t, i) {
+    const d = i * 0.012;
+    if (t < T.slam1 + d) return 0;
+    if (t < T.explode) return eIn(prog(t, T.slam1 + d, T.slam1 + HIT + d));
+    if (t < T.slam2 + d) return 1 - eOut(prog(t, T.explode, T.explode + 0.55));
+    return eIn(prog(t, T.slam2 + d, T.slam2 + HIT + d));
+  }
+  const impacts = [T.slam1 + HIT, T.slam2 + HIT];
+
+  window.renderFrame = function (t) {
+    const sinceHit = Math.min(...impacts.map((h) => (t >= h ? t - h : 1e9)));
+    // camera: shake after each slam, slow push in on the pack shot
+    const shake = Math.exp(-sinceHit * 9) * (sinceHit < 1 ? 1 : 0);
+    const zoom = t < T.pack ? 1 : lerp(1, 1.04, prog(t, T.pack, T.end));
+    $('cam').style.transform = `translate(${Math.sin(t * 91) * 22 * shake}px, ${Math.cos(t * 77) * 26 * shake}px) scale(${zoom + 0.03 * shake})`;
+    $('flash').style.opacity = 0.45 * Math.exp(-sinceHit * 14) * (sinceHit < 1 ? 1 : 0);
+
+    // the whole burger is drawn smaller once assembled, and a little smaller while labelled
+    const inLabels = eInOut(prog(t, T.explode, T.explode + 0.6)) * (1 - eInOut(prog(t, T.slam2 - 0.2, T.slam2 + HIT)));
+    const asm = Math.max(assembled(t, 0), assembled(t, 7));
+    const sc = lerp(lerp(0.95, 0.86, inLabels), 0.8, asm) * (1 + 0.04 * Math.exp(-sinceHit * 6) * (sinceHit < 1 ? 1 : 0));
+    // pack shot: smaller and higher, to leave room for the price, logo and phone
+    const pk = eInOut(prog(t, T.pack + 0.2, T.pack + 0.8));
+    stage.style.transform = `translateY(${-115 * pk}px) scale(${sc * lerp(1, 0.775, pk)})`;
+
+    L.forEach((l, i) => {
+      const k = ORDER.indexOf(i), tin = T.fly + k * 0.25;          // arrival
+      const p = prog(t, tin - 0.35, tin);
+      const [fx, fy, fr] = FROM[i];
+      const a = assembled(t, i);
+      const bob = Math.sin(t * 2.2 + i * 0.9) * 10 * (1 - a);
+      const x = OX + l.x * S + (1 - eOut(p)) * fx;
+      const y = OY + lerp(l.y, l.ay, a) * S + (1 - eOut(p)) * fy + bob;
+      const rot = (1 - eOut(p)) * fr + Math.sin(t * 1.7 + i) * 1.5 * (1 - a);
+      l.el.style.opacity = p > 0 ? 1 : 0;
+      l.el.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg)`;
+      if (l.tag) {   // ingredient labels while exploded the second time
+        const tt = T.explode + 0.6 + (i - 1) * 0.28, q = eOut(prog(t, tt, tt + 0.35));
+        const vis = q * (1 - prog(t, T.slam2 - 0.25, T.slam2));
+        const cy = (OY + l.y * S + l.h * S / 2) * sc + 1000 * (1 - sc) + bob * sc;
+        const tagW = l.tag.offsetWidth;
+        const cx = l.side === 'r' ? 1080 - 60 - tagW : 60;
+        l.tag.style.opacity = vis;
+        l.tag.style.transform = `translate(${cx + (1 - q) * (l.side === 'r' ? 80 : -80)}px, ${cy - 30}px)`;
+      }
+    });
+    // loose bits float with the exploded burger, and vanish when it is assembled
+    P.style.opacity = t < T.fly ? 0 : (1 - Math.max(assembled(t, 0), assembled(t, 7))) * prog(t, T.fly, T.fly + 1.5);
+    P.style.transform = `translate(${OX}px, ${OY + Math.sin(t * 1.3) * 12}px) scale(${S / S})`;
+
+    // burst from the middle of the burger on each slam
+    DOTS.forEach((d) => {
+      const s = sinceHit < 1.6 ? sinceHit : -1;
+      d.el.style.opacity = s < 0 ? 0 : clamp(1 - s / 1.4);
+      const cx = 540, cy = 1000 - 40;
+      const x = cx + Math.cos(d.a) * d.v * s, y = cy + Math.sin(d.a) * d.v * 0.6 * s - d.up * s + 1400 * s * s;
+      d.el.style.transform = `translate(${x}px, ${y}px) rotate(${d.spin * s}deg)`;
+    });
+
+    // text
+    const bunIn = T.fly + 7 * 0.25, knock = eIn(prog(t, bunIn - 0.42, bunIn - 0.14));
+    const hk = eBack(prog(t, 0.3, 0.75));
+    $('hook').style.opacity = clamp(prog(t, 0.3, 0.45)) * (1 - knock);
+    $('hook').style.transform = `translateY(${-500 * knock}px) rotate(${-12 * knock}deg) scale(${prog(t, 0.3, 0.75) > 0 ? hk : 0})`;
+    const ti = (t >= T.slam1 + HIT && t < T.explode) || t >= T.slam2 + HIT;
+    const tStart = t < T.explode ? T.slam1 + HIT : T.slam2 + HIT;
+    const tp = eBack(prog(t, tStart, tStart + 0.4));
+    $('title').style.opacity = ti ? clamp(prog(t, tStart, tStart + 0.12)) * (1 - prog(t, T.explode - 0.25, T.explode) * (t < T.explode ? 1 : 0)) : 0;
+    $('title').style.transform = `scale(${ti ? tp : 0})`;
+    const pp = prog(t, T.pack + 0.5, T.pack + 0.95);
+    $('price').style.opacity = clamp(pp * 3);
+    $('price').style.transform = `rotate(${lerp(-40, -8, eOut(pp))}deg) scale(${pp > 0 ? eBack(pp) : 0})`;
+    const lp = eOut(prog(t, T.pack + 0.9, T.pack + 1.4));
+    $('logo').style.opacity = lp; $('logo').style.transform = `translateX(${(1 - lp) * -80}px)`;
+    const cp = eOut(prog(t, T.pack + 1.3, T.pack + 1.8));
+    $('contact').style.opacity = cp; $('contact').style.transform = `translateY(${(1 - cp) * 60}px)`;
+  };
+  await Promise.all([...document.images].map((im) => im.decode().catch(() => {})));
+  window.sceneReady = true;
+  window.renderFrame(0);
+</script>
+</body>
+</html>

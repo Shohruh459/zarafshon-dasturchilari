@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Registon v2 scene</title>
+<style>
+  @font-face { font-family: 'Montserrat'; font-weight: 300; src: url(../registon/fonts/montserrat-latin-300-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 400; src: url(../registon/fonts/montserrat-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 500; src: url(../registon/fonts/montserrat-latin-500-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 600; src: url(../registon/fonts/montserrat-latin-600-normal.woff2) format('woff2'); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+  body { font-family: 'Montserrat', sans-serif; color: #fff; --stone: #e2cda6; }
+  .full { position: absolute; inset: 0; overflow: hidden; }
+
+  /* ---------- globe ---------- */
+  #globe, #overlay2d { position: absolute; inset: 0; width: 1080px; height: 1920px; }
+  #topShade { position: absolute; left: 0; right: 0; top: 0; height: 760px; background: linear-gradient(180deg, rgba(0,0,0,.7), rgba(0,0,0,.35) 55%, transparent); }
+  #pin { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+  #pin .head { position: absolute; left: -26px; top: -78px; width: 52px; height: 78px; transform-origin: 50% 100%; }
+  #pin .ring { position: absolute; left: -40px; top: -16px; width: 80px; height: 32px; border-radius: 50%; border: 3px solid var(--stone); }
+  #pin .label { position: absolute; left: 44px; top: -70px; font-weight: 600; font-size: 40px; letter-spacing: .24em; white-space: nowrap;
+                text-shadow: 0 2px 12px rgba(0,0,0,.8); }
+  #pin .label small { display: block; font-weight: 400; font-size: 24px; letter-spacing: .3em; color: var(--stone); margin-top: 6px; }
+
+  /* ---------- photo shots ---------- */
+  .shot { position: absolute; inset: 0; overflow: hidden; display: none; }
+  .shot img.seq { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  .card { position: absolute; left: 0; width: 1080px; top: 400px; height: 818px; overflow: hidden;
+          box-shadow: 0 30px 60px rgba(0,0,0,.55), 0 -10px 40px rgba(0,0,0,.35); }
+  .bg { position: absolute; left: 50%; top: 0; height: 1920px; transform-origin: 50% 50%; }
+  #shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,10,20,.55), rgba(8,10,20,.35) 45%, rgba(8,10,20,.65)); opacity: 0; }
+
+  /* ---------- text ---------- */
+  .txt { position: absolute; left: 120px; right: 120px; text-align: center; text-shadow: 0 2px 18px rgba(0,0,0,.45), 0 1px 3px rgba(0,0,0,.4); }
+  .mask { display: inline-block; overflow: hidden; vertical-align: bottom; padding: 0 .04em; }
+  .mask > span { display: inline-block; }
+  #hook { top: 250px; font-weight: 600; font-size: 66px; line-height: 1.18; letter-spacing: .06em; }
+  #hook .eyebrow { display: block; font-weight: 500; font-size: 36px; letter-spacing: .36em; padding-left: .36em; color: var(--stone); margin-bottom: 14px; }
+  #brand { top: 300px; }
+  #brand .name { font-weight: 500; font-size: 112px; letter-spacing: .2em; padding-left: .2em; line-height: 1; }
+  #brand .name span { display: inline-block; }
+  #brand .kind { font-weight: 500; font-size: 36px; letter-spacing: .44em; padding-left: .44em; color: var(--stone); margin-top: 22px; }
+  #place { top: 1380px; display: flex; justify-content: center; align-items: center; gap: 18px; font-weight: 500; font-size: 48px; letter-spacing: .16em; }
+  #calm { top: 1290px; font-weight: 300; font-size: 54px; letter-spacing: .04em; }
+  #calm .rule, #card .rule { display: block; height: 2px; background: var(--stone); margin: 0 auto 30px; width: 120px; transform-origin: 50% 50%; }
+  #cozy { top: 1270px; font-weight: 600; font-size: 74px; line-height: 1.18; letter-spacing: .06em; }
+
+  #card { top: 560px; }
+  #card .name { font-weight: 300; font-size: 108px; letter-spacing: .26em; padding-left: .26em; line-height: 1; }
+  #card .name span { display: inline-block; }
+  #card .rule { width: 150px; margin: 44px auto 46px; }
+  #card .row { display: flex; justify-content: center; align-items: center; gap: 18px; }
+  #card .where { font-weight: 400; font-size: 46px; letter-spacing: .14em; }
+  #card .phone { font-weight: 600; font-size: 64px; letter-spacing: .03em; margin-top: 34px; font-variant-numeric: tabular-nums; }
+  #card .call { position: relative; overflow: hidden; display: inline-block; margin-top: 56px; padding: 24px 48px; border-radius: 60px;
+                border: 2px solid rgba(226,205,166,.95); background: rgba(0,0,0,.25); font-weight: 500; font-size: 36px; letter-spacing: .06em; }
+  #card .call i { position: absolute; top: -40%; width: 90px; height: 180%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent); transform: rotate(20deg); }
+
+  #flash { position: absolute; inset: 0; background: #fff; opacity: 0; z-index: 30; }
+  #vignette { position: absolute; inset: 0; z-index: 40; background: radial-gradient(ellipse 85% 70% at 50% 50%, transparent 60%, rgba(0,0,0,.4) 100%); }
+</style>
+</head>
+<body>
+
+<div class="full" id="space">
+  <canvas id="globe" width="1080" height="1920"></canvas>
+  <canvas id="overlay2d" width="1080" height="1920"></canvas>
+  <div id="topShade"></div>
+  <div id="pin">
+    <div class="ring" id="ring1"></div><div class="ring" id="ring2"></div>
+    <svg class="head" id="pinHead" viewBox="0 0 52 78"><path d="M26 2C13 2 2 12.5 2 25.5 2 43 26 76 26 76S50 43 50 25.5C50 12.5 39 2 26 2Z" fill="#e2cda6" stroke="#fff" stroke-width="3"/><circle cx="26" cy="25" r="9" fill="#1d1a14"/></svg>
+    <div class="label" id="pinLabel">KARMANA<small>O'ZBEKISTON</small></div>
+  </div>
+</div>
+
+<!-- photo shots; data-seq = ext|room, data-framed = bedroom card layout -->
+<div class="shot" id="shotA" data-seq="ext"><img class="seq" alt=""></div>
+<div class="shot" id="shotB" data-seq="ext"><img class="seq" alt=""></div>
+<div class="shot" id="shotC" data-seq="ext"><img class="seq" alt=""></div>
+<div class="shot" id="shotD" data-seq="room" data-framed><img class="bg" src="assets/room_bg.jpg" alt=""><div class="card"><img class="seq" alt=""></div></div>
+<div class="shot" id="shotE" data-seq="room" data-framed><img class="bg" src="assets/room_bg.jpg" alt=""><div class="card"><img class="seq" alt=""></div></div>
+<div class="shot" id="shotF" data-seq="room" data-framed><img class="bg" src="assets/room_bg.jpg" alt=""><div class="card"><img class="seq" alt=""></div></div>
+<div class="shot" id="shotG" data-seq="room" data-framed><img class="bg" src="assets/room_bg.jpg" alt=""><div class="card"><img class="seq" alt=""></div></div>
+<div class="shot" id="shotH" data-seq="ext"><img class="seq" alt=""><div id="shade"></div></div>
+
+<div class="txt" id="hook"><span class="eyebrow">KARMANADA</span>MEHMONXONA IZLAYAPSIZMI?</div>
+<div class="txt" id="brand"><div class="name">REGISTON</div><div class="kind">MEHMONXONASI</div></div>
+<div class="txt" id="place">
+  <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#e2cda6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+  <span>KARMANA</span>
+</div>
+<div class="txt" id="calm"><span class="rule"></span>Qulay va sokin muhit</div>
+<div class="txt" id="cozy">SIZ UCHUN<br>QULAY MASKAN</div>
+<div class="txt" id="card">
+  <div class="name">REGISTON</div>
+  <span class="rule"></span>
+  <div class="row where"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#e2cda6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>Karmana</div>
+  <div class="row phone"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#e2cda6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg>+998 95 611 55 41</div>
+  <div><span class="call"><i id="shine"></i>Murojaat uchun qo‘ng‘iroq qiling</span></div>
+</div>
+
+<div id="flash"></div>
+<div id="vignette"></div>
+
+<script type="importmap">{ "imports": { "three": "./lib/three.module.js" } }</script>
+<script type="module">
+  import * as THREE from 'three';
+
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const prog = (t, a, b) => clamp((t - a) / (b - a));
+  const lerp = (a, b, p) => a + (b - a) * p;
+  const eOut = (x) => 1 - Math.pow(1 - x, 3);
+  const eIn = (x) => x * x * x;
+  const eInOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  const eBack = (x) => { const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+  const $ = (id) => document.getElementById(id);
+  const FPS = 30;
+
+  // Timeline (seconds), on a 120 BPM grid. Keep in sync with audio.js.
+  const T = { dive: 3.0, land: 3.5, cutB: 5.0, cutC: 6.0, room: 7.0, cutE: 8.5, cutF: 9.5, cutG: 10.5, end: 12.0 };
+  const KARMANA = { lat: 40.136, lon: 65.362 };
+
+  // ================= globe =================
+  const canvas = $('globe');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1);
+  renderer.setSize(1080, 1920, false);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(32, 1080 / 1920, 0.001, 200);
+
+  // lat/lon -> point on SphereGeometry's default UV layout (u = 0 at lon -180)
+  function ll(lat, lon, r = 1) {
+    const u = ((lon + 180) / 360) * Math.PI * 2, la = (lat * Math.PI) / 180;
+    return new THREE.Vector3(-r * Math.cos(u) * Math.cos(la), r * Math.sin(la), r * Math.sin(u) * Math.cos(la));
+  }
+
+  const loader = new THREE.TextureLoader();
+  const load = (url) => new Promise((res) => loader.load(url, (tx) => res(tx)));
+  const [dayTx, waterTx, bumpTx, cloudTx] = await Promise.all([
+    load('assets/earth-blue-marble.jpg'), load('assets/earth-water.png'), load('assets/earth-topology.png'), load('assets/clouds.png'),
+  ]);
+  dayTx.colorSpace = THREE.SRGBColorSpace;
+  dayTx.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+  const earth = new THREE.Mesh(
+    new THREE.SphereGeometry(1, 160, 160),
+    new THREE.MeshPhongMaterial({ map: dayTx, specularMap: waterTx, specular: new THREE.Color(0x335577), shininess: 18, bumpMap: bumpTx, bumpScale: 0.6 }),
+  );
+  scene.add(earth);
+  const clouds = new THREE.Mesh(
+    new THREE.SphereGeometry(1.006, 120, 120),
+    new THREE.MeshLambertMaterial({ map: cloudTx, transparent: true, opacity: 0.55, depthWrite: false }),
+  );
+  scene.add(clouds);
+  // atmosphere rim glow
+  const atmo = new THREE.Mesh(
+    new THREE.SphereGeometry(1.12, 96, 96),
+    new THREE.ShaderMaterial({
+      side: THREE.BackSide, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
+      vertexShader: 'varying vec3 vN; varying vec3 vP; void main(){ vN = normalize(normalMatrix * normal); vec4 p = modelViewMatrix * vec4(position,1.); vP = p.xyz; gl_Position = projectionMatrix * p; }',
+      fragmentShader: 'varying vec3 vN; varying vec3 vP; void main(){ float f = pow(clamp(0.62 - dot(vN, vec3(0., 0., 1.)), 0., 1.), 5.0); gl_FragColor = vec4(0.35, 0.62, 1.0, 1.0) * f * 2.2; }',
+    }),
+  );
+  scene.add(atmo);
+  // stars
+  {
+    let s = 3; const rnd = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+    const n = 2600, pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) {
+      const th = rnd() * Math.PI * 2, ph = Math.acos(2 * rnd() - 1), r = 60;
+      pos.set([r * Math.sin(ph) * Math.cos(th), r * Math.cos(ph), r * Math.sin(ph) * Math.sin(th)], i * 3);
+      const b = 0.45 + rnd() * 0.55, warm = rnd() > 0.8;
+      col.set([b, b * (warm ? 0.9 : 0.97), b * (warm ? 0.8 : 1)], i * 3);
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    scene.add(new THREE.Points(g, new THREE.PointsMaterial({ size: 0.14, vertexColors: true, sizeAttenuation: true })));
+  }
+  const sun = new THREE.DirectionalLight(0xffffff, 3.0);
+  sun.position.copy(ll(KARMANA.lat + 18, KARMANA.lon - 55, 10));
+  scene.add(sun, new THREE.AmbientLight(0x223344, 0.5));
+
+  const border = (await (await fetch('assets/uzbekistan.json')).json()).rings[0];
+  const borderPts = border.map(([lon, lat]) => ll(lat, lon, 1.002));
+  const karmana = ll(KARMANA.lat, KARMANA.lon, 1.0);
+  const ctx2d = $('overlay2d').getContext('2d');
+
+  function toScreen(v) {
+    const p = v.clone().project(camera);
+    return [(p.x * 0.5 + 0.5) * 1080, (-p.y * 0.5 + 0.5) * 1920, p.z];
+  }
+
+  function renderGlobe(t) {
+    // camera path: far Earth turning to face Central Asia, then closing in and diving to Karmana
+    const approach = eInOut(prog(t, 0, T.dive));
+    const dive = eIn(prog(t, T.dive, T.land));
+    const lat = lerp(12, KARMANA.lat - 6, approach), lon = lerp(-15, KARMANA.lon, approach);
+    const dist = lerp(lerp(7.5, 1.55, approach), 1.03, dive);
+    camera.position.copy(ll(lat, lon, dist));
+    const look = new THREE.Vector3().lerpVectors(new THREE.Vector3(), karmana, eInOut(prog(t, 1.6, T.land)));
+    camera.up.set(0, 1, 0);
+    camera.lookAt(look);
+    clouds.rotation.y = t * 0.02;
+    clouds.material.opacity = lerp(0.55, 0.15, prog(t, 1.5, T.dive));
+    renderer.render(scene, camera);
+
+    // Uzbekistan outline, drawn on as we arrive
+    ctx2d.clearRect(0, 0, 1080, 1920);
+    const draw = eInOut(prog(t, 1.5, 2.4)), fade = 1 - prog(t, T.dive + 0.1, T.land);
+    if (draw > 0) {
+      const n = Math.max(2, Math.floor(borderPts.length * draw));
+      ctx2d.save();
+      ctx2d.globalAlpha = fade;
+      ctx2d.strokeStyle = '#e2cda6'; ctx2d.lineWidth = 4; ctx2d.lineJoin = 'round';
+      ctx2d.shadowColor = 'rgba(226,205,166,.9)'; ctx2d.shadowBlur = 16;
+      ctx2d.beginPath();
+      for (let i = 0; i < n; i++) { const [x, y] = toScreen(borderPts[i]); i ? ctx2d.lineTo(x, y) : ctx2d.moveTo(x, y); }
+      ctx2d.stroke();
+      if (draw >= 1) { ctx2d.globalAlpha = 0.12 * fade; ctx2d.fillStyle = '#e2cda6'; ctx2d.closePath(); ctx2d.fill(); }
+      ctx2d.restore();
+    }
+
+    // pin
+    const [px, py] = toScreen(karmana);
+    const drop = prog(t, 2.2, 2.6);
+    $('pin').style.transform = `translate(${px}px, ${py}px)`;
+    $('pin').style.opacity = drop > 0 ? 1 - prog(t, T.dive + 0.15, T.dive + 0.35) : 0;
+    $('pinHead').style.transform = `translateY(${(1 - eBack(drop)) * -160}px) scale(${lerp(0.6, 1, eOut(drop))})`;
+    [['ring1', 2.5], ['ring2', 2.8]].forEach(([id, at]) => {
+      const r = prog(t, at, at + 0.9);
+      $(id).style.opacity = r > 0 && r < 1 ? 1 - r : 0;
+      $(id).style.transform = `scale(${0.4 + r * 2.4})`;
+    });
+    const lb = eOut(prog(t, 2.45, 2.85));
+    $('pinLabel').style.opacity = lb;
+    $('pinLabel').style.transform = `translateX(${(1 - lb) * -20}px)`;
+  }
+
+  // ================= photo shots =================
+  const SRC = { ext: { w: 688, h: 1529 }, room: { w: 688, h: 521 } }; // 1x photo size; sequences are 2x
+  // [id, start, end, camera(k) -> {cx, cy, z}] ; z = output px per 1x source px
+  const SHOTS = [
+    ['shotA', T.land, T.cutB, (k) => ({ cx: 344, cy: lerp(820, 760, k), z: lerp(1.95, 1.62, eOut(k)) })],
+    ['shotB', T.cutB, T.cutC, (k) => ({ cx: lerp(250, 420, k), cy: 650, z: 2.6 })],
+    ['shotC', T.cutC, T.room, (k) => ({ cx: 510, cy: lerp(690, 620, k), z: lerp(2.3, 2.5, k) })],
+    ['shotD', T.room, T.cutE, (k) => ({ cx: lerp(330, 350, k), cy: 260, z: lerp(1.62, 1.7, k) })],
+    ['shotE', T.cutE, T.cutF, (k) => ({ cx: lerp(210, 250, k), cy: 300, z: 2.55 })],
+    ['shotF', T.cutF, T.cutG, (k) => ({ cx: 555, cy: lerp(150, 120, k), z: lerp(2.9, 3.05, k) })],
+    ['shotG', T.cutG, T.end, (k) => ({ cx: lerp(344, 300, eInOut(k)), cy: lerp(260, 320, eInOut(k)), z: lerp(1.62, 2.1, eInOut(k)) })],
+    ['shotH', T.end, 99, (k) => ({ cx: 344, cy: 700, z: lerp(1.85, 1.72, eOut(prog(k, 0, 0.3))) })],
+  ];
+  const X = 0.14; // crossfade length at each cut
+
+  const imgCache = {};
+  function setFrame(img, seq, idx) {
+    const src = `assets/seq/${seq}_${String(idx).padStart(3, '0')}.jpg`;
+    if (img.dataset.src === src) return null;
+    img.dataset.src = src;
+    img.src = src;
+    return img.decode().catch(() => {});
+  }
+
+  async function renderShots(t) {
+    const waits = [];
+    for (const [id, t0, t1, cam] of SHOTS) {
+      const el = $(id);
+      const visible = t >= t0 - X && t < t1 + X && t >= T.land - 0.01;
+      el.style.display = visible ? 'block' : 'none';
+      if (!visible) continue;
+      const seq = el.dataset.seq, framed = el.hasAttribute('data-framed');
+      const img = el.querySelector('img.seq');
+      waits.push(setFrame(img, seq, Math.min(149, Math.max(0, Math.floor((t - t0 + X) * FPS)))));
+      const k = prog(t, t0, id === 'shotH' ? t0 + 10 : t1);
+      let { cx, cy, z } = cam(k);
+      // punch-in on each cut: start 7% tighter and settle in 0.35s
+      z *= 1 + 0.07 * (1 - eOut(prog(t, t0, t0 + 0.35)));
+      const vw = 1080, vh = framed ? 818 : 1920;
+      // keep the camera inside the photo so no empty edge ever shows
+      cx = clamp(cx, vw / 2 / z, SRC[seq].w - vw / 2 / z);
+      cy = clamp(cy, vh / 2 / z, SRC[seq].h - vh / 2 / z);
+      img.style.width = `${SRC[seq].w * 2}px`;
+      img.style.transform = `translate(${vw / 2 - cx * z}px, ${vh / 2 - cy * z}px) scale(${z / 2})`;
+      // cross-dissolve at the edges of the shot; the whip pan into the room slides instead
+      let o = prog(t, t0 - X, t0 + X) * (1 - prog(t, t1 - X, t1 + X));
+      let slide = 0, blur = 0;
+      if (id === 'shotC') { const w = prog(t, T.room - 0.2, T.room + 0.05); slide = -eIn(w) * 700; blur = w * 24; o = t < T.room + 0.05 ? prog(t, t0 - X, t0 + X) : 0; }
+      if (id === 'shotD') { const w = prog(t, T.room - 0.05, T.room + 0.25); slide = (1 - eOut(w)) * 700; blur = (1 - w) * 24; o = w > 0 ? 1 - prog(t, t1 - X, t1 + X) : 0; }
+      if (id === 'shotA') o = 1 - prog(t, t1 - X, t1 + X);
+      if (id === 'shotH') o = prog(t, t0 - X, t0 + X);
+      el.style.opacity = o;
+      el.style.transform = `translateX(${slide}px)`;
+      el.style.filter = blur ? `blur(${blur}px)` : 'none';
+      if (framed) {
+        const bg = el.querySelector('.bg');
+        bg.style.transform = `translateX(-50%) scale(${1.05 + 0.03 * k})`;
+      }
+    }
+    await Promise.all(waits.filter(Boolean));
+  }
+
+  // ================= text =================
+  // wrap each word in a mask so it can slide up into place
+  function maskWords(el) {
+    const walker = [...el.childNodes].filter((n) => n.nodeType === 3 && n.textContent.trim());
+    walker.forEach((node) => {
+      const frag = document.createDocumentFragment();
+      node.textContent.trim().split(/\s+/).forEach((w, i) => {
+        if (i) frag.append(' ');
+        const m = document.createElement('span'); m.className = 'mask';
+        const s = document.createElement('span'); s.textContent = w; m.append(s); frag.append(m);
+      });
+      node.replaceWith(frag);
+    });
+    return [...el.querySelectorAll('.mask > span')];
+  }
+  function letters(el) {
+    el.innerHTML = [...el.textContent].map((c) => `<span>${c}</span>`).join('');
+    return [...el.children];
+  }
+  const hookEyebrow = $('hook').querySelector('.eyebrow');
+  const hookWords = maskWords($('hook'));
+  const brandLetters = letters($('brand').querySelector('.name'));
+  const cozyWords = maskWords($('cozy'));
+  const calmWords = maskWords($('calm'));
+  const cardLetters = letters($('card').querySelector('.name'));
+
+  function reveal(els, t, start, gap, dur = 0.5) {
+    els.forEach((e, i) => {
+      const p = eOut(prog(t, start + i * gap, start + i * gap + dur));
+      e.style.transform = `translateY(${(1 - p) * 110}%)`;
+      e.style.opacity = p > 0 ? 1 : 0;
+    });
+  }
+  function block(id, t, tin, tout, dur = 0.3) {
+    const el = $(id), o = prog(t, tin, tin + 0.01) * (1 - prog(t, tout, tout + dur));
+    el.style.opacity = o;
+    el.style.display = o > 0 ? 'block' : 'none';
+    return el;
+  }
+
+  function renderText(t) {
+    block('hook', t, 0.2, T.dive - 0.1);
+    const e = eOut(prog(t, 0.2, 0.8));
+    hookEyebrow.style.opacity = e;
+    hookEyebrow.style.letterSpacing = `${lerp(0.7, 0.36, e)}em`;
+    reveal(hookWords, t, 0.5, 0.18);
+
+    block('brand', t, T.land + 0.1, T.cutB - 0.15);
+    brandLetters.forEach((l, i) => {
+      const p = eOut(prog(t, T.land + 0.15 + i * 0.05, T.land + 0.65 + i * 0.05));
+      l.style.opacity = p;
+      l.style.transform = `translateY(${(1 - p) * 40}px)`;
+      l.style.filter = `blur(${(1 - p) * 8}px)`;
+    });
+    const kd = eOut(prog(t, T.land + 0.6, T.land + 1.0));
+    $('brand').querySelector('.kind').style.opacity = kd;
+    $('brand').querySelector('.kind').style.letterSpacing = `${lerp(0.8, 0.44, kd)}em`;
+
+    const pl = block('place', t, T.cutB + 0.1, T.room - 0.2);
+    pl.style.display = pl.style.opacity > 0 ? 'flex' : 'none';
+    const pp = eOut(prog(t, T.cutB + 0.1, T.cutB + 0.5));
+    pl.style.transform = `translateY(${(1 - pp) * 30}px)`;
+    pl.style.opacity = Math.min(pl.style.opacity, pp);
+
+    block('calm', t, T.room + 0.3, T.cutG - 0.15);
+    $('calm').querySelector('.rule').style.transform = `scaleX(${eOut(prog(t, T.room + 0.3, T.room + 0.8))})`;
+    reveal(calmWords, t, T.room + 0.45, 0.1);
+
+    block('cozy', t, T.cutG + 0.15, T.end - 0.15);
+    reveal(cozyWords, t, T.cutG + 0.15, 0.12);
+
+    block('card', t, T.end + 0.2, 99);
+    cardLetters.forEach((l, i) => {
+      const p = eOut(prog(t, T.end + 0.25 + i * 0.05, T.end + 0.85 + i * 0.05));
+      l.style.opacity = p;
+      l.style.filter = `blur(${(1 - p) * 10}px)`;
+      l.style.transform = `scale(${lerp(1.4, 1, p)})`;
+    });
+    const card = $('card');
+    card.querySelector('.rule').style.transform = `scaleX(${eOut(prog(t, T.end + 0.8, T.end + 1.3))})`;
+    [['.where', 1.0], ['.phone', 1.25], ['div:last-child', 1.55]].forEach(([sel, at]) => {
+      const p = eOut(prog(t, T.end + at, T.end + at + 0.5)), el = card.querySelector(sel);
+      el.style.opacity = p;
+      el.style.transform = `translateY(${(1 - p) * 30}px)`;
+    });
+    $('shine').style.left = `${lerp(-160, 820, prog((t - T.end - 2.0) % 1.6, 0, 1.0))}px`;
+    $('shade').style.opacity = eOut(prog(t, T.end, T.end + 0.6));
+  }
+
+  window.renderFrame = async function (t) {
+    const inSpace = t < T.land + 0.05;
+    $('space').style.display = inSpace ? 'block' : 'none';
+    if (inSpace) renderGlobe(t);
+    await renderShots(t);
+    renderText(t);
+    // flashes: the dive into the photo, and the closing card
+    const f1 = 1 - Math.abs(t - T.land) / 0.22, f2 = 1 - Math.abs(t - T.end) / 0.18;
+    $('flash').style.opacity = clamp(Math.max(f1 * 0.95, f2 * 0.55));
+  };
+  window.sceneReady = true;
+  await window.renderFrame(0);
+</script>
+</body>
+</html>

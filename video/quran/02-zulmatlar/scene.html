@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Dengiz tubidagi zulmatlar</title>
+<style>
+  @font-face { font-family: 'Amiri Quran'; src: url(../fonts/amiri-quran-arabic-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 300; src: url(../../registon/fonts/montserrat-latin-300-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 400; src: url(../../registon/fonts/montserrat-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 500; src: url(../../registon/fonts/montserrat-latin-500-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 600; src: url(../../registon/fonts/montserrat-latin-600-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 800; src: url(../../promo/fonts/montserrat-latin-800-normal.woff2) format('woff2'); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+  body { font-family: 'Montserrat', sans-serif; color: #fff; --aqua: #9fe6f0; --pale: #e8f7fa; }
+  /* the ocean is shaded at half resolution and scaled up: soft water hides it, and it keeps software WebGL fast */
+  #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  #vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 85% 70% at 50% 50%, transparent 55%, rgba(0,0,0,.55) 100%); }
+
+  /* Reels safe area: x 120-960, y 220-1500 */
+  .txt { position: absolute; left: 110px; right: 110px; text-align: center; opacity: 0; text-shadow: 0 2px 18px rgba(0,0,0,.85), 0 0 2px rgba(0,0,0,.9); }
+  .mask { display: inline-block; overflow: hidden; vertical-align: bottom; padding: 0 .04em; }
+  .mask > span { display: inline-block; }
+  #hook { top: 660px; font-weight: 600; font-size: 62px; line-height: 1.22; }
+  #hook .l2 { display: block; margin-top: 24px; font-weight: 300; font-size: 46px; color: var(--pale); }
+  .arabic { font-family: 'Amiri Quran', serif; direction: rtl; color: #f3f9fb; line-height: 2.05; text-shadow: 0 0 26px rgba(160,230,240,.35), 0 2px 12px rgba(0,0,0,.9); }
+  #ayah { top: 640px; padding: 26px 0 40px; border-radius: 60px; background: radial-gradient(ellipse 72% 62% at 50% 50%, rgba(0,12,18,.62), rgba(0,12,18,0) 100%); }
+  #ayah .arabic { font-size: 62px; }
+  .meaning { font-weight: 400; font-size: 38px; line-height: 1.42; margin-top: 22px; }
+  .ref { font-weight: 500; font-size: 27px; letter-spacing: .3em; padding-left: .3em; color: var(--aqua); margin-top: 24px; }
+
+  #gauge { position: absolute; left: 58px; top: 330px; height: 1040px; width: 150px; opacity: 0; }
+  #gauge .track { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, rgba(160,230,240,.8), rgba(160,230,240,.15)); }
+  #gauge .tick { position: absolute; left: 0; width: 18px; height: 2px; background: rgba(200,240,245,.7); }
+  #gauge .tick span { position: absolute; left: 26px; top: -13px; font-size: 22px; font-weight: 500; color: rgba(220,245,250,.8); white-space: nowrap; }
+  #gauge .mark { position: absolute; left: -9px; width: 21px; height: 21px; margin-top: -10px; border-radius: 50%; background: #dff8fb; box-shadow: 0 0 20px #9fe6f0; }
+  #readout { position: absolute; right: 120px; top: 250px; text-align: right; opacity: 0; font-weight: 800; font-size: 96px; font-variant-numeric: tabular-nums; letter-spacing: -.01em;
+             text-shadow: 0 2px 20px rgba(0,0,0,.8); }
+  #readout small { font-size: 44px; font-weight: 500; margin-left: 8px; color: var(--aqua); }
+  .fact { top: 1180px; left: 200px; right: 110px; }
+  .fact .big { font-weight: 800; font-size: 76px; color: var(--pale); line-height: 1; }
+  .fact .what { font-weight: 500; font-size: 42px; line-height: 1.3; margin-top: 16px; }
+  .fact .note { font-weight: 300; font-size: 32px; line-height: 1.35; margin-top: 12px; color: #cfe7ec; }
+
+  .layer { position: absolute; left: 110px; right: 110px; opacity: 0; display: flex; align-items: center; gap: 18px; font-weight: 600; font-size: 38px; letter-spacing: .04em;
+           text-shadow: 0 2px 14px rgba(0,0,0,.9); }
+  .layer i { flex: 0 0 60px; height: 2px; background: var(--aqua); }
+  .layer em { font-style: normal; font-weight: 300; font-size: 28px; color: #d6eef2; margin-left: 6px; }
+  #xsTitle { top: 1190px; font-weight: 300; font-size: 40px; line-height: 1.35; font-style: normal; }
+  #xsFact { top: 1330px; }
+  #xsFact .what { font-weight: 500; font-size: 36px; line-height: 1.32; }
+  #xsFact .note { font-weight: 300; font-size: 30px; line-height: 1.35; margin-top: 12px; color: #cfe7ec; }
+
+  #close { top: 700px; }
+  #close .q { font-weight: 300; font-size: 50px; line-height: 1.35; color: var(--pale); }
+  #close .brand { margin-top: 70px; font-weight: 600; font-size: 30px; letter-spacing: .3em; padding-left: .3em; }
+  #close .end { font-weight: 300; font-size: 36px; margin-top: 16px; color: var(--aqua); }
+  #flash { position: absolute; inset: 0; background: #e9fbff; opacity: 0; }
+</style>
+</head>
+<body>
+<canvas id="gl" width="540" height="960"></canvas>
+<div id="vignette"></div>
+
+<div class="txt" id="hook"></div>
+<div class="txt" id="ayah"><div class="arabic" id="ar"></div><div class="meaning" id="mean"></div><div class="ref" id="ref"></div></div>
+
+<div id="gauge"><div class="track"></div><div class="mark" id="mark"></div></div>
+<div id="readout"><span id="depthNum">0</span><small>m</small></div>
+<div class="txt fact" id="f10"><div class="big">10 m</div><div class="what" id="w10"></div></div>
+<div class="txt fact" id="f200"><div class="big">200 m</div><div class="what" id="w200"></div></div>
+<div class="txt fact" id="f1000"><div class="big">1000 m</div><div class="what" id="w1000"></div></div>
+<div class="txt fact" id="fDeep"><div class="what" id="wDeep"></div><div class="note" id="nDeep"></div></div>
+
+<div class="txt" id="xsTitle"></div>
+<div class="layer" id="lCloud" style="top:330px"><i></i><span id="tCloud"></span></div>
+<div class="layer" id="lSurf" style="top:580px"><i></i><span id="tSurf"></span></div>
+<div class="layer" id="lInt" style="top:960px"><i></i><span id="tInt"></span></div>
+<div class="layer" id="lDark" style="top:1100px"><i></i><span id="tDark"></span></div>
+<div class="txt" id="xsFact"><div class="what" id="xsW"></div><div class="note" id="xsN"></div></div>
+
+<div class="txt" id="close"><div class="q" id="closeQ"></div><div class="brand">ZARAFSHON DASTURCHILARI</div><div class="end">Alloh bilguvchiroq</div></div>
+<div id="flash"></div>
+
+<script type="x-shader/x-fragment" id="frag">
+precision highp float;
+uniform vec2 uRes;
+uniform float uTime, uMode, uDepth, uPitch, uCamY, uLight, uBio, uFade;
+varying vec2 vUv;
+
+// Light absorption of sea water per metre for red, green, blue (close to pure-water values):
+// red is gone within ~10 m, blue reaches deepest.
+const vec3 K = vec3(0.35, 0.064, 0.020);
+const vec3 SUN = vec3(0.30, 0.10, -1.0);
+
+float hash(vec2 p) { p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
+float noise(vec2 p) {
+  vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);
+  return mix(mix(hash(i), hash(i + vec2(1, 0)), f.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), f.x), f.y);
+}
+float fbm(vec2 p) { float v = 0., a = .5; mat2 m = mat2(1.6, 1.2, -1.2, 1.6); for (int i = 0; i < 5; i++) { v += a * noise(p); p = m * p; a *= .5; } return v; }
+
+// Wind-driven sea surface: directional wave trains with sharp crests, detuned by noise.
+float waveH(vec2 p, float t, int oct) {
+  float h = 0., amp = .62, freq = .16; vec2 dir = vec2(1., .35);
+  mat2 rot = mat2(.8, .6, -.6, .8);
+  for (int i = 0; i < 6; i++) {
+    if (i >= oct) break;
+    vec2 d = normalize(dir);
+    float ph = dot(d, p) * freq + t * sqrt(9.81 * freq) * .8 + noise(p * freq * .35 + float(i) * 3.1) * 2.4;
+    float w = pow(1. - abs(sin(ph)), 1.35);
+    h += amp * (w - .5);
+    dir = rot * dir; amp *= .56; freq *= 1.85;
+  }
+  return h;
+}
+
+vec3 sky(vec3 rd) {
+  float y = max(rd.y, 0.);
+  vec3 col = mix(vec3(.20, .25, .31), vec3(.05, .07, .11), pow(y, .45));
+  float s = max(dot(rd, normalize(SUN)), 0.);
+  col += vec3(.50, .36, .26) * pow(s, 8.) * .35 * (1. - y);
+  if (rd.y > 0.) {
+    vec2 uv = rd.xz / (rd.y + .07) * 1.1 + vec2(uTime * .035, 0.);
+    float c = smoothstep(.32, .78, fbm(uv * .9));
+    vec3 cc = mix(vec3(.09, .11, .14), vec3(.34, .37, .42), fbm(uv * 1.7 + 3.));
+    cc += uLight * vec3(.75, .8, .95) * fbm(uv * 2.2 + 7.);
+    col = mix(col, cc, c * smoothstep(0., .12, rd.y));
+  }
+  return col + uLight * vec3(.20, .22, .30);
+}
+
+mat3 camera(float pitch) {
+  vec3 fw = normalize(vec3(0., sin(pitch), -cos(pitch)));
+  vec3 rt = normalize(cross(fw, vec3(0., 1., 0.)));
+  return mat3(rt, cross(rt, fw), fw);
+}
+
+vec3 above(vec2 uv) {
+  vec3 ro = vec3(0., uCamY, -uTime * 3.);
+  vec3 rd = normalize(camera(uPitch) * vec3(uv, 1.5));
+  vec3 col = sky(rd);
+  if (rd.y < 0.) {
+    float t = max((ro.y - 1.6) / -rd.y, 0.); bool hit = false; vec3 p;
+    for (int i = 0; i < 80; i++) {
+      p = ro + rd * t;
+      float d = p.y - waveH(p.xz, uTime, 4);
+      if (d < .004 * t + .01) { hit = true; break; }
+      t += max(d * .6, .02 + t * .002);
+      if (t > 700.) break;
+    }
+    if (hit) {
+      float e = .02 + t * .002;
+      vec3 n = normalize(vec3(waveH(p.xz - vec2(e, 0), uTime, 6) - waveH(p.xz + vec2(e, 0), uTime, 6), 2. * e,
+                              waveH(p.xz - vec2(0, e), uTime, 6) - waveH(p.xz + vec2(0, e), uTime, 6)));
+      vec2 rq = p.xz * 2.2 + vec2(uTime * .9, uTime * .4);
+      float r0 = fbm(rq), rx = fbm(rq + vec2(.08, 0.)), rz = fbm(rq + vec2(0., .08));
+      n = normalize(n + vec3(r0 - rx, 0., r0 - rz) * 2.2 * exp(-t * .02));  // wind ripples, fading with distance
+      float fres = .02 + .9 * pow(1. - max(dot(n, -rd), 0.), 5.);
+      vec3 water = vec3(.004, .028, .045) + vec3(.01, .075, .08) * clamp(p.y + .3, 0., 1.) * .6; // deep blue, light through crests
+      col = mix(water, sky(reflect(rd, n)), fres);
+      col += vec3(1., .72, .48) * pow(max(dot(reflect(rd, n), normalize(SUN)), 0.), 90.) * .7;
+      col += vec3(.6) * smoothstep(.30, .55, p.y) * pow(fbm(p.xz * 3. + uTime * .3), 2.) * .7; // foam on crests
+      col = mix(col, sky(vec3(rd.x, .02, rd.z)), 1. - exp(-t * .0035));
+    }
+  }
+  return col;
+}
+
+vec3 lightAt(float d) { return exp(-K * max(d, 0.)); }
+
+vec3 under(vec2 uv) {
+  float D = uDepth;
+  vec3 rd = normalize(camera(uPitch) * vec3(uv, 1.3));
+  // light scattered toward the camera: brighter looking up, coloured by what survives at that depth
+  float dEff = max(D - rd.y * 22., 0.);
+  vec3 col = lightAt(dEff) * vec3(.03, .20, .30) * (.5 + .5 * rd.y);
+  // the sea surface seen from below, with Snell's window overhead
+  if (rd.y > .04) {
+    float L = D / rd.y;
+    if (L < 70.) {
+      vec2 sp = rd.xz * L + vec2(0., uTime * .6);
+      float w = fbm(sp * .3 + uTime * .2);
+      float web = pow(1. - abs(fbm(sp * .6 + uTime * .25) - fbm(sp * .6 + 4.7 - uTime * .2)) * 2., 4.);
+      float win = smoothstep(.60, .72, rd.y + (w - .5) * .14);
+      vec3 s = mix(vec3(.02, .10, .14), vec3(.75, .90, .95), win) * (.45 + .55 * w + .7 * web * win);
+      col = mix(col, s * lightAt(L) * 1.25, exp(-L * .035));
+    }
+  }
+  // shafts of sunlight: columns of brightness from the rippled surface, fading with depth
+  float rays = 0.;
+  vec2 sdir = normalize(SUN).xz;
+  for (int i = 0; i < 14; i++) {
+    float s = (float(i) + hash(uv * 311. + fract(uTime))) * 2.4;
+    vec3 p = rd * s; float dp = D - p.y;
+    if (dp < 0.) continue;
+    vec2 q = p.xz + sdir * dp * .35;
+    float c = pow(smoothstep(.48, .82, fbm(q * .22 + vec2(uTime * .06, uTime * .02))), 2.);
+    rays += c * exp(-.04 * dp) * exp(-s * .07);
+  }
+  col += vec3(.45, .80, .85) * lightAt(D) * rays * .20;
+  // marine snow drifting past; bioluminescent sparks in the dark
+  float snow = 0., bio = 0.;
+  for (int l = 0; l < 3; l++) {
+    float fl = float(l), sc = 34. + fl * 26.;
+    vec2 g = uv * sc + vec2(uTime * (.15 + .1 * fl), uTime * (.35 + .25 * fl) + D * .05 * (1. + fl));
+    vec2 id = floor(g), f = fract(g) - .5;
+    float h = hash(id + fl * 7.1);
+    if (h > .82) {
+      vec2 o = vec2(hash(id + 1.3), hash(id + 2.7)) - .5;
+      float d = length(f - o * .7);
+      float sp = smoothstep(.10, .0, d) * (.35 + .65 * hash(id + 3.9));
+      snow += sp;
+      bio += sp * step(.93, h) * (.5 + .5 * sin(uTime * 3. + h * 40.));
+    }
+  }
+  col += vec3(.60, .76, .80) * snow * (.02 + .30 * lightAt(D).b);
+  col += vec3(.20, .85, 1.) * bio * uBio;
+  return col;
+}
+
+// Cross-section: clouds, surface waves, the internal wave on a density boundary, darkness below.
+vec3 section(vec2 q) {
+  float t = uTime;
+  float ys = .72 + .010 * sin(q.x * 34. - t * 2.2) + .006 * sin(q.x * 71. + t * 3.1);
+  if (q.y > ys) {
+    vec3 col = mix(vec3(.28, .30, .34), vec3(.05, .07, .11), (q.y - ys) / (1. - ys));
+    float c = smoothstep(.40, .78, fbm(vec2(q.x * 3. + t * .05, q.y * 7.)));
+    c *= smoothstep(.78, .86, q.y);
+    col = mix(col, mix(vec3(.14, .15, .18), vec3(.46, .45, .48), fbm(q * 9. + 2.)), c);
+    return col + uLight * vec3(.3, .32, .4) * c;
+  }
+  float depth = pow((ys - q.y) / ys, 1.7) * 1000.;
+  vec3 col = lightAt(depth) * vec3(.10, .40, .52);
+  float yi = .47 + .045 * sin(q.x * 6.3 - t * .9) + .012 * sin(q.x * 17. + t * 1.4);
+  float below = smoothstep(yi + .004, yi - .004, q.y);
+  col = mix(col, col * vec3(.35, .45, .6), below);                  // colder, denser water below the boundary
+  col += vec3(.35, .75, .85) * smoothstep(.010, 0., abs(q.y - yi)) * .6; // the density boundary itself
+  col *= .9 + .2 * fbm(vec2(q.x * 1.5, q.y * 45.) + t * .05);         // soft horizontal texture
+  return col;
+}
+
+void main() {
+  vec2 uv = (vUv - .5) * vec2(uRes.x / uRes.y, 1.) * 2.;
+  vec3 col = uMode < .5 ? above(uv) : (uMode < 1.5 ? under(uv) : section(vUv));
+  col = col / (1. + col * .4);            // gentle tone map
+  col = pow(col, vec3(1. / 2.2)) * uFade;
+  col += (hash(vUv * 900. + fract(uTime * 7.)) - .5) * .02; // fine grain
+  gl_FragColor = vec4(col, 1.);
+}
+</script>
+
+<script type="importmap">{ "imports": { "three": "../../registon2/lib/three.module.js" } }</script>
+<script type="module">
+  import * as THREE from 'three';
+
+  // Arabic: Uthmani text from ../ayat.json. Uzbek meaning follows Tafsiri Hilol —
+  // CHECK THE WORDING AGAINST THE BOOK before publishing.
+  const ayat = (await (await fetch('../ayat.json')).json()).ayat;
+  const TEXT = {
+    hook1: 'Qo‘lingizni ham ko‘ra olmaydigan zulmat',
+    hook2: 'Qur’onda 1400 yil avval tasvirlangan',
+    mean: '«Yoki (ularning amallari) chuqur dengizdagi zulmatlarga o‘xshar: uni to‘lqin o‘rar, uning ustida yana to‘lqin, uning ustida bulut. Zulmatlar — ba’zisi ba’zisining ustida. Qo‘lini chiqarsa, uni deyarli ko‘rmas.»',
+    ref: 'NUR SURASI · 40',
+    w10: 'Qizil rang deyarli yo‘qoladi',
+    w200: 'Quyosh nuri tugay boshlaydi',
+    w1000: 'Mutlaq zulmat',
+    wDeep: 'Okeanning eng chuqur nuqtasi — qariyb 11 000 m',
+    nDeep: 'Inson u yerga ilk bor 1960 yilda batiskafda tushgan',
+    xsTitle: '«...to‘lqin, uning ustida yana to‘lqin, uning ustida bulut»',
+    tCloud: 'Bulutlar', tSurf: 'Yuza to‘lqinlari', tInt: 'Ichki to‘lqinlar', tDark: 'Zulmat',
+    xsW: 'Ichki to‘lqinlar — zichligi turlicha suv qatlamlari chegarasida hosil bo‘ladi',
+    xsN: '1893–1896: Fridtyof Nansen kuzatgan · 1904: Vagn Ekman tushuntirgan',
+    closeQ: '«Zulmatlar — ba’zisi ba’zisining ustida»',
+  };
+  const $ = (id) => document.getElementById(id);
+  $('hook').innerHTML = `<span>${TEXT.hook1}</span><span class="l2">${TEXT.hook2}</span>`;
+  { const w = ayat['24:40-fragment'].split(' '); $('ar').innerHTML = [w.slice(0, 6), w.slice(6, 13), w.slice(13)].map((x) => x.join(' ')).join('<br>'); }
+  for (const k of ['mean', 'ref', 'w10', 'w200', 'w1000', 'wDeep', 'nDeep', 'xsTitle', 'tCloud', 'tSurf', 'tInt', 'tDark', 'xsW', 'xsN', 'closeQ']) $(k).textContent = TEXT[k];
+  $('tInt').insertAdjacentHTML('beforeend', '<em>(yuzlab metr chuqurlikda)</em>');
+
+  // ---------------- helpers ----------------
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const prog = (t, a, b) => clamp((t - a) / (b - a));
+  const lerp = (a, b, p) => a + (b - a) * p;
+  const eOut = (x) => 1 - Math.pow(1 - x, 3);
+  const eInOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+
+  // Timeline (seconds). Keep in sync with audio.js.
+  const T = { dive: 3.2, ayah: 3.6, descend: 10.5, dark: 19.5, section: 21.5, close: 27.5, end: 32 };
+  // depth during the descent: exponential so the shallow colour changes get screen time
+  const depthAt = (t) => (t < T.descend ? lerp(1.5, 5, prog(t, T.ayah, T.descend)) : 5 * Math.pow(240, prog(t, T.descend, T.dark)) + Math.max(0, t - T.dark) * 60);
+  const timeAtDepth = (d) => T.descend + (Math.log(d / 5) / Math.log(240)) * (T.dark - T.descend);
+
+  // ---------------- depth gauge (log scale) ----------------
+  const gaugeY = (d) => 1040 * Math.log10(1 + d) / Math.log10(1 + 1500);
+  [0, 10, 50, 200, 500, 1000].forEach((d) => {
+    $('gauge').insertAdjacentHTML('beforeend', `<div class="tick" style="top:${gaugeY(d)}px"><span>${d} m</span></div>`);
+  });
+
+  // ---------------- WebGL: one full-screen shader ----------------
+  const renderer = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: false, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1); renderer.setSize(540, 960, false);
+  const uniforms = {
+    uRes: { value: new THREE.Vector2(540, 960) }, uTime: { value: 0 }, uMode: { value: 0 }, uDepth: { value: 0 },
+    uPitch: { value: 0 }, uCamY: { value: 4 }, uLight: { value: 0 }, uBio: { value: 0 }, uFade: { value: 1 },
+  };
+  const mat = new THREE.ShaderMaterial({
+    uniforms,
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
+    fragmentShader: $('frag').textContent,
+  });
+  const scene = new THREE.Scene();
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat));
+  const cam = new THREE.Camera();
+
+  // ---------------- text animation ----------------
+  function words(el) {
+    const walk = (node) => {
+      for (const n of [...node.childNodes]) {
+        if (n.nodeType === 3 && n.textContent.trim()) {
+          const f = document.createDocumentFragment();
+          n.textContent.split(/(\s+)/).forEach((w) => {
+            if (!w.trim()) { f.append(w); return; }
+            const m = document.createElement('span'); m.className = 'mask';
+            const s = document.createElement('span'); s.textContent = w; m.append(s); f.append(m);
+          });
+          n.replaceWith(f);
+        } else if (n.nodeType === 1 && !n.classList.contains('arabic') && !n.classList.contains('big') && n.tagName !== 'EM') walk(n);
+      }
+    };
+    walk(el);
+    return [...el.querySelectorAll('.mask > span')];
+  }
+  const W = {};
+  for (const id of ['hook', 'ayah', 'f10', 'f200', 'f1000', 'fDeep', 'xsTitle', 'xsFact', 'close']) W[id] = words($(id));
+  function show(id, t, tin, tout, stagger = 0.05) {
+    const el = $(id), o = prog(t, tin, tin + 0.05) * (1 - prog(t, tout - 0.3, tout));
+    el.style.opacity = o;
+    if (o <= 0) return;
+    W[id].forEach((w, i) => { const p = eOut(prog(t, tin + 0.1 + i * stagger, tin + 0.6 + i * stagger)); w.style.transform = `translateY(${(1 - p) * 110}%)`; });
+    const ar = el.querySelector('.arabic');
+    if (ar) { const p = eInOut(prog(t, tin, tin + 1.6)); ar.style.clipPath = `inset(0 0 0 ${(1 - p) * 100}%)`; }
+    const big = el.querySelector('.big');
+    if (big) { const p = eOut(prog(t, tin, tin + 0.5)); big.style.transform = `translateX(${(1 - p) * -40}px)`; big.style.opacity = p; }
+  }
+  function layer(id, t, tin, tout) {
+    const el = $(id), p = eOut(prog(t, tin, tin + 0.5)), o = p * (1 - prog(t, tout - 0.3, tout));
+    el.style.opacity = o;
+    el.style.transform = `translateX(${(1 - p) * -60}px)`;
+    el.querySelector('i').style.transform = `scaleX(${p})`;
+  }
+
+  // ---------------- frame ----------------
+  window.renderFrame = function (t) {
+    const U = uniforms;
+    U.uTime.value = t;
+    // lightning over the storm at the start
+    U.uLight.value = Math.max(Math.exp(-Math.pow((t - 0.9) / 0.06, 2)), 0.7 * Math.exp(-Math.pow((t - 1.05) / 0.05, 2)), 0.8 * Math.exp(-Math.pow((t - 2.35) / 0.07, 2)));
+    U.uBio.value = prog(t, T.dark - 0.5, T.dark + 1.5) * (t < T.section ? 1 : 0) + prog(t, T.close, T.close + 1.5) * 1.2;
+    U.uFade.value = 1;
+    if (t < T.dive + 0.25) {
+      U.uMode.value = 0;
+      const d = eInOut(prog(t, 2.2, T.dive + 0.25));
+      U.uPitch.value = lerp(-0.06, -0.55, d);
+      U.uCamY.value = lerp(3.0, 0.3, d);
+    } else if (t < T.section) {
+      U.uMode.value = 1;
+      U.uDepth.value = depthAt(t);
+      const look = t < T.descend ? 1.0 + 0.05 * Math.sin(t * 0.7) : lerp(1.0, -0.05, eInOut(prog(t, T.descend, T.descend + 3)));
+      U.uPitch.value = look;
+      U.uFade.value = 1 - prog(t, T.section - 0.35, T.section);
+    } else if (t < T.close) {
+      U.uMode.value = 2;
+      U.uLight.value = 0;
+      U.uFade.value = prog(t, T.section, T.section + 0.4) * (1 - prog(t, T.close - 0.35, T.close));
+    } else {
+      U.uMode.value = 1;
+      U.uDepth.value = 1500;
+      U.uPitch.value = 0.1;
+      U.uFade.value = prog(t, T.close, T.close + 0.8);
+    }
+    renderer.render(scene, cam);
+
+    // splash as the camera goes under
+    $('flash').style.opacity = clamp(1 - Math.abs(t - T.dive - 0.2) / 0.22) * 0.85;
+
+    show('hook', t, 0.4, T.dive, 0.08);
+    show('ayah', t, T.ayah + 0.3, T.descend, 0.035);
+
+    // gauge and readout during the descent
+    const g = prog(t, T.descend - 0.2, T.descend + 0.3) * (1 - prog(t, T.section - 0.4, T.section));
+    $('gauge').style.opacity = g; $('readout').style.opacity = g;
+    const D = depthAt(t);
+    $('mark').style.top = `${gaugeY(D)}px`;
+    $('depthNum').textContent = D < 100 ? D.toFixed(0) : String(Math.round(D / 10) * 10).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    const t10 = timeAtDepth(10), t200 = timeAtDepth(200), t1000 = timeAtDepth(1000);
+    show('f10', t, t10, t200 - 0.2);
+    show('f200', t, t200, t1000 - 0.2);
+    show('f1000', t, t1000, T.dark + 0.4);
+    show('fDeep', t, T.dark + 0.4, T.section);
+
+    show('xsTitle', t, T.section + 0.3, T.close, 0.06);
+    layer('lCloud', t, T.section + 0.8, T.close);
+    layer('lSurf', t, T.section + 1.1, T.close);
+    layer('lInt', t, T.section + 1.4, T.close);
+    layer('lDark', t, T.section + 1.7, T.close);
+    show('xsFact', t, T.section + 2.4, T.close, 0.04);
+
+    show('close', t, T.close + 0.5, T.end + 1, 0.08);
+  };
+  window.sceneReady = true;
+  window.renderFrame(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Moxito scene</title>
+<style>
+  @font-face { font-family: 'Montserrat'; font-weight: 600; src: url(../promo/fonts/montserrat-latin-600-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 800; src: url(../promo/fonts/montserrat-latin-800-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 900; src: url(../promo/fonts/montserrat-latin-900-normal.woff2) format('woff2'); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #06331f; }
+  body { font-family: 'Montserrat', sans-serif; color: #fff; }
+  .abs { position: absolute; }
+  .layer { position: absolute; inset: 0; overflow: hidden; }
+  img { display: block; }
+
+  .headline { position: absolute; left: 50px; right: 50px; text-align: center; font-weight: 900; line-height: 1.1; }
+  .headline .w { display: inline-block; }
+  .lime-text { background: linear-gradient(180deg, #e9ff8a, #7ed321); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hot-text { background: linear-gradient(180deg, #ffe08a, #ff6a1a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* ---------- scene 1: heat ---------- */
+  #hot img { position: absolute; left: 50%; top: 50%; width: 3400px; height: auto; transform-origin: 50% 50%; filter: blur(7px) saturate(1.25) brightness(1.05); }
+  #hotTint { position: absolute; inset: 0; background:
+      radial-gradient(700px 700px at 85% 8%, rgba(255, 236, 170, .95), rgba(255, 170, 60, .45) 40%, transparent 70%),
+      linear-gradient(180deg, rgba(255, 120, 30, .35), rgba(255, 70, 20, .15) 50%, rgba(80, 20, 0, .55)); }
+  #sun { position: absolute; left: 760px; top: 80px; width: 260px; height: 260px; border-radius: 50%;
+         background: radial-gradient(circle, #fffbe6 0%, #ffe27a 45%, rgba(255, 190, 60, 0) 72%); }
+  #thermo { position: absolute; left: 0; right: 0; top: 1020px; text-align: center; font-weight: 900; font-size: 250px; letter-spacing: -8px;
+            font-variant-numeric: tabular-nums; }
+  #thermo small { font-size: 120px; letter-spacing: 0; vertical-align: 90px; }
+
+  /* ---------- scenes 2-4: cool ---------- */
+  #cool { background:
+      radial-gradient(900px 1100px at 50% 45%, #33c27a 0%, #128a4f 38%, #075a34 70%, #04301c 100%); }
+  #rays { position: absolute; left: -460px; top: -80px; width: 2000px; height: 2000px; border-radius: 50%;
+          background: repeating-conic-gradient(from 0deg, rgba(230, 255, 170, .09) 0deg 5deg, transparent 5deg 15deg);
+          -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 62%); }
+  .bubble { position: absolute; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .55);
+            background: radial-gradient(circle at 32% 30%, rgba(255,255,255,.85) 0 12%, rgba(255,255,255,.08) 30%, transparent 70%); }
+  .ice { position: absolute; width: 300px; filter: drop-shadow(0 20px 30px rgba(0, 40, 60, .35)); }
+  #frost { position: absolute; inset: 0; background: radial-gradient(circle, rgba(255,255,255,.95), rgba(190, 245, 255, .9) 50%, rgba(120, 220, 255, .8)); opacity: 0; }
+
+  .ing { position: absolute; left: 0; top: 0; transform-origin: 50% 50%; filter: drop-shadow(0 30px 40px rgba(0, 40, 20, .45)); }
+  .ingLabel { position: absolute; left: 0; right: 0; top: 1150px; text-align: center; }
+  .ingLabel span { display: inline-block; padding: 18px 44px; border-radius: 60px; font-size: 66px; font-weight: 900;
+                   background: rgba(255, 255, 255, .95); color: #0b6b3a; box-shadow: 0 16px 40px rgba(0, 50, 20, .35); }
+  .slotCap { position: absolute; width: 300px; text-align: center; top: 1670px; font-size: 40px; font-weight: 800; }
+
+  #glassWrap { position: absolute; left: 250px; top: 560px; width: 1400px; height: 996px; transform-origin: 18% 80%; }
+  #glassWrap img, #glassSheen { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #glassWrap img { filter: drop-shadow(0 40px 50px rgba(0, 40, 20, .5)); }
+  #glassSheen { -webkit-mask-image: url(assets/glass_hand@3x.png); -webkit-mask-size: 100% 100%; mix-blend-mode: screen; }
+  .drop { position: absolute; border-radius: 50%;
+          background: radial-gradient(circle at 35% 30%, #fff 0 18%, rgba(220, 255, 240, .75) 35%, rgba(120, 220, 170, .25) 70%);
+          box-shadow: 0 4px 10px rgba(0, 60, 30, .25); }
+  .leaf { position: absolute; filter: drop-shadow(0 16px 20px rgba(0, 40, 20, .4)); }
+
+  .chip { position: absolute; left: 70px; display: flex; align-items: center; gap: 22px; padding: 18px 36px 18px 18px; border-radius: 60px;
+          background: rgba(255, 255, 255, .96); color: #0b6b3a; font-size: 50px; font-weight: 900; box-shadow: 0 16px 40px rgba(0, 50, 20, .3); }
+  .chip i { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #b8f04a, #2fb562); display: flex; align-items: center; justify-content: center; }
+  .chip svg { width: 40px; height: 40px; }
+
+  #logo { position: absolute; left: 540px; top: 150px; width: 720px; margin-left: -360px; transform-origin: 50% 50%; }
+  #logo img { width: 100%; filter: drop-shadow(0 20px 30px rgba(0, 40, 20, .45)); }
+  #logoSheen { position: absolute; inset: 0; -webkit-mask-image: url(assets/logo@3x.png); -webkit-mask-size: 100% 100%; }
+  #tagline { position: absolute; left: 0; right: 0; top: 540px; text-align: center; font-size: 56px; font-weight: 800; letter-spacing: 2px; }
+  #coaster { position: absolute; left: 30px; top: 1170px; width: 270px; filter: drop-shadow(0 20px 30px rgba(0, 40, 20, .45)); }
+  #cta { position: absolute; left: 110px; right: 110px; top: 1600px; height: 150px; border-radius: 80px; overflow: hidden;
+         background: linear-gradient(90deg, #b8f04a, #4cd07d); color: #064d2b; font-size: 58px; font-weight: 900;
+         display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 50px rgba(0, 60, 25, .45); }
+  #cta .shine { position: absolute; top: -50%; width: 140px; height: 200%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.8), transparent); transform: rotate(20deg); }
+  #foot { position: absolute; left: 0; right: 0; top: 1790px; text-align: center; font-size: 34px; font-weight: 800; letter-spacing: 4px; opacity: .9; }
+
+  #flash { position: absolute; inset: 0; background: #fff; opacity: 0; z-index: 40; }
+  #vignette { position: absolute; inset: 0; z-index: 50; background: radial-gradient(ellipse 80% 70% at 50% 50%, transparent 60%, rgba(0, 20, 10, .45) 100%); }
+</style>
+</head>
+<body>
+
+<!-- scene 1: heat -->
+<div class="layer" id="hot">
+  <img id="beach" src="assets/beach.jpg" alt="">
+  <div id="hotTint"></div>
+  <div id="sun"></div>
+  <div class="headline" id="h1" style="top:430px; font-size:118px;" data-text="Jazirama #issiqmi?"></div>
+  <div id="thermo" class="hot-text"><span id="deg">30</span><small>°C</small></div>
+</div>
+
+<!-- scenes 2-4: cool -->
+<div class="layer" id="cool">
+  <div id="rays"></div>
+  <div id="bubbles"></div>
+
+  <div class="headline" id="h2" style="top:230px; font-size:84px;" data-text="100% #tabiiy #ingredientlar"></div>
+  <img class="ing" id="ing0" src="assets/mint@3x.png" alt="" style="width:640px">
+  <img class="ing" id="ing1" src="assets/lime@3x.png" alt="" style="width:700px">
+  <img class="ing" id="ing2" src="assets/ice@3x.png" alt="" style="width:560px">
+  <div class="ingLabel" id="lab0"><span>Yangi yalpiz</span></div>
+  <div class="ingLabel" id="lab1"><span>Tabiiy laym</span></div>
+  <div class="ingLabel" id="lab2"><span>Muzdek sovuq</span></div>
+  <div class="slotCap" id="cap0" style="left:40px">Yalpiz</div>
+  <div class="slotCap" id="cap1" style="left:390px">Laym</div>
+  <div class="slotCap" id="cap2" style="left:740px">Muz</div>
+
+  <div id="leaves"></div>
+  <div id="glassWrap"><img src="assets/glass_hand@3x.png" alt=""><div id="glassSheen"></div></div>
+  <div id="drops"></div>
+
+  <div class="chip" id="chip0" style="top:170px"><i data-check></i>Tetiklantiruvchi</div>
+  <div class="chip" id="chip1" style="top:300px"><i data-check></i>Chanqoqni qondiruvchi</div>
+  <div class="chip" id="chip2" style="top:430px"><i data-check></i>Mukammal ta'm</div>
+
+  <div id="logo"><img src="assets/logo@3x.png" alt=""><div id="logoSheen"></div></div>
+  <div id="tagline">YANGI TA'M</div>
+  <img id="coaster" src="assets/coaster@3x.png" alt="">
+  <div id="cta"><div class="shine" id="ctaShine"></div><span style="position:relative">Hoziroq tatib ko'ring!</span></div>
+  <div id="foot">FRESH • TETIK • MUKAMMAL</div>
+</div>
+
+<div id="icefall"></div>
+<div id="frost"></div>
+<div id="flash"></div>
+<div id="vignette"></div>
+
+<script>
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const prog = (t, a, b) => clamp((t - a) / (b - a));
+  const lerp = (a, b, p) => a + (b - a) * p;
+  const eOut = (x) => 1 - Math.pow(1 - x, 3);
+  const eIn = (x) => x * x * x;
+  const eInOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  const eBack = (x) => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+  const $ = (id) => document.getElementById(id);
+  let seed = 11;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+
+  // Timeline (seconds). Keep in sync with audio.js.
+  const T = { cool: 2.8, glass: 6.0, pack: 9.2, end: 12 };
+  const ING = [3.05, 3.85, 4.65]; // each ingredient enters here, parks 0.8s later
+  const CHIPS = [6.9, 7.35, 7.8];
+
+  // #word = lime/hot gradient highlight
+  function buildHeadline(el, hl) {
+    el.innerHTML = el.dataset.text.split(' ').map((w) =>
+      `<span class="w${w.startsWith('#') ? ' ' + hl : ''}">${w.replace('#', '')}</span>`).join(' ');
+    return [...el.querySelectorAll('.w')];
+  }
+  function animWords(words, t, start, gap, dur = 0.35, glow = 'rgba(0,0,0,.35)') {
+    words.forEach((w, i) => {
+      const p = prog(t, start + i * gap, start + i * gap + dur);
+      w.style.opacity = p;
+      w.style.transform = `translateY(${(1 - eOut(p)) * 60}px) scale(${lerp(0.5, 1, eBack(p))})`;
+      w.style.filter = `blur(${(1 - p) * 10}px) drop-shadow(0 8px 20px ${glow})`;
+    });
+  }
+  const H1 = buildHeadline($('h1'), 'hot-text');
+  const H2 = buildHeadline($('h2'), 'lime-text');
+
+  document.querySelectorAll('[data-check]').forEach((el) => {
+    el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  });
+
+  // ---------- particles ----------
+  const bubbles = [];
+  for (let i = 0; i < 26; i++) {
+    const d = document.createElement('div'), s = 14 + rnd() * 50;
+    d.className = 'bubble';
+    Object.assign(d.style, { width: s + 'px', height: s + 'px' });
+    bubbles.push({ el: d, x: rnd() * 1080, y: rnd() * 1920, sp: 90 + rnd() * 160, ph: rnd() * 6 });
+    $('bubbles').appendChild(d);
+  }
+  const ices = [];
+  for (let i = 0; i < 7; i++) {
+    const im = document.createElement('img');
+    im.src = 'assets/ice@3x.png'; im.className = 'ice';
+    im.style.width = `${220 + rnd() * 200}px`;
+    ices.push({ el: im, x: -60 + (i / 6) * 900 + rnd() * 80, land: 1500 + rnd() * 300, delay: rnd() * 0.25, rot: -40 + rnd() * 80 });
+    $('icefall').appendChild(im);
+  }
+  const drops = [];
+  for (let i = 0; i < 34; i++) {
+    const d = document.createElement('div'), s = 10 + rnd() * 34;
+    d.className = 'drop';
+    Object.assign(d.style, { width: s + 'px', height: s * 1.15 + 'px' });
+    const a = -Math.PI * (0.05 + rnd() * 0.9); // mostly upwards
+    drops.push({ el: d, a, v: 700 + rnd() * 900, ph: rnd() * 6 });
+    $('drops').appendChild(d);
+  }
+  const leaves = [];
+  [['mint', 260, 60, 520], ['lime', 230, 820, 700], ['mint', 200, 870, 1240], ['lime', 190, 40, 1180]].forEach(([n, w, x, y], i) => {
+    const im = document.createElement('img');
+    im.src = `assets/${n}@3x.png`; im.className = 'leaf'; im.style.width = w + 'px';
+    leaves.push({ el: im, x, y, ph: i * 1.7 });
+    $('leaves').appendChild(im);
+  });
+
+  // ingredient geometry: enter pos -> centre -> slot
+  const ING_DEF = [
+    { el: $('ing0'), w: 640, from: [-700, 700, -60], slot: 190 },
+    { el: $('ing1'), w: 700, from: [1400, 600, 70], slot: 540 },
+    { el: $('ing2'), w: 560, from: [540, -600, -30], slot: 890 },
+  ];
+
+  window.renderFrame = function (t) {
+    // ===== scene 1: heat (0 - 3.1) =====
+    const out1 = prog(t, T.cool - 0.05, T.cool + 0.3);
+    $('hot').style.display = out1 < 1 ? 'block' : 'none';
+    const kb = 1 + 0.08 * (t / T.cool);
+    $('beach').style.transform = `translate(-50%, -50%) scale(${kb}) translateX(${Math.sin(t * 0.8) * 20}px)`;
+    $('sun').style.transform = `scale(${1 + 0.08 * Math.sin(t * 5)})`;
+    animWords(H1, t, 0.2, 0.25, 0.4);
+    const deg = Math.round(lerp(30, 42, eInOut(prog(t, 0.5, 2.2))));
+    $('deg').textContent = deg;
+    const th = eBack(prog(t, 0.45, 0.85));
+    $('thermo').style.transform = `scale(${th}) translateX(${Math.sin(t * 40) * 3 * prog(t, 1.8, 2.3)}px)`;
+    $('thermo').style.opacity = clamp(th);
+
+    // ice cubes crash in and freeze the frame
+    ices.forEach((c) => {
+      const p = prog(t, T.cool - 0.45 + c.delay, T.cool - 0.05 + c.delay);
+      const bounce = Math.sin(Math.PI * prog(t, T.cool - 0.05 + c.delay, T.cool + 0.25 + c.delay)) * 60;
+      const out = prog(t, T.cool + 0.35, T.cool + 0.7);
+      c.el.style.transform = `translate(${c.x}px, ${lerp(-500, c.land, eIn(p)) - bounce + out * 700}px) rotate(${c.rot * p + t * 20}deg)`;
+      c.el.style.opacity = p > 0 ? 1 - out : 0;
+    });
+    $('frost').style.opacity = clamp(1 - Math.abs(t - T.cool - 0.05) / 0.28) * 0.95;
+
+    // ===== scenes 2-4 background =====
+    const in2 = prog(t, T.cool, T.cool + 0.15);
+    $('cool').style.display = in2 > 0 ? 'block' : 'none';
+    $('rays').style.transform = `rotate(${t * 10}deg)`;
+    bubbles.forEach((b) => {
+      const y = ((b.y - t * b.sp) % 2000 + 2000) % 2000 - 40;
+      b.el.style.transform = `translate(${b.x + Math.sin(t * 2 + b.ph) * 18}px, ${y}px)`;
+    });
+
+    // ===== scene 2: ingredients (2.8 - 6.2) =====
+    const h2out = prog(t, T.glass - 0.3, T.glass);
+    animWords(H2, t, T.cool + 0.15, 0.12);
+    $('h2').style.opacity = 1 - h2out;
+    ING_DEF.forEach((g, i) => {
+      const tin = ING[i], park = tin + 0.8;
+      const pIn = eOut(prog(t, tin, tin + 0.45));
+      const pPark = eInOut(prog(t, park, park + 0.4));
+      const pGo = eIn(prog(t, T.glass - 0.25 + i * 0.05, T.glass + 0.15 + i * 0.05)); // swept into the glass
+      const cx = lerp(lerp(g.from[0], 540, pIn), g.slot, pPark);
+      const cy = lerp(lerp(g.from[1], 800, pIn), 1500, pPark);
+      const sc = lerp(1, 0.42, pPark) * (1 - pGo * 0.8);
+      const x = lerp(cx, 520, pGo), y = lerp(cy, 1000, pGo);
+      const rot = lerp(g.from[2], 0, pIn) + Math.sin(t * 2 + i) * 4;
+      g.el.style.transform = `translate(${x - g.w / 2}px, ${y - g.w * 0.35}px) rotate(${rot}deg) scale(${sc * (0.4 + 0.6 * pIn)})`;
+      g.el.style.opacity = t < tin ? 0 : 1 - prog(t, T.glass, T.glass + 0.2);
+      const lp = prog(t, tin + 0.15, tin + 0.4) * (1 - prog(t, park - 0.05, park + 0.15));
+      $('lab' + i).style.opacity = lp;
+      $('lab' + i).style.transform = `translateY(${(1 - eOut(lp)) * 40}px) scale(${0.8 + 0.2 * eBack(lp)})`;
+      const cp = prog(t, park + 0.25, park + 0.5) * (1 - prog(t, T.glass - 0.3, T.glass - 0.1));
+      $('cap' + i).style.opacity = cp;
+    });
+
+    // ===== scene 3: glass hero (6.0 - 9.2) =====
+    const gIn = eOut(prog(t, T.glass, T.glass + 0.7));
+    const settle = Math.sin(Math.PI * prog(t, T.glass + 0.55, T.glass + 1.0)) * 3;
+    const toPack = eInOut(prog(t, T.pack, T.pack + 0.7));
+    $('glassWrap').style.display = t >= T.glass ? 'block' : 'none';
+    $('glassWrap').style.transform =
+      `translate(${(1 - gIn) * 1100 + toPack * 20}px, ${(1 - gIn) * 120 + toPack * 60 + Math.sin(t * 1.6) * 8}px) ` +
+      `rotate(${(1 - gIn) * -12 + settle + Math.sin(t * 1.2) * 1.2}deg) scale(${lerp(1, 0.78, toPack)})`;
+    const sweep = prog(t, T.glass + 0.9, T.glass + 1.6) + prog(t, T.pack + 1.2, T.pack + 1.9);
+    const sx = lerp(-40, 140, sweep % 1 || (sweep >= 1 ? 1 : 0));
+    $('glassSheen').style.background =
+      `linear-gradient(105deg, transparent ${sx - 14}%, rgba(255,255,255,.75) ${sx}%, transparent ${sx + 14}%)`;
+
+    const burst = prog(t, T.glass + 0.45, T.glass + 1.6);
+    drops.forEach((d) => {
+      const px = 520 + Math.cos(d.a) * d.v * burst;
+      const py = 900 + Math.sin(d.a) * d.v * burst + 900 * burst * burst;
+      d.el.style.transform = `translate(${px}px, ${py}px)`;
+      d.el.style.opacity = burst > 0 && burst < 1 ? 1 - burst * burst : 0;
+    });
+    leaves.forEach((l, i) => {
+      const p = eBack(prog(t, T.glass + 0.4 + i * 0.12, T.glass + 0.9 + i * 0.12));
+      const out = prog(t, T.pack, T.pack + 0.4);
+      l.el.style.opacity = clamp(p) * (1 - out);
+      l.el.style.transform = `translate(${l.x + Math.sin(t * 1.3 + l.ph) * 25}px, ${l.y + Math.cos(t * 1.1 + l.ph) * 30}px) ` +
+        `rotate(${Math.sin(t * 0.9 + l.ph) * 25 + i * 40}deg) scale(${p})`;
+    });
+    CHIPS.forEach((at, i) => {
+      const p = eBack(prog(t, at, at + 0.4)), out = prog(t, T.pack - 0.25, T.pack + 0.05);
+      const el = $('chip' + i);
+      el.style.opacity = clamp(p) * (1 - out);
+      el.style.transform = `translateX(${(1 - clamp(p)) * -500 - out * 300}px) scale(${lerp(0.7, 1, clamp(p))})`;
+    });
+
+    // ===== scene 4: pack shot (9.2 - 12) =====
+    const lg = eBack(prog(t, T.pack + 0.2, T.pack + 0.75));
+    $('logo').style.opacity = clamp(lg * 3);
+    $('logo').style.transform = `scale(${lg}) rotate(${(1 - clamp(lg)) * -8}deg) translateY(${Math.sin(t * 2) * 6}px)`;
+    const ls = prog(t, T.pack + 0.9, T.pack + 1.5);
+    $('logoSheen').style.background = `linear-gradient(110deg, transparent ${lerp(-30, 130, ls) - 12}%, rgba(255,255,255,.85) ${lerp(-30, 130, ls)}%, transparent ${lerp(-30, 130, ls) + 12}%)`;
+    const tg = eOut(prog(t, T.pack + 0.6, T.pack + 1.0));
+    $('tagline').style.opacity = tg;
+    $('tagline').style.letterSpacing = `${lerp(30, 6, tg)}px`;
+    const co = eOut(prog(t, T.pack + 0.7, T.pack + 1.3));
+    $('coaster').style.opacity = co;
+    $('coaster').style.transform = `translate(${(1 - co) * -500}px, ${(1 - co) * 200}px) rotate(${(1 - co) * 360 + t * 12}deg)`;
+    const ct = eBack(prog(t, T.pack + 1.0, T.pack + 1.45));
+    const pulse = 1 + 0.035 * Math.sin(Math.max(0, t - T.pack - 1.45) * 6);
+    $('cta').style.opacity = clamp(ct);
+    $('cta').style.transform = `translateY(${(1 - clamp(ct)) * 80}px) scale(${ct * pulse})`;
+    $('ctaShine').style.left = `${lerp(-300, 1100, (t * 0.8) % 1)}px`;
+    $('foot').style.opacity = prog(t, T.pack + 1.4, T.pack + 1.8) * 0.9;
+
+    $('flash').style.opacity = clamp(1 - Math.abs(t - T.pack - 0.1) / 0.2) * 0.7;
+  };
+
+  window.renderFrame(0);
+</script>
+</body>
+</html>

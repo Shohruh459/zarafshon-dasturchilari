@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Intros</title>
+<style>
+  @font-face { font-family: 'Montserrat'; font-weight: 300; src: url(../registon/fonts/montserrat-latin-300-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 500; src: url(../registon/fonts/montserrat-latin-500-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 600; src: url(../registon/fonts/montserrat-latin-600-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 800; src: url(../promo/fonts/montserrat-latin-800-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 900; src: url(../promo/fonts/montserrat-latin-900-normal.woff2) format('woff2'); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+  body { font-family: 'Montserrat', sans-serif; color: #fff; }
+  .intro { position: absolute; inset: 0; overflow: hidden; display: none; }
+  .abs { position: absolute; }
+  .center { position: absolute; left: 120px; right: 120px; text-align: center; }
+
+  /* shared brand block */
+  .brand { font-weight: 600; font-size: 34px; letter-spacing: .22em; padding-left: .22em; white-space: nowrap; }
+  .kicker { font-weight: 500; font-size: 28px; letter-spacing: .34em; padding-left: .34em; margin-top: 26px; }
+  .topic { display: inline-block; margin-top: 28px; padding: 16px 34px; border-radius: 50px; font-weight: 600; font-size: 34px; letter-spacing: .04em; }
+
+  /* ================= A: build (online shop) ================= */
+  #A { background: radial-gradient(900px 900px at 50% 45%, #1a0b45, #07031a 70%); }
+  #A .grid { position: absolute; inset: -200px; background-image: linear-gradient(rgba(94,231,255,.07) 2px, transparent 2px), linear-gradient(90deg, rgba(179,107,255,.07) 2px, transparent 2px); background-size: 90px 90px; }
+  #term { position: absolute; left: 110px; right: 110px; top: 610px; font-family: 'DejaVu Sans Mono', monospace; font-size: 44px; line-height: 1.6; color: #b9f6ff; }
+  #term .p { color: #ff4fd8; }
+  #term .ok { color: #35e0a1; }
+  #cursor { display: inline-block; width: 22px; height: 44px; background: #5ee7ff; vertical-align: -8px; margin-left: 4px; }
+  #bar { position: absolute; left: 110px; right: 110px; top: 1010px; height: 22px; border-radius: 11px; background: rgba(255,255,255,.08); overflow: hidden; }
+  #bar i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, #ff4fd8, #7b3dff, #5ee7ff); box-shadow: 0 0 30px #5ee7ff; }
+  #pct { position: absolute; right: 110px; top: 1050px; font-family: 'DejaVu Sans Mono', monospace; font-size: 34px; color: #5ee7ff; }
+  #aLogo { position: absolute; left: 50%; top: 560px; width: 300px; height: 300px; margin-left: -150px; border-radius: 76px; padding: 10px;
+           background: conic-gradient(from 0deg, #ff4fd8, #7b3dff, #5ee7ff, #ffe259, #ff4fd8); }
+  #aLogo div { width: 100%; height: 100%; border-radius: 66px; background: linear-gradient(145deg, #1a0d45, #0b0628); display: flex; align-items: center; justify-content: center;
+               font-weight: 900; font-size: 136px; letter-spacing: -6px; }
+  #aLogo span { background: linear-gradient(90deg, #ff4fd8, #b36bff 45%, #5ee7ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  #aRing { position: absolute; left: 50%; top: 710px; width: 300px; height: 300px; margin: -150px 0 0 -150px; border-radius: 50%; border: 8px solid #5ee7ff; }
+  #aText { top: 930px; }
+  #aText .kicker { color: #5ee7ff; }
+  #aText .topic { background: rgba(255,79,216,.15); border: 2px solid rgba(255,79,216,.8); box-shadow: 0 0 30px rgba(255,79,216,.35); }
+  .rgb { position: absolute; inset: 0; mix-blend-mode: screen; }
+
+  /* ================= B: splash (drink) ================= */
+  #B { background: linear-gradient(180deg, #f3fff6, #d9f7e3); }
+  #liquid { position: absolute; left: 0; right: 0; bottom: 0; }
+  #liquid svg { position: absolute; left: 0; top: -80px; width: 1080px; height: 82px; }
+  #liquid .body { position: absolute; left: 0; right: 0; top: 0; bottom: 0; background: linear-gradient(180deg, #7fe07a, #22a55a 45%, #0b6b3a); }
+  .bub { position: absolute; border-radius: 50%; border: 2px solid rgba(255,255,255,.65); background: radial-gradient(circle at 32% 30%, rgba(255,255,255,.9) 0 12%, rgba(255,255,255,.1) 32%, transparent 70%); }
+  #cube { position: absolute; left: 50%; width: 330px; margin-left: -165px; filter: drop-shadow(0 20px 30px rgba(0,60,30,.3)); }
+  .drop { position: absolute; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0 20%, rgba(190,255,210,.8) 40%, rgba(60,180,100,.5) 75%); }
+  #bLogo { position: absolute; left: 50%; top: 560px; width: 290px; height: 290px; margin-left: -145px; border-radius: 80px; background: #fff;
+           display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 132px; letter-spacing: -6px; color: #0b6b3a;
+           box-shadow: 0 30px 60px rgba(0,60,30,.35); }
+  #bLogo span { background: linear-gradient(180deg, #7ed321, #0b6b3a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  #bText { top: 920px; }
+  #bText .kicker { color: #d7ffcf; }
+  #bText .topic { background: #fff; color: #0b6b3a; box-shadow: 0 16px 40px rgba(0,60,30,.3); }
+
+  /* ================= C: cinema (hotel) ================= */
+  #C { background: #000; }
+  #cBg { position: absolute; inset: 0; background: radial-gradient(900px 1000px at 50% 45%, #1b2233, #0a0d16 65%, #040509); }
+  .bar { position: absolute; left: 0; right: 0; background: #000; }
+  #cLine { position: absolute; left: 50%; top: 959px; height: 2px; background: linear-gradient(90deg, transparent, #e2cda6 20%, #fff3d9 50%, #e2cda6 80%, transparent); }
+  .dust { position: absolute; border-radius: 50%; background: #f1dfb8; box-shadow: 0 0 10px #e2cda6; }
+  #cMono { position: absolute; left: 50%; top: 600px; width: 320px; height: 240px; margin-left: -160px; }
+  #cText { top: 900px; }
+  #cText .brand { font-weight: 300; font-size: 35px; letter-spacing: .24em; padding-left: .24em; }
+  #cText .kicker { color: #e2cda6; }
+  #cText .topic { border: 1.5px solid rgba(226,205,166,.8); color: #f3e7cf; font-weight: 500; }
+
+  #flash { position: absolute; inset: 0; background: #fff; opacity: 0; z-index: 20; }
+</style>
+</head>
+<body>
+
+<!-- A: build -->
+<div class="intro" id="A">
+  <div class="grid" id="aGrid"></div>
+  <div id="aScene">
+    <div id="term"></div>
+    <div id="bar"><i id="barFill"></i></div>
+    <div id="pct">0%</div>
+  </div>
+  <div id="aRing"></div>
+  <div id="aLogo"><div><span>ZD</span></div></div>
+  <div class="center" id="aText">
+    <div class="brand">ZARAFSHON DASTURCHILARI</div>
+    <div class="kicker">REKLAMA KONSEPTI · 01</div>
+    <div class="topic">Online do'kon va Telegram Mini App</div>
+  </div>
+</div>
+
+<!-- B: splash -->
+<div class="intro" id="B">
+  <div id="bubbles"></div>
+  <img id="cube" src="../moxito/assets/ice@3x.png" alt="">
+  <div id="drops"></div>
+  <div id="liquid">
+    <svg viewBox="0 0 1080 82" preserveAspectRatio="none"><path id="wave" fill="#7fe07a"/></svg>
+    <div class="body"></div>
+    <div id="bubbles2"></div>
+  </div>
+  <div id="bLogo"><span>ZD</span></div>
+  <div class="center" id="bText">
+    <div class="brand">ZARAFSHON DASTURCHILARI</div>
+    <div class="kicker">REKLAMA KONSEPTI · 02</div>
+    <div class="topic">Ichimlik reklamasi</div>
+  </div>
+</div>
+
+<!-- C: cinema -->
+<div class="intro" id="C">
+  <div id="cBg"></div>
+  <div id="dust"></div>
+  <svg id="cMono" viewBox="0 0 320 240" fill="none" stroke="#e2cda6" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <path id="mZ" d="M30 40 H140 L30 200 H140"/>
+    <path id="mD" d="M180 40 V200 H222 C266 200 296 166 296 120 C296 74 266 40 222 40 Z"/>
+    <path id="mU" d="M20 222 H300"/>
+  </svg>
+  <div class="center" id="cText">
+    <div class="brand">ZARAFSHON DASTURCHILARI</div>
+    <div class="kicker">REKLAMA KONSEPTI · 03</div>
+    <div class="topic">Mehmonxona reklamasi</div>
+  </div>
+  <div class="bar" id="barTop" style="top:0"></div>
+  <div class="bar" id="barBot" style="bottom:0"></div>
+  <div id="cLine"></div>
+</div>
+
+<div id="flash"></div>
+
+<script>
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const prog = (t, a, b) => clamp((t - a) / (b - a));
+  const lerp = (a, b, p) => a + (b - a) * p;
+  const eOut = (x) => 1 - Math.pow(1 - x, 3);
+  const eIn = (x) => x * x * x;
+  const eInOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  const eBack = (x) => { const c1 = 1.8, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+  const $ = (id) => document.getElementById(id);
+  let seed = 9;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+
+  // Each intro's length in seconds; render.js reads these. Keep in sync with audio.js.
+  window.INTROS = { A: 2.4, B: 2.4, C: 2.6 };
+
+  // Reveal the brand block's children one after another.
+  function brandIn(el, t, start, gap = 0.12) {
+    [...el.children].forEach((c, i) => {
+      const p = eOut(prog(t, start + i * gap, start + i * gap + 0.45));
+      c.style.opacity = p;
+      c.style.transform = `translateY(${(1 - p) * 34}px)`;
+      c.style.filter = `blur(${(1 - p) * 6}px)`;
+    });
+  }
+
+  // ================= A =================
+  const LINES = [
+    ['<span class="p">&gt;</span> zarafshon build --reklama', 0.05, 0.45],
+    ['<span class="ok">[ok]</span> ssenariy', 0.5, 0.58],
+    ['<span class="ok">[ok]</span> animatsiya', 0.62, 0.7],
+    ['<span class="ok">[ok]</span> musiqa', 0.74, 0.82],
+  ];
+  function renderA(t) {
+    $('aGrid').style.transform = `translateY(${(t * 120) % 90}px)`;
+    // typing: the first line is typed character by character, the rest pop in
+    let html = '';
+    LINES.forEach(([txt, t0, t1], i) => {
+      if (t < t0) return;
+      if (i === 0) {
+        const cmd = ' zarafshon build --reklama';
+        html += `<span class="p">&gt;</span>${cmd.slice(0, Math.floor(cmd.length * prog(t, t0, t1)))}`;
+      } else html += '<br>' + txt;
+    });
+    const blink = Math.floor(t * 6) % 2 === 0;
+    $('term').innerHTML = html + (blink || t < 0.45 ? '<span id="cursor"></span>' : '');
+    const bar = eInOut(prog(t, 0.5, 1.05));
+    $('barFill').style.width = `${bar * 100}%`;
+    $('pct').textContent = `${Math.round(bar * 100)}%`;
+    // glitch out of the terminal
+    const g = prog(t, 1.05, 1.3);
+    const jitter = g > 0 && g < 1 ? (rnd() - 0.5) * 60 : 0;
+    $('aScene').style.opacity = 1 - g;
+    $('aScene').style.transform = `translateX(${jitter}px) skewX(${g > 0 && g < 1 ? (rnd() - 0.5) * 20 : 0}deg)`;
+    $('aScene').style.filter = g > 0 && g < 1 ? `drop-shadow(${12 * (1 - g)}px 0 0 #ff4fd8) drop-shadow(${-12 * (1 - g)}px 0 0 #5ee7ff)` : 'none';
+    // logo slam
+    const s = prog(t, 1.2, 1.45);
+    const lg = $('aLogo');
+    lg.style.opacity = s > 0 ? 1 : 0;
+    const shake = s >= 1 ? Math.sin(t * 90) * 10 * (1 - prog(t, 1.45, 1.7)) : 0;
+    lg.style.transform = `translate(${shake}px, ${-shake * 0.5}px) scale(${lerp(2.6, 1, eIn(s))}) rotate(${(1 - s) * -20}deg)`;
+    lg.style.filter = `blur(${(1 - s) * 16}px) drop-shadow(0 0 ${40 + 20 * Math.sin(t * 8)}px rgba(179,107,255,.8))`;
+    const r = prog(t, 1.45, 2.0);
+    $('aRing').style.opacity = r > 0 && r < 1 ? (1 - r) : 0;
+    $('aRing').style.transform = `scale(${1 + r * 2.4})`;
+    brandIn($('aText'), t, 1.55);
+    $('flash').style.opacity = clamp(1 - Math.abs(t - 1.45) / 0.12) * 0.6;
+  }
+
+  // ================= B =================
+  const bubbles = [], bubbles2 = [], drops = [];
+  function setupB() {
+    for (let i = 0; i < 18; i++) {
+      const d = document.createElement('div'), s = 16 + rnd() * 44;
+      d.className = 'bub'; Object.assign(d.style, { width: s + 'px', height: s + 'px', borderColor: 'rgba(40,160,90,.35)' });
+      bubbles.push({ el: d, x: rnd() * 1080, y: 400 + rnd() * 1500, sp: 120 + rnd() * 200, ph: rnd() * 6 });
+      $('bubbles').appendChild(d);
+    }
+    for (let i = 0; i < 30; i++) {
+      const d = document.createElement('div'), s = 10 + rnd() * 40;
+      d.className = 'bub'; Object.assign(d.style, { width: s + 'px', height: s + 'px' });
+      bubbles2.push({ el: d, x: rnd() * 1080, y: rnd() * 1900, sp: 200 + rnd() * 300, ph: rnd() * 6 });
+      $('bubbles2').appendChild(d);
+    }
+    for (let i = 0; i < 26; i++) {
+      const d = document.createElement('div'), s = 12 + rnd() * 34;
+      d.className = 'drop'; Object.assign(d.style, { width: s + 'px', height: s * 1.15 + 'px' });
+      drops.push({ el: d, a: -Math.PI * (0.1 + rnd() * 0.8), v: 700 + rnd() * 900 });
+      $('drops').appendChild(d);
+    }
+  }
+  function renderB(t) {
+    bubbles.forEach((b) => { b.el.style.transform = `translate(${b.x + Math.sin(t * 3 + b.ph) * 15}px, ${b.y - t * b.sp}px)`; });
+    // ice cube falls and lands in the liquid
+    const fall = eIn(prog(t, 0.0, 0.45));
+    const bob = Math.sin(Math.PI * prog(t, 0.45, 0.9)) * 70;
+    const level = lerp(0, 1150, eOut(prog(t, 0.35, 1.2))) + lerp(0, 800, eInOut(prog(t, 1.95, 2.4)));
+    const surface = 1920 - level;
+    $('cube').style.transform = `translateY(${lerp(-400, surface - 180, fall) + bob - (t > 0.9 ? (t - 0.9) * 120 : 0)}px) rotate(${t * 70}deg)`;
+    $('cube').style.opacity = 1 - prog(t, 1.1, 1.35);
+    const splash = prog(t, 0.45, 1.3);
+    drops.forEach((d) => {
+      const x = 540 + Math.cos(d.a) * d.v * splash, y = surface - 60 + Math.sin(d.a) * d.v * splash + 1200 * splash * splash;
+      d.el.style.transform = `translate(${x}px, ${y}px)`;
+      d.el.style.opacity = splash > 0 && splash < 1 ? 1 - splash : 0;
+    });
+    $('liquid').style.height = `${level}px`;
+    const amp = 18 + 22 * Math.exp(-3 * Math.max(0, t - 0.45));
+    let dPath = 'M0 82 ';
+    for (let x = 0; x <= 1080; x += 30) dPath += `L${x} ${41 + amp * Math.sin(x / 120 + t * 7) * 0.8} `;
+    $('wave').setAttribute('d', dPath + 'L1080 82 Z');
+    bubbles2.forEach((b) => {
+      const y = ((b.y - t * b.sp) % 1900 + 1900) % 1900;
+      b.el.style.transform = `translate(${b.x + Math.sin(t * 4 + b.ph) * 12}px, ${y}px)`;
+    });
+    // logo floats up out of the liquid
+    const lp = eBack(prog(t, 1.0, 1.5));
+    $('bLogo').style.opacity = clamp(lp * 2);
+    $('bLogo').style.transform = `translateY(${(1 - lp) * 500 + Math.sin(t * 3) * 8}px) rotate(${(1 - clamp(lp)) * 15}deg)`;
+    brandIn($('bText'), t, 1.25);
+  }
+
+  // ================= C =================
+  const dust = [];
+  function setupC() {
+    for (let i = 0; i < 70; i++) {
+      const d = document.createElement('div'), s = 2 + rnd() * 5;
+      d.className = 'dust'; Object.assign(d.style, { width: s + 'px', height: s + 'px' });
+      const a = rnd() * Math.PI * 2, r = 250 + rnd() * 700;
+      dust.push({ el: d, x: 540 + Math.cos(a) * r, y: 800 + Math.sin(a) * r * 1.2, ph: rnd() * 6, sp: 0.3 + rnd() * 0.7 });
+      $('dust').appendChild(d);
+    }
+    ['mZ', 'mD', 'mU'].forEach((id) => { const p = $(id), L = p.getTotalLength(); p.dataset.len = L; p.style.strokeDasharray = L; });
+  }
+  function renderC(t) {
+    const draw = eInOut(prog(t, 0.05, 0.55));
+    const open = eInOut(prog(t, 0.55, 1.15));
+    $('cLine').style.width = `${draw * 1080}px`;
+    $('cLine').style.marginLeft = `${-draw * 540}px`;
+    $('cLine').style.opacity = 1 - open;
+    $('barTop').style.height = `${lerp(960, 250, open)}px`;
+    $('barBot').style.height = `${lerp(960, 250, open)}px`;
+    // gold dust drifts, then is pulled toward the monogram
+    const pull = eInOut(prog(t, 0.9, 1.7));
+    dust.forEach((d) => {
+      const x = lerp(d.x + Math.sin(t * d.sp + d.ph) * 30, 540 + (d.x - 540) * 0.25, pull);
+      const y = lerp(d.y + Math.cos(t * d.sp + d.ph) * 30 - t * 20, 720 + (d.y - 800) * 0.2, pull);
+      d.el.style.transform = `translate(${x}px, ${y}px)`;
+      d.el.style.opacity = (0.3 + 0.7 * Math.abs(Math.sin(t * 3 + d.ph))) * (1 - prog(t, 1.6, 1.9));
+    });
+    [['mZ', 1.0], ['mD', 1.2], ['mU', 1.45]].forEach(([id, at]) => {
+      const p = $(id), k = eInOut(prog(t, at, at + 0.55));
+      p.style.strokeDashoffset = p.dataset.len * (1 - k);
+    });
+    const glow = prog(t, 1.6, 2.0);
+    $('cMono').style.filter = `drop-shadow(0 0 ${6 + glow * 18}px rgba(226,205,166,${0.4 + glow * 0.5}))`;
+    brandIn($('cText'), t, 1.55, 0.14);
+    // fade to black: the hotel film opens on black space
+    $('C').style.opacity = 1 - prog(t, 2.25, 2.6);
+  }
+
+  let current = null;
+  window.setup = function (kind) {
+    current = kind;
+    document.querySelectorAll('.intro').forEach((el) => { el.style.display = el.id === kind ? 'block' : 'none'; });
+    if (kind === 'B') setupB();
+    if (kind === 'C') setupC();
+  };
+  window.renderFrame = function (t) {
+    seed = 1000 + Math.round(t * 30); // deterministic glitch jitter per frame
+    ({ A: renderA, B: renderB, C: renderC })[current](t);
+  };
+</script>
+</body>
+</html>
