@@ -17,6 +17,8 @@ const DURATION = 40.6;
 // Timeline, kept in sync with scene.html.
 const T = { ayah68: 5, ayah69: 10.5, fem: 15.1, colors: 23.9, shifo: 30.1, close: 35.6 };
 // Voice-over line -> start time; each line begins just after its shot's cut.
+// Directory of the voice-over MP3s (VOICE_DIR=voice-madina for the female voice).
+const VOICE_DIR = path.join(__dirname, process.env.VOICE_DIR || 'voice');
 const VOICE = { hook: 0.3, a68: T.ayah68 + 0.3, a69: T.ayah69 + 0.3, fem: T.fem + 0.3, colors: T.colors + 0.3, shifo: T.shifo + 0.3, close: T.close + 0.3 };
 
 const synth = createSynth(DURATION);
@@ -115,9 +117,9 @@ air(T.close + 0.4, 1.8, 0.05);
 function generateAudio(file) {
   const sfx = file.replace(/\.wav$/, '-sfx.wav');
   synth.writeWav(sfx, synth.mixdown([], 1.6));
-  const keys = Object.keys(VOICE).filter((k) => fs.existsSync(path.join(__dirname, 'voice', `${k}.mp3`)));
+  const keys = Object.keys(VOICE).filter((k) => fs.existsSync(path.join(VOICE_DIR, `${k}.mp3`)));
   if (!keys.length) { fs.renameSync(sfx, file); return file; }
-  const inputs = keys.flatMap((k) => ['-i', path.join(__dirname, 'voice', `${k}.mp3`)]);
+  const inputs = keys.flatMap((k) => ['-i', path.join(VOICE_DIR, `${k}.mp3`)]);
   const lines = keys.map((k, i) => `[${i + 1}:a]aresample=44100,aformat=channel_layouts=stereo,adelay=${Math.round(VOICE[k] * 1000)}:all=1[l${i}]`);
   execFileSync(process.env.FFMPEG_PATH || 'ffmpeg', [
     '-y', '-hide_banner', '-loglevel', 'error', '-i', sfx, ...inputs,

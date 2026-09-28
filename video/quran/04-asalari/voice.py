@@ -7,13 +7,14 @@ In the text, oʻ/gʻ use U+02BB (ʻ) and the glottal stop U+02BC (ʼ): with a
 plain apostrophe the voice reads "yig'adigan" as "yigadigan".
 Meanings of the ayat follow Tafsiri Hilol — CHECK AGAINST THE BOOK.
 
-Usage:  python3 video/quran/04-asalari/voice.py [--voice uz-UZ-MadinaNeural]
+Usage:  python3 video/quran/04-asalari/voice.py [--voice uz-UZ-MadinaNeural --out voice-madina]
 """
 import asyncio
 import os
 import sys
 
 VOICE = sys.argv[sys.argv.index('--voice') + 1] if '--voice' in sys.argv else 'uz-UZ-SardorNeural'
+OUT = sys.argv[sys.argv.index('--out') + 1] if '--out' in sys.argv else 'voice'
 RATE = '-4%'
 
 # key -> text; start times live in render.js (LINES), in sync with scene.html.
@@ -34,7 +35,7 @@ async def main():
     if ca:  # behind a TLS-inspecting proxy edge-tts must trust its CA
         certifi.where = lambda: ca
     import edge_tts
-    out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'voice')
+    out = os.path.join(os.path.dirname(os.path.abspath(__file__)), OUT)
     os.makedirs(out, exist_ok=True)
     for key, text in LINES.items():
         await edge_tts.Communicate(text, VOICE, rate=RATE).save(os.path.join(out, f'{key}.mp3'))
