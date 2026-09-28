@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Renders the Milano Foods sushi reel, 1080x1920, 15s.
+ * Renders the Milano Foods sushi reel, 1080x1920, 16.4s.
  * Run `python3 video/milano/prep.py` and `python3 video/milano-sushi/pieces.py` first.
  *
  * Usage:

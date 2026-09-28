@@ -20,6 +20,9 @@
   /* Reels safe area: x 120-960, y 220-1500 */
   .big { position: absolute; left: 60px; right: 60px; text-align: center; font-weight: 800; line-height: 1; text-shadow: 0 8px 30px rgba(0,0,0,.6); }
 
+  /* 0: the Earth from space */
+  #s0 { background: #000; }
+  #globe, #overlay2d { position: absolute; inset: 0; width: 1080px; height: 1920px; }
   /* 1: flying over Zarafshon */
   #s1 { background: #efe8dc; perspective: 1400px; }
   #mapWrap { position: absolute; left: 50%; top: 52%; width: 1720px; height: 1120px; margin: -560px 0 0 -860px; transform-origin: 50% 50%; }
@@ -61,6 +64,11 @@
 </style>
 </head>
 <body>
+<section class="scene" id="s0">
+  <canvas id="globe" width="1080" height="1920"></canvas>
+  <canvas id="overlay2d" width="1080" height="1920"></canvas>
+</section>
+
 <section class="scene" id="s1">
   <div id="mapWrap">
     <svg viewBox="0 0 860 560">
@@ -115,16 +123,85 @@
 </section>
 <div id="flash"></div>
 
+<script type="importmap">{ "imports": { "three": "../registon2/lib/three.module.js" } }</script>
 <script type="module">
+  import * as THREE from 'three';
   import { clamp, prog, lerp, eOut, eInOut } from '../quran/common/anim.js';
   const $ = (id) => document.getElementById(id);
   const eIn = (x) => x * x * x;
   const eBack = (x) => { const c = 1.9; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
 
   // Timeline (seconds), on the 120 BPM grid of audio.js. Keep in sync with audio.js.
-  const T = { rolls: 2.0, cut: 4.0, set: 6.5, review: 9.0, cta: 11.5, end: 15 };
-  const SCENES = [['s1', 0, T.rolls], ['s2', T.rolls, T.cut], ['s3', T.cut, T.set], ['s4', T.set, T.review], ['s5', T.review, T.cta], ['s6', T.cta, T.end + 1]];
-  const CUTS = [T.rolls, T.cut, T.set, T.review, T.cta];
+  const G = 1.4;   // the globe dive; everything after it is shifted by G
+  const T = { map: G, rolls: G + 2.0, cut: G + 4.0, set: G + 6.5, review: G + 9.0, cta: G + 11.5, end: G + 15 };
+  const SCENES = [['s0', 0, T.map], ['s1', T.map, T.rolls], ['s2', T.rolls, T.cut], ['s3', T.cut, T.set], ['s4', T.set, T.review], ['s5', T.review, T.cta], ['s6', T.cta, T.end + 1]];
+  const CUTS = [T.map, T.rolls, T.cut, T.set, T.review, T.cta];
+
+  // ================= 0: the Earth (textures and border from ../registon2) =================
+  const ZAR = { lat: 41.57, lon: 64.2 };   // Zarafshon, Navoiy region
+  const renderer = new THREE.WebGLRenderer({ canvas: $('globe'), antialias: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1); renderer.setSize(1080, 1920, false); renderer.outputColorSpace = THREE.SRGBColorSpace;
+  const scene3 = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(32, 1080 / 1920, 0.001, 200);
+  function ll(lat, lon, r = 1) {   // lat/lon -> point on SphereGeometry's default UV layout
+    const u = ((lon + 180) / 360) * Math.PI * 2, la = (lat * Math.PI) / 180;
+    return new THREE.Vector3(-r * Math.cos(u) * Math.cos(la), r * Math.sin(la), r * Math.sin(u) * Math.cos(la));
+  }
+  const loader = new THREE.TextureLoader();
+  const load = (url) => new Promise((res) => loader.load(url, res));
+  const A = '../registon2/assets/';
+  const [dayTx, waterTx, bumpTx, cloudTx] = await Promise.all(['earth-blue-marble.jpg', 'earth-water.png', 'earth-topology.png', 'clouds.png'].map((f) => load(A + f)));
+  dayTx.colorSpace = THREE.SRGBColorSpace; dayTx.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  scene3.add(new THREE.Mesh(new THREE.SphereGeometry(1, 160, 160),
+    new THREE.MeshPhongMaterial({ map: dayTx, specularMap: waterTx, specular: new THREE.Color(0x335577), shininess: 18, bumpMap: bumpTx, bumpScale: 0.6 })));
+  const clouds = new THREE.Mesh(new THREE.SphereGeometry(1.006, 120, 120), new THREE.MeshLambertMaterial({ map: cloudTx, transparent: true, opacity: 0.55, depthWrite: false }));
+  scene3.add(clouds);
+  scene3.add(new THREE.Mesh(new THREE.SphereGeometry(1.12, 96, 96), new THREE.ShaderMaterial({
+    side: THREE.BackSide, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
+    vertexShader: 'varying vec3 vN; void main(){ vN = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }',
+    fragmentShader: 'varying vec3 vN; void main(){ float f = pow(clamp(0.62 - dot(vN, vec3(0., 0., 1.)), 0., 1.), 5.0); gl_FragColor = vec4(0.35, 0.62, 1.0, 1.0) * f * 2.2; }',
+  })));
+  {
+    let q = 3; const r = () => ((q = (q * 16807) % 2147483647) / 2147483647);
+    const n = 2600, pos = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) { const th = r() * Math.PI * 2, ph = Math.acos(2 * r() - 1); pos.set([60 * Math.sin(ph) * Math.cos(th), 60 * Math.cos(ph), 60 * Math.sin(ph) * Math.sin(th)], i * 3); }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    scene3.add(new THREE.Points(g, new THREE.PointsMaterial({ size: 0.12, color: 0xdfe8ff })));
+  }
+  const sunL = new THREE.DirectionalLight(0xffffff, 3.0); sunL.position.copy(ll(ZAR.lat + 18, ZAR.lon - 55, 10));
+  scene3.add(sunL, new THREE.AmbientLight(0x223344, 0.5));
+  const borderPts = (await (await fetch(A + 'uzbekistan.json')).json()).rings[0].map(([lon, lat]) => ll(lat, lon, 1.002));
+  const zar = ll(ZAR.lat, ZAR.lon, 1.0);
+  const ctx2d = $('overlay2d').getContext('2d');
+  const toScreen = (v) => { const p = v.clone().project(camera); return [(p.x * 0.5 + 0.5) * 1080, (-p.y * 0.5 + 0.5) * 1920]; };
+
+  function renderGlobe(t) {
+    // a fast dive: the whole Earth, turning to Central Asia, straight down onto Zarafshon
+    const k = eInOut(prog(t, 0, G * 0.75)), dive = eIn(prog(t, G * 0.55, G));
+    const lat = lerp(20, ZAR.lat - 4, k), lon = lerp(20, ZAR.lon, k);
+    camera.position.copy(ll(lat, lon, lerp(lerp(6.5, 1.6, k), 1.02, dive)));
+    camera.up.set(0, 1, 0);
+    camera.lookAt(new THREE.Vector3().lerpVectors(new THREE.Vector3(), zar, eInOut(prog(t, 0.4, G))));
+    clouds.rotation.y = t * 0.05;
+    renderer.render(scene3, camera);
+    ctx2d.clearRect(0, 0, 1080, 1920);
+    const draw = eOut(prog(t, 0.35, 0.85)), fade = 1 - prog(t, G - 0.25, G);
+    if (draw > 0) {   // Uzbekistan's border drawn on, then the Zarafshon dot pulsing
+      const n = Math.max(2, Math.floor(borderPts.length * draw));
+      ctx2d.save(); ctx2d.globalAlpha = fade; ctx2d.strokeStyle = '#ffc247'; ctx2d.lineWidth = 5; ctx2d.lineJoin = 'round';
+      ctx2d.shadowColor = 'rgba(255,194,71,.9)'; ctx2d.shadowBlur = 16; ctx2d.beginPath();
+      for (let i = 0; i < n; i++) { const [x, y] = toScreen(borderPts[i]); i ? ctx2d.lineTo(x, y) : ctx2d.moveTo(x, y); }
+      ctx2d.stroke(); ctx2d.restore();
+      const [zx, zy] = toScreen(zar), pulse = (t * 2.5) % 1;
+      ctx2d.save(); ctx2d.globalAlpha = fade * draw;
+      ctx2d.fillStyle = '#e2231a'; ctx2d.beginPath(); ctx2d.arc(zx, zy, 14, 0, Math.PI * 2); ctx2d.fill();
+      ctx2d.strokeStyle = '#e2231a'; ctx2d.lineWidth = 5; ctx2d.globalAlpha = fade * draw * (1 - pulse);
+      ctx2d.beginPath(); ctx2d.arc(zx, zy, 14 + pulse * 60, 0, Math.PI * 2); ctx2d.stroke();
+      ctx2d.globalAlpha = fade * draw; ctx2d.fillStyle = '#fff'; ctx2d.font = '800 46px Montserrat'; ctx2d.shadowColor = 'rgba(0,0,0,.8)'; ctx2d.shadowBlur = 12;
+      const right = zx < 640;   // keep the label on screen
+      ctx2d.textAlign = right ? 'left' : 'right'; ctx2d.fillText('ZARAFSHON', right ? zx + 30 : zx - 30, zy - 20); ctx2d.restore();
+    }
+  }
 
   // "ZARAFSHON", letter by letter
   $('zar').innerHTML = [...'ZARAFSHON'].map((c) => `<span>${c}</span>`).join('');
@@ -157,32 +234,34 @@
   const place = (el, x, y, rot = 0, sc = 1, extra = '') => { el.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg) scale(${sc}) ${extra}`; };
 
   window.renderFrame = function (t) {
+    if (t < T.map) renderGlobe(t);
     for (const [id, a, b] of SCENES) $(id).style.opacity = t >= a && t < b ? 1 : 0;
     const dc = Math.min(...CUTS.map((c) => Math.abs(t - c)));
     $('flash').style.opacity = clamp(1 - dc / 0.12) * 0.7;
 
     // ---------- 1: fly over the map, drop the pin, whip-zoom into it ----------
     {
-      const k = eOut(prog(t, 0, 1.3)), z = eIn(prog(t, 1.55, T.rolls));
+      const u = t - T.map;   // the map scene's own clock
+      const k = eOut(prog(u, 0, 1.3)), z = eIn(prog(u, 1.55, 2.0));
       const tilt = lerp(58, 0, k), sc = lerp(0.55, 1.15, k) * lerp(1, 7, z);
       // pin tip in map coords (450, 250) of 860x560 -> px in the 1720x1120 wrap
       const px = 450 * 2, py = 250 * 2;
       $('mapWrap').style.transformOrigin = `${px}px ${py}px`;
       $('mapWrap').style.transform = `translateY(${lerp(250, 0, k)}px) rotateX(${tilt}deg) rotateZ(${lerp(-25, 0, k)}deg) scale(${sc})`;
-      const pp = prog(t, 0.85, 1.2);
-      $('pin').style.transform = `translate(${px - 75}px, ${py - 200 + (1 - eOut(pp)) * -400}px) scale(${pp >= 1 ? 1 + 0.2 * Math.exp(-(t - 1.2) * 10) : 1}, ${pp >= 1 ? 1 - 0.2 * Math.exp(-(t - 1.2) * 10) : 1})`;
+      const pp = prog(u, 0.85, 1.2);
+      $('pin').style.transform = `translate(${px - 75}px, ${py - 200 + (1 - eOut(pp)) * -400}px) scale(${pp >= 1 ? 1 + 0.2 * Math.exp(-(u - 1.2) * 10) : 1}, ${pp >= 1 ? 1 - 0.2 * Math.exp(-(u - 1.2) * 10) : 1})`;
       $('pin').style.opacity = clamp(pp * 5);
       [['ring1', 1.2], ['ring2', 1.4]].forEach(([id, t0]) => {
-        const r = prog(t, t0, t0 + 0.6);
+        const r = prog(u, t0, t0 + 0.6);
         $(id).style.left = `${px}px`; $(id).style.top = `${py}px`;
         $(id).style.opacity = r > 0 ? 1 - r : 0; $(id).style.transform = `scale(${1 + r * 5})`;
       });
       letters.forEach((el, i) => {
-        const p = prog(t, 0.1 + i * 0.05, 0.4 + i * 0.05);
+        const p = prog(u, 0.1 + i * 0.05, 0.4 + i * 0.05);
         el.style.transform = `translateY(${(1 - eOut(p)) * -300}px) scale(${p > 0 ? eBack(p) : 0})`;
         el.style.opacity = clamp(p * 4) * (1 - z);
       });
-      const sp = prog(t, 0.7, 1.0);
+      const sp = prog(u, 0.7, 1.0);
       $('zarSub').style.opacity = clamp(sp * 3) * (1 - z);
       $('zarSub').style.transform = `scale(${sp > 0 ? eBack(sp) : 0})`;
       $('speed').style.opacity = z * 0.9;

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Original soundtrack for the Milano Foods sushi reel, scored to scene.html: a
- * rising whoosh over the map and a thud when the pin lands, a whip into a
+ * deep space rumble and a rushing dive down to Zarafshon, a rising whoosh over the map and a thud when the pin lands, a whip into a
  * punchy 120 BPM beat, coin clinks, a blade swish and slice, bouncing pops for
  * the raining pieces, sparkles for the stars and a resolved ending. The
  * restaurant's own voice-over lines (voice/*.wav) sit on top when present.
@@ -13,10 +13,11 @@ const path = require('path');
 const { createSynth } = require('../lib/synth');
 const { mixVoice } = require('../lib/voiceover');
 
-const DURATION = 15;
+const DURATION = 16.4;
 const BEAT = 0.5;
 // Timeline, kept in sync with scene.html.
-const T = { rolls: 2.0, cut: 4.0, set: 6.5, review: 9.0, cta: 11.5 };
+const G = 1.4;   // the globe dive at the start; the rest is shifted by G
+const T = { map: G, rolls: G + 2.0, cut: G + 4.0, set: G + 6.5, review: G + 9.0, cta: G + 11.5 };
 // voice-over line -> start time (files recorded by the restaurant, voice/<key>.wav)
 const VOICE = { zarafshon: 0.15, sushi: T.rolls + 0.15, milano: T.set + 0.35, order: T.cta + 0.35 };
 
@@ -30,12 +31,18 @@ function clink(t0, k = 0) {
   note(fx, 102.3 + k, t0, 0.01, { type: 'sine', gain: 0.06, a: 0.001, d: 0.12, s: 0, r: 0.15, pan: k % 2 ? 0.4 : -0.4, sendAmt: 0.4 });
 }
 
+// ---------- 0: the globe dive ----------
+noiseHit(music, 0, G, { gain: 2.2, a: 0.1, decay: 1e6, lp: 70, sendAmt: 0.2 });                              // space rumble
+noiseHit(fx, 0.2, G - 0.2, { gain: 0.45, rise: true, hp: 150, lp: 500, lpEnd: 9000, sendAmt: 0.3 });      // rushing down through the air
+for (let i = 0; i < 6; i++) note(fx, 84 + i * 2, 0.4 + i * 0.08, 0.02, { type: 'sine', gain: 0.05, a: 0.001, d: 0.05, s: 0, r: 0.05, sendAmt: 0.4 }); // border drawn on
+impact(T.map);
+
 // ---------- 1: map fly-over ----------
-noiseHit(fx, 0, 1.3, { gain: 0.35, a: 0.02, decay: 0.6, hp: 200, lp: 3000, lpEnd: 600, sendAmt: 0.3 });   // air rushing past
-note(fx, 38, 1.2, 0.3, { type: 'sine', gain: 0.6, a: 0.002, d: 0.25, s: 0, r: 0.2, glideFrom: 50 });        // pin lands
-noiseHit(fx, 1.2, 0.2, { gain: 0.2, decay: 0.05, hp: 800, lp: 5000 });
-for (let i = 0; i < 9; i++) note(fx, 72 + i, 0.1 + i * 0.05, 0.02, { type: 'sine', gain: 0.07, a: 0.001, d: 0.05, s: 0, r: 0.04, pan: (i / 8) - 0.5 }); // letters drop
-riser(1.45, T.rolls);
+noiseHit(fx, T.map, 1.3, { gain: 0.35, a: 0.02, decay: 0.6, hp: 200, lp: 3000, lpEnd: 600, sendAmt: 0.3 });   // air rushing past
+note(fx, 38, T.map + 1.2, 0.3, { type: 'sine', gain: 0.6, a: 0.002, d: 0.25, s: 0, r: 0.2, glideFrom: 50 });        // pin lands
+noiseHit(fx, T.map + 1.2, 0.2, { gain: 0.2, decay: 0.05, hp: 800, lp: 5000 });
+for (let i = 0; i < 9; i++) note(fx, 72 + i, T.map + 0.1 + i * 0.05, 0.02, { type: 'sine', gain: 0.07, a: 0.001, d: 0.05, s: 0, r: 0.04, pan: (i / 8) - 0.5 }); // letters drop
+riser(T.map + 1.45, T.rolls);
 whoosh(T.rolls - 0.35);
 
 // ---------- beat from the first cut to the call to action ----------
