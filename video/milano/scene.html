@@ -29,7 +29,7 @@
   /* 1: hook */
   #s1 img { position: absolute; left: 50%; top: 50%; height: 1920px; transform-origin: 50% 60%; }
   #s1 .shade { position: absolute; inset: 0; background: linear-gradient(rgba(0,0,0,.65), rgba(0,0,0,0) 35%, rgba(0,0,0,0) 70%, rgba(0,0,0,.55)); }
-  #hook { top: 250px; font-size: 96px; }
+  #hook { top: 250px; font-size: 88px; }
 
   /* 2: logo */
   #s2 { background: var(--cream); }
@@ -92,7 +92,7 @@
 <section class="scene" id="s1">
   <img id="burger" src="assets/burger.jpg" alt="">
   <div class="shade"></div>
-  <div class="headline" id="hook">Qorningiz<br>ochdimi?</div>
+  <div class="headline" id="hook">Zarafshonda<br>mazali taom<br>izlayapsizmi?</div>
 </section>
 
 <section class="scene" id="s2">
@@ -161,7 +161,7 @@
   const eBack = (x) => { const c = 1.7; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
 
   // Timeline (seconds), on the 120 BPM grid of audio.js. Keep in sync with audio.js.
-  const T = { logo: 2.5, pizza: 4.5, sushi: 7.5, combo: 10.5, reviews: 14.5, cta: 18.5, end: 24 };
+  const T = { logo: 3, pizza: 5, sushi: 8, combo: 11, reviews: 15, cta: 19, end: 24.5 };
   const SCENES = [['s1', 0, T.logo], ['s2', T.logo, T.pizza], ['s3', T.pizza, T.sushi], ['s4', T.sushi, T.combo],
                   ['s5', T.combo, T.reviews], ['s6', T.reviews, T.cta], ['s7', T.cta, T.end + 1]];
 

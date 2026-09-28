@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Renders the Milano Foods ad, 1080x1920, 24s.
+ * Renders the Milano Foods ad, 1080x1920, 24.5s.
  * Run `python3 video/milano/prep.py` first to build assets/ from src/.
  *
  * Usage:
