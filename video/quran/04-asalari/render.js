@@ -24,7 +24,7 @@ const si = args.indexOf('--stills');
     await renderStills({ page, times: args[si + 1].split(',').map(Number), outDir: __dirname, background: plate });
     return;
   }
-  const file = args.find((a) => !a.startsWith('--') && a !== args[si + 1]);
+  const file = args.find((a, i) => !a.startsWith('--') && (si === -1 || i !== si + 1));
   await renderScene({
     page,
     duration: DURATION,
