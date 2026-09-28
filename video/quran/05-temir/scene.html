@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Temir</title>
+<style>
+  @font-face { font-family: 'Amiri Quran'; src: url(../fonts/amiri-quran-arabic-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 300; src: url(../../registon/fonts/montserrat-latin-300-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 400; src: url(../../registon/fonts/montserrat-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 500; src: url(../../registon/fonts/montserrat-latin-500-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 600; src: url(../../registon/fonts/montserrat-latin-600-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Montserrat'; font-weight: 800; src: url(../../promo/fonts/montserrat-latin-800-normal.woff2) format('woff2'); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+  body { font-family: 'Montserrat', sans-serif; color: #fff; --fe: #ffb067; --steel: #c9d3e3; --pale: #f1f3f8; }
+  /* shaded at half resolution and scaled up: keeps software WebGL fast */
+  #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  #vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 85% 70% at 50% 50%, transparent 55%, rgba(0,0,0,.5) 100%); }
+
+  /* Reels safe area: x 120-960, y 220-1500 */
+  .txt { position: absolute; left: 110px; right: 110px; text-align: center; opacity: 0; text-shadow: 0 2px 18px rgba(0,0,0,.85), 0 0 2px rgba(0,0,0,.9); }
+  .mask { display: inline-block; overflow: hidden; vertical-align: bottom; padding: 0 .04em; }
+  .mask > span { display: inline-block; }
+  .panel { padding: 28px 10px 40px; border-radius: 60px; background: radial-gradient(ellipse 72% 62% at 50% 50%, rgba(4,6,14,.6), rgba(4,6,14,0) 100%); }
+  #hook { top: 1050px; font-weight: 600; font-size: 62px; line-height: 1.2; }
+  #hook b { color: var(--fe); font-weight: 600; }
+  #hook .l2 { display: block; margin-top: 24px; font-weight: 300; font-size: 46px; color: var(--pale); }
+  .arabic { font-family: 'Amiri Quran', serif; direction: rtl; color: #fbfcff; line-height: 2.05; text-shadow: 0 0 26px rgba(255,176,103,.35), 0 2px 12px rgba(0,0,0,.9); }
+  #ayah { top: 900px; }
+  #ayah .arabic { font-size: 78px; }
+  .meaning { font-weight: 400; font-size: 40px; line-height: 1.42; margin-top: 14px; }
+  .ref { font-weight: 500; font-size: 27px; letter-spacing: .3em; padding-left: .3em; color: var(--fe); margin-top: 24px; }
+
+  .title { top: 250px; font-weight: 600; font-size: 44px; }
+  .title small { display: block; font-weight: 300; font-size: 30px; color: #dfe5f0; margin-top: 8px; }
+  #chain { position: absolute; left: 100px; right: 100px; top: 1320px; display: flex; justify-content: center; align-items: baseline; gap: 10px; font-weight: 600; font-size: 44px; }
+  #chain span { opacity: 0; text-shadow: 0 2px 12px rgba(0,0,0,.9); }
+  #chain .ar { font-weight: 300; color: rgba(255,255,255,.6); font-size: 34px; }
+  #chain .fe { color: var(--fe); font-size: 58px; }
+  .fact { top: 1400px; }
+  .fact .what { font-weight: 500; font-size: 37px; line-height: 1.32; }
+  .fact .what b { color: var(--fe); font-weight: 600; }
+  .fact .note { font-weight: 300; font-size: 29px; line-height: 1.35; margin-top: 12px; color: #dfe5f0; }
+  #coreFact { top: 1395px; }
+
+  /* heat comparison bars */
+  #heat { position: absolute; left: 130px; right: 130px; top: 860px; opacity: 0; }
+  .bar { margin-bottom: 46px; }
+  .bar .lbl { font-weight: 500; font-size: 32px; margin-bottom: 12px; text-shadow: 0 2px 10px rgba(0,0,0,.9); }
+  .bar .lbl b { float: right; font-weight: 600; }
+  .bar .track { height: 30px; border-radius: 15px; background: rgba(255,255,255,.1); overflow: hidden; }
+  .bar .fill { height: 100%; width: 0; border-radius: 15px; }
+  #barSun .fill { background: linear-gradient(90deg, #ffcf6b, #ffe7a8); min-width: 6px; }
+  #barFe .fill { background: linear-gradient(90deg, #ff7b2e, #fff1d6); box-shadow: 0 0 24px rgba(255,160,90,.8); }
+  #heatFact { top: 1250px; }
+
+  .lbl3 { position: absolute; opacity: 0; font-weight: 600; font-size: 32px; line-height: 1.25; text-shadow: 0 2px 14px rgba(0,0,0,.95); }
+  .lbl3 small { display: block; font-weight: 300; font-size: 26px; color: #e6ebf3; margin-top: 2px; }
+  .lbl3::before { content: ''; position: absolute; top: 18px; width: var(--w, 40px); height: 2px; background: rgba(255,255,255,.75); }
+  .lbl3.l::before { right: calc(100% + 12px); } .lbl3.r::before { left: calc(100% + 12px); }
+
+  #close { top: 560px; }
+  #close .arabic { font-size: 84px; }
+  #close .meaning { font-size: 42px; }
+  #close .brand { margin-top: 64px; font-weight: 600; font-size: 30px; letter-spacing: .3em; padding-left: .3em; }
+  #close .end { font-weight: 300; font-size: 36px; margin-top: 16px; color: var(--fe); }
+  #flash { position: absolute; inset: 0; background: #fff6ea; opacity: 0; }
+</style>
+</head>
+<body>
+<canvas id="gl" width="540" height="960"></canvas>
+<div id="vignette"></div>
+
+<div class="txt" id="hook"></div>
+<div class="txt panel" id="ayah"><div class="arabic" id="ar"></div><div class="meaning" id="mean"></div><div class="ref">HADID SURASI · 25</div></div>
+
+<!-- a massive star in cross-section -->
+<div class="txt title" id="coreTitle"></div>
+<div id="chain"></div>
+<div class="txt fact" id="coreFact"><div class="what" id="cfW"></div></div>
+<div id="heat">
+  <div class="bar" id="barSun"><div class="lbl" id="bsL"></div><div class="track"><div class="fill"></div></div></div>
+  <div class="bar" id="barFe"><div class="lbl" id="bfL"></div><div class="track"><div class="fill"></div></div></div>
+</div>
+<div class="txt fact" id="heatFact"><div class="what" id="hfW"></div></div>
+
+<!-- supernova -->
+<div class="txt fact" id="novaFact"><div class="what" id="nfW"></div><div class="note" id="nfN"></div></div>
+
+<!-- Earth cut open -->
+<div class="lbl3 l" id="lInner" style="left:700px; top:882px; --w:100px"></div>
+<div class="lbl3 l" id="lOuter" style="left:700px; top:752px"></div>
+<div class="lbl3 r" id="lMantle" style="left:130px; top:1002px"></div>
+<div class="txt fact" id="earthFact"><div class="what" id="efW"></div></div>
+
+<!-- red blood cells -->
+<div class="txt title" id="bloodTitle"></div>
+<div class="txt fact" id="bloodFact"><div class="what" id="bfW"></div><div class="note" id="bfN"></div></div>
+
+<div class="txt panel" id="close"><div class="arabic" id="closeAr"></div><div class="meaning" id="closeM"></div><div class="brand">ZARAFSHON DASTURCHILARI</div><div class="end">Alloh bilguvchiroq</div></div>
+<div id="flash"></div>
+
+<script type="x-shader/x-fragment" id="frag">
+precision highp float;
+uniform vec2 uRes, uC;
+uniform float uTime, uMode, uP, uR, uZoom, uFade;
+varying vec2 vUv;
+
+const vec3 SUN = vec3(.55, .45, .70);
+
+float hash(vec2 p) { p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
+float hash3(vec3 p) { p = fract(p * .3183099 + .1); p *= 17.; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
+float noise(vec2 p) {
+  vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);
+  return mix(mix(hash(i), hash(i + vec2(1, 0)), f.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), f.x), f.y);
+}
+float noise3(vec3 x) {
+  vec3 i = floor(x), f = fract(x); f = f * f * (3. - 2. * f);
+  return mix(mix(mix(hash3(i), hash3(i + vec3(1, 0, 0)), f.x), mix(hash3(i + vec3(0, 1, 0)), hash3(i + vec3(1, 1, 0)), f.x), f.y),
+             mix(mix(hash3(i + vec3(0, 0, 1)), hash3(i + vec3(1, 0, 1)), f.x), mix(hash3(i + vec3(0, 1, 1)), hash3(i + vec3(1, 1, 1)), f.x), f.y), f.z);
+}
+float fbm(vec2 p) { float v = 0., a = .5; mat2 m = mat2(1.6, 1.2, -1.2, 1.6); for (int i = 0; i < 5; i++) { v += a * noise(p); p = m * p; a *= .5; } return v; }
+float fbm3(vec3 p) { float v = 0., a = .5; for (int i = 0; i < 5; i++) { v += a * noise3(p); p = p * 2.03 + vec3(1.7, 9.2, 3.1); a *= .5; } return v; }
+
+// ---------------- deep space with a massive blue-white star ----------------
+vec3 stars(vec2 p) {
+  vec3 col = vec3(0.);
+  for (int l = 0; l < 3; l++) {
+    float sc = 22. + float(l) * 19.;
+    vec2 g = p * sc, id = floor(g), f = fract(g) - .5;
+    float h = hash(id + float(l) * 17.);
+    if (h > .82) {
+      vec2 off = vec2(hash(id + 3.1), hash(id + 7.7)) - .5;
+      float d = length(f - off * .7);
+      float tw = .75 + .25 * sin(uTime * (1. + 3. * h) + h * 40.);
+      vec3 c = mix(vec3(.7, .8, 1.), vec3(1., .85, .7), hash(id + 1.3));
+      col += c * smoothstep(.09 - float(l) * .02, 0., d) * (h - .82) * 5. * tw;
+    }
+  }
+  return col;
+}
+vec3 space(vec2 uv, vec2 starPos, float starR) {
+  vec2 p = uv / uZoom;
+  float n = fbm(p * 1.3 + vec2(3., 1.) + uTime * .006), n2 = fbm(p * 2.4 - 2. - uTime * .004);
+  vec3 col = vec3(.008, .01, .025) + vec3(.30, .09, .32) * pow(n, 3.) * 1.3 + vec3(.05, .13, .32) * pow(n2, 3.) * 1.2;
+  col += stars(p);
+  if (starR > 0.) {
+    vec2 q = p - starPos; float d = length(q), a = atan(q.y, q.x);
+    float flick = fbm(vec2(a * 3., d * 20. - uTime * 1.5));
+    col += vec3(.45, .65, 1.) * exp(-(d - starR) * 14.) * .45 * (.7 + .6 * flick) * step(starR, d);
+    col += vec3(.7, .85, 1.) * exp(-d * 4.) * .25;
+    // diffraction spikes
+    col += vec3(.7, .85, 1.) * (exp(-abs(q.x) * 400.) + exp(-abs(q.y) * 400.)) * exp(-d * 6.) * .8;
+    float limb = sqrt(max(1. - pow(d / starR, 2.), 0.));
+    vec3 disc = mix(vec3(.55, .7, 1.), vec3(1.), limb) * (2.2 + .6 * fbm(q / starR * 4. + uTime * .3));
+    col = mix(col, disc, smoothstep(starR, starR * .96, d));
+  }
+  return col;
+}
+
+// ---------------- a massive star in cross-section: shells H .. Fe ----------------
+float shellR(int i) { return i == 0 ? 1. : i == 1 ? .83 : i == 2 ? .67 : i == 3 ? .53 : i == 4 ? .39 : .24; }
+vec3 shellC(int i) {
+  return i == 0 ? vec3(.80, .16, .07) : i == 1 ? vec3(1., .42, .10) : i == 2 ? vec3(1., .68, .24)
+       : i == 3 ? vec3(1., .88, .52) : i == 4 ? vec3(.95, .95, 1.) : vec3(.42, .46, .56);
+}
+vec3 onion(vec2 uv) {
+  vec3 bg = space(uv, vec2(0.), 0.) * .6;
+  vec2 q = (uv - uC) / uR; float r = length(q), a = atan(q.y, q.x);
+  if (r > 1.) return bg + vec3(1., .35, .12) * exp(-(r - 1.) * 9.) * .5 * smoothstep(0., .3, uP);
+  vec3 col = bg; float shown = 0.;
+  for (int i = 0; i < 6; i++) {
+    float rev = clamp(uP * 6. - float(i), 0., 1.);
+    if (r < shellR(i) && rev > 0.) {
+      float tex = .72 + .55 * fbm(vec2(a * 4. + float(i) * 3., r * 9.) + vec2(uTime * .15, -uTime * .3));
+      vec3 c = shellC(i) * tex * 1.2;
+      if (i == 5) {   // the iron core: dull metal-grey, lit by a hot rim
+        c = shellC(5) * (.8 + .4 * fbm(q * 9. + uTime * .2)) + vec3(1., .55, .2) * exp(-(shellR(5) - r) * 40.) * 1.4;
+      }
+      col = mix(col, c, rev);
+      shown = float(i);
+    }
+  }
+  // thin dark lines between shells
+  for (int i = 1; i < 6; i++) col *= 1. - .55 * exp(-abs(r - shellR(i)) * 260.) * step(float(i), uP * 6.);
+  return col;
+}
+
+// ---------------- core collapse and supernova ----------------
+vec3 supernova(vec2 uv) {
+  float t = uP;
+  vec2 c = vec2(0., .12), p = uv - c; float r = length(p), a = atan(p.y, p.x);
+  vec3 col = space(uv, vec2(0.), 0.) * .7;
+  // the star before collapse: shrinking, flickering
+  float R0 = .26 * (1. - .85 * smoothstep(0., .55, t));
+  if (t < .6) {
+    float flick = fbm(vec2(a * 3., r * 20. - uTime * 3.));
+    col += vec3(1., .6, .3) * exp(-(r - R0) * 10.) * .6 * step(R0, r) * (.6 + .8 * flick);
+    col = mix(col, vec3(1., .8, .55) * 2.2, smoothstep(R0, R0 * .95, r));
+  }
+  float t2 = max(t - .5, 0.);
+  float Rs = .04 + .62 * (1. - exp(-t2 * .55));
+  float w = .025 + .10 * Rs;
+  float fil = fbm(vec2(a * 5., r * 7. - t2 * .4) + 3.);
+  float fil2 = fbm(vec2(a * 11., r * 18.) - 7.);
+  float shell = exp(-pow((r - Rs) / w, 2.)) * (.35 + 1.1 * fil) * step(.5, t);
+  col += vec3(.55, .78, 1.) * shell * 1.4;
+  // iron-rich ejecta inside the shell: orange filaments
+  float inside = smoothstep(Rs, Rs * .7, r) * smoothstep(0., .1, r);
+  col += vec3(1., .42, .12) * inside * pow(fil2, 2.) * 1.8 * step(.5, t) * (.6 + .4 * exp(-t2 * .2));
+  // clumps flying outward
+  for (int i = 0; i < 48; i++) {
+    float fi = float(i), ang = hash(vec2(fi, 1.3)) * 6.2832, sp = .35 + .65 * hash(vec2(fi, 4.1));
+    vec2 pos = vec2(cos(ang), sin(ang)) * Rs * sp;
+    float d = length(p - pos);
+    col += vec3(1., .55, .2) * smoothstep(.012, 0., d) * 1.5 * step(.5, t);
+  }
+  // the neutron star left behind
+  col += vec3(.7, .85, 1.) * (exp(-r * 90.) * 2. + exp(-r * 20.) * .3) * step(.5, t);
+  // the flash
+  col += vec3(1., .95, .9) * exp(-t2 * 5.) * step(.5, t) * 2.5 * exp(-r * 1.5);
+  return col;
+}
+
+// ---------------- the Earth, cut open ----------------
+float earthSDF(vec3 p) { return max(length(p) - 1., min(min(p.x, p.y), p.z)); }
+vec3 earth(vec2 uv) {
+  vec3 bg = space(uv, vec2(0.), 0.) * .6;
+  float ang = .78 + (uTime - 34.) * .035;
+  vec3 ro = 3.4 * normalize(vec3(cos(ang), .62, sin(ang)));
+  vec3 fw = normalize(-ro), rt = normalize(cross(fw, vec3(0, 1, 0))), up = cross(rt, fw);
+  vec2 s = uv - vec2(0., .05);
+  vec3 rd = normalize(fw * 1.35 + rt * s.x + up * s.y);
+  // bounding sphere
+  float b = dot(ro, rd), cc = dot(ro, ro) - 1.02, h = b * b - cc;
+  if (h < 0.) return bg + vec3(.3, .55, 1.) * .0;
+  float t = -b - sqrt(h), hit = -1.;
+  for (int i = 0; i < 64; i++) {
+    float d = earthSDF(ro + rd * t);
+    if (d < .0008) { hit = t; break; }
+    t += d;
+    if (t > 6.) break;
+  }
+  // atmosphere glow around the limb
+  float limb = exp(-max(length(cross(ro, rd)) - 1., 0.) * 22.);
+  if (hit < 0.) return bg + vec3(.3, .55, 1.) * limb * .5;
+  vec3 p = ro + rd * hit;
+  vec2 e = vec2(.001, 0.);
+  vec3 n = normalize(vec3(earthSDF(p + e.xyy) - earthSDF(p - e.xyy), earthSDF(p + e.yxy) - earthSDF(p - e.yxy), earthSDF(p + e.yyx) - earthSDF(p - e.yyx)));
+  vec3 L = normalize(SUN);
+  float r = length(p);
+  vec3 col;
+  if (min(min(p.x, p.y), p.z) < -.002 || r > .998) {
+    // surface: rotating continents, clouds, ice caps
+    float rot = uTime * .06; vec3 q = vec3(p.x * cos(rot) - p.z * sin(rot), p.y, p.x * sin(rot) + p.z * cos(rot));
+    float land = fbm3(q * 1.6 + 2.), cl = fbm3(q * 3. + vec3(uTime * .03, 0., 0.) + 11.);
+    vec3 c = mix(vec3(.015, .06, .17), vec3(.03, .10, .22), fbm3(q * 6.));
+    float isLand = smoothstep(.52, .54, land);
+    c = mix(c, mix(vec3(.10, .22, .06), vec3(.42, .35, .20), smoothstep(.56, .66, land)), isLand);
+    c = mix(c, vec3(.9, .93, .97), smoothstep(.78, .86, abs(p.y)));
+    float dif = max(dot(n, L), 0.);
+    col = c * (.08 + 1.1 * dif);
+    col = mix(col, vec3(1.) * (.1 + 1.1 * dif), smoothstep(.55, .72, cl) * .8);
+    col += vec3(.3, .55, 1.) * pow(1. - max(dot(n, -rd), 0.), 3.) * .6 * (.3 + dif);
+  } else {
+    // cut faces: crust, mantle, liquid outer core, solid inner core (radii to scale)
+    float sw = fbm(vec2(atan(p.y, p.x) * 3. + atan(p.z, p.x) * 2., r * 12.) + uTime * .1);
+    if (r < .19) col = vec3(1., .92, .7) * (1.6 + .3 * sw);
+    else if (r < .546) col = mix(vec3(1., .62, .2), vec3(1., .45, .12), (r - .19) / .356) * (1.1 + .5 * sw);
+    else if (r < .985) col = mix(vec3(.62, .16, .05), vec3(.32, .07, .04), (r - .546) / .44) * (.85 + .4 * sw);
+    else col = vec3(.36, .30, .24);
+    col *= .75 + .35 * max(dot(n, L), 0.);
+    col *= 1. - .5 * (exp(-abs(r - .19) * 300.) + exp(-abs(r - .546) * 300.) + exp(-abs(r - .985) * 300.));
+  }
+  return col;
+}
+
+// ---------------- red blood cells flowing ----------------
+mat3 rotm(vec3 a) {
+  float cx = cos(a.x), sx = sin(a.x), cy = cos(a.y), sy = sin(a.y);
+  return mat3(cy, 0., -sy, 0., 1., 0., sy, 0., cy) * mat3(1., 0., 0., 0., cx, sx, 0., -sx, cx);
+}
+float smin(float a, float b, float k) { float h = clamp(.5 + .5 * (b - a) / k, 0., 1.); return mix(b, a, h) - k * h * (1. - h); }
+float cellSDF(vec3 p) {
+  vec2 q = vec2(length(p.xz), p.y);
+  float torus = length(q - vec2(.72, 0.)) - .30;
+  float disk = max(q.x - .78, abs(q.y) - .10);
+  return smin(torus, disk, .18);
+}
+const float CS = 3.;
+float bloodSDF(vec3 p) {
+  vec3 id = floor(p / CS);
+  vec3 lp = mod(p, CS) - CS * .5;
+  vec3 jit = vec3(hash3(id), hash3(id + 5.3), hash3(id + 9.1)) - .5;
+  lp -= jit * .6;
+  lp = rotm(vec3(hash3(id + 2.2) * 6.28 + uTime * .3 * (hash3(id + 1.) - .5), hash3(id + 7.7) * 6.28, 0.)) * lp;
+  return cellSDF(lp);
+}
+vec3 blood(vec2 uv) {
+  vec3 ro = vec3(.4, .3, uTime * 1.1), rd = normalize(vec3(uv * .85, 1.));
+  float t = .1, hit = -1.;
+  for (int i = 0; i < 90; i++) {
+    float d = bloodSDF(ro + rd * t);
+    if (d < .002) { hit = t; break; }
+    t += d * .8;
+    if (t > 28.) break;
+  }
+  vec3 fogc = vec3(.13, .012, .01);
+  if (hit < 0.) return fogc;
+  vec3 p = ro + rd * hit; vec2 e = vec2(.002, 0.);
+  vec3 n = normalize(vec3(bloodSDF(p + e.xyy) - bloodSDF(p - e.xyy), bloodSDF(p + e.yxy) - bloodSDF(p - e.yxy), bloodSDF(p + e.yyx) - bloodSDF(p - e.yyx)));
+  vec3 L = normalize(vec3(.3, .8, -.4));
+  float dif = max(dot(n, L), 0.), rim = pow(1. - max(dot(n, -rd), 0.), 2.);
+  vec3 col = vec3(.55, .03, .025) * (.25 + .9 * dif) + vec3(1., .22, .12) * rim * .55;
+  col += vec3(1., .7, .6) * pow(max(dot(reflect(rd, n), L), 0.), 40.) * .35;
+  return mix(fogc, col, exp(-hit * .09));
+}
+
+void main() {
+  vec2 uv = (vUv - .5) * vec2(uRes.x / uRes.y, 1.) * 2.;
+  vec3 col;
+  if (uMode < .5) col = space(uv, uC, uR);
+  else if (uMode < 1.5) col = onion(uv);
+  else if (uMode < 2.5) col = supernova(uv);
+  else if (uMode < 3.5) col = earth(uv);
+  else col = blood(uv);
+  col = col / (1. + col * .35);
+  col = pow(col, vec3(1. / 2.2)) * uFade;
+  col += (hash(vUv * 900. + fract(uTime * 7.)) - .5) * .018;
+  gl_FragColor = vec4(col, 1.);
+}
+</script>
+<script type="importmap">{ "imports": { "three": "../../registon2/lib/three.module.js" } }</script>
+<script type="module">
+  import * as THREE from 'three';
+  import { clamp, prog, lerp, eOut, eInOut, textAnimator, loadAyat } from '../common/anim.js';
+
+  // Arabic: Uthmani text from ../ayat.json. Uzbek meanings follow Tafsiri Hilol —
+  // CHECK THE WORDING AGAINST THE BOOK before publishing.
+  const ayat = await loadAyat();
+  const TEXT = {
+    hook1: 'Qur’on temir haqida <b>«tushirdik»</b> deydi',
+    hook2: 'Temir qayerdan kelgan?',
+    mean: '«...Va temirni tushirdik. Unda qattiq kuch va odamlar uchun manfaatlar bor...»',
+    coreTitle: 'Og‘ir yulduz yadrosi<small>Quyoshdan kamida ~8–10 marta og‘ir yulduzlarda</small>',
+    cfW: 'Zanjir <b>temirda to‘xtaydi</b>: undan keyingi sintez energiya bermaydi',
+    bsL: 'Quyosh yadrosi <b>~15 mln °C</b>',
+    bfL: 'Temir hosil bo‘lishi <b>~3 mlrd °C</b>',
+    hfW: 'Taxminan 200 barobar issiqroq. Quyoshimiz hech qachon <b>temir hosil qila olmaydi</b>',
+    nfW: 'Yadro qulaydi — <b>o‘ta yangi yulduz</b> portlaydi',
+    nfN: 'Temir va boshqa og‘ir elementlar koinotga sochiladi, keyin yangi yulduz va sayyoralar tarkibiga kiradi',
+    lInner: 'Ichki yadro<small>qattiq temir-nikel</small>',
+    lOuter: 'Tashqi yadro<small>suyuq temir-nikel</small>',
+    lMantle: 'Mantiya',
+    efW: 'Yer massasining <b>~32%</b> i temir',
+    bloodTitle: 'Qizil qon tanachalari',
+    bfW: 'Gemoglobindagi <b>temir</b> kislorodni biriktirib, butun tanaga tashiydi',
+    bfN: 'Katta yoshli odam tanasida ~3–4 g temir bor',
+    closeM: '«...Unda qattiq kuch va odamlar uchun manfaatlar bor.»',
+  };
+  const $ = (id) => document.getElementById(id);
+  $('hook').innerHTML = `<span>${TEXT.hook1}</span><span class="l2">${TEXT.hook2}</span>`;
+  $('ar').textContent = ayat['57:25-hadid'];
+  $('closeAr').textContent = ayat['57:25-fihi'];
+  for (const k of ['mean', 'nfN', 'bfN', 'closeM', 'bloodTitle']) $(k).textContent = TEXT[k];
+  for (const k of ['coreTitle', 'cfW', 'bsL', 'bfL', 'hfW', 'nfW', 'lInner', 'lOuter', 'lMantle', 'efW', 'bfW']) $(k).innerHTML = TEXT[k];
+  const EL = ['H', 'He', 'C', 'O', 'Si', 'Fe'];
+  $('chain').innerHTML = EL.map((e, i) => `${i ? '<span class="ar">→</span>' : ''}<span class="${e === 'Fe' ? 'fe' : ''}">${e}</span>`).join('');
+  const chain = [...$('chain').children];
+
+  // Timeline (seconds), timed to the voice-over. Keep in sync with audio.js.
+  const T = { ayah: 5.4, core: 12.0, heat: 21.8, nova: 28.6, earth: 34.2, blood: 41.8, close: 47.0, end: 52.0 };
+
+  const renderer = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: false, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1); renderer.setSize(540, 960, false);
+  const U = {
+    uRes: { value: new THREE.Vector2(540, 960) }, uTime: { value: 0 }, uMode: { value: 0 }, uP: { value: 0 },
+    uC: { value: new THREE.Vector2(0, 0) }, uR: { value: .06 }, uZoom: { value: 1 }, uFade: { value: 1 },
+  };
+  const scene = new THREE.Scene();
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
+    uniforms: U, fragmentShader: $('frag').textContent,
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
+  })));
+  const cam = new THREE.Camera();
+
+  const show = textAnimator(['hook', 'ayah', 'coreTitle', 'coreFact', 'heatFact', 'novaFact', 'earthFact', 'bloodTitle', 'bloodFact', 'close']);
+  function label(id, t, tin, tout) {
+    const el = $(id), p = eOut(prog(t, tin, tin + 0.5));
+    el.style.opacity = p * (1 - prog(t, tout - 0.3, tout));
+    el.style.transform = `translateY(${(1 - p) * 24}px)`;
+  }
+  const fade = (t, a, b) => prog(t, a, a + 0.4) * (1 - prog(t, b - 0.35, b));
+
+  window.renderFrame = function (t) {
+    U.uTime.value = t;
+    if (t < T.core || t >= T.close) {
+      U.uMode.value = 0;
+      const first = t < T.core;
+      // a slow push in toward the star, then a wide calm view for the ending
+      U.uZoom.value = first ? lerp(1, 1.5, eInOut(prog(t, 0, T.core))) : lerp(1.1, 1.2, prog(t, T.close, T.end));
+      U.uC.value.set(first ? 0.02 : 0.2, first ? 0.42 : 0.72);
+      U.uR.value = first ? 0.07 : 0.035;
+      U.uFade.value = first ? prog(t, 0, 0.6) * (1 - prog(t, T.core - 0.35, T.core)) : prog(t, T.close, T.close + 0.5);
+    } else if (t < T.nova) {
+      U.uMode.value = 1;
+      U.uP.value = prog(t, T.core + 0.3, T.core + 6.5);
+      // during the heat comparison the star moves up and shrinks
+      const k = eInOut(prog(t, T.heat - 0.2, T.heat + 0.8));
+      U.uC.value.set(0, lerp(0.12, 0.5, k));
+      U.uR.value = lerp(0.44, 0.27, k);
+      U.uFade.value = fade(t, T.core, T.nova);
+    } else if (t < T.earth) {
+      U.uMode.value = 2;
+      U.uP.value = t - T.nova - 0.2;
+      U.uFade.value = fade(t, T.nova, T.earth);
+    } else if (t < T.blood) {
+      U.uMode.value = 3;
+      U.uFade.value = fade(t, T.earth, T.blood);
+    } else {
+      U.uMode.value = 4;
+      U.uFade.value = fade(t, T.blood, T.close);
+    }
+    renderer.render(scene, cam);
+
+    show('hook', t, 0.4, T.ayah, 0.08);
+    show('ayah', t, T.ayah + 0.3, T.core, 0.04);
+
+    show('coreTitle', t, T.core + 0.3, T.heat, 0.05);
+    chain.forEach((el, i) => {
+      const k = Math.ceil(i / 2), tin = T.core + 0.3 + (6.2 / 6) * k;   // element k appears with its shell
+      el.style.opacity = eOut(prog(t, tin, tin + 0.4)) * (1 - prog(t, T.heat - 0.3, T.heat));
+    });
+    show('coreFact', t, T.core + 5.2, T.heat, 0.04);
+
+    const hv = prog(t, T.heat + 0.4, T.heat + 0.8) * (1 - prog(t, T.nova - 0.3, T.nova));
+    $('heat').style.opacity = hv;
+    $('barSun').querySelector('.fill').style.width = `${eOut(prog(t, T.heat + 0.8, T.heat + 1.6)) * 0.5}%`;
+    $('barFe').querySelector('.fill').style.width = `${eOut(prog(t, T.heat + 1.6, T.heat + 3.0)) * 100}%`;
+    show('heatFact', t, T.heat + 3.0, T.nova, 0.04);
+
+    show('novaFact', t, T.nova + 1.2, T.earth, 0.04);
+
+    label('lInner', t, T.earth + 0.8, T.blood);
+    label('lOuter', t, T.earth + 1.2, T.blood);
+    label('lMantle', t, T.earth + 1.6, T.blood);
+    show('earthFact', t, T.earth + 0.4, T.blood, 0.05);
+
+    show('bloodTitle', t, T.blood + 0.3, T.close, 0.05);
+    show('bloodFact', t, T.blood + 1.0, T.close, 0.04);
+
+    show('close', t, T.close + 0.4, T.end + 1, 0.06);
+    $('flash').style.opacity = clamp(1 - Math.abs(t - (T.nova + 0.7)) / 0.25) * 0.6;
+  };
+  window.sceneReady = true;
+  window.renderFrame(0);
+</script>
+</body>
+</html>

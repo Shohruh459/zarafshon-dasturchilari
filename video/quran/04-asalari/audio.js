@@ -8,10 +8,10 @@
  *
  * Usage:  node video/quran/04-asalari/audio.js [out.wav]
  */
-const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const { createSynth } = require('../../lib/synth');
+const { mixVoice } = require('../../lib/voiceover');
 
 const DURATION = 40.6;
 // Timeline, kept in sync with scene.html.
@@ -117,21 +117,7 @@ air(T.close + 0.4, 1.8, 0.05);
 function generateAudio(file) {
   const sfx = file.replace(/\.wav$/, '-sfx.wav');
   synth.writeWav(sfx, synth.mixdown([], 1.6));
-  const keys = Object.keys(VOICE).filter((k) => fs.existsSync(path.join(VOICE_DIR, `${k}.mp3`)));
-  if (!keys.length) { fs.renameSync(sfx, file); return file; }
-  const inputs = keys.flatMap((k) => ['-i', path.join(VOICE_DIR, `${k}.mp3`)]);
-  const lines = keys.map((k, i) => `[${i + 1}:a]aresample=44100,aformat=channel_layouts=stereo,adelay=${Math.round(VOICE[k] * 1000)}:all=1[l${i}]`);
-  execFileSync(process.env.FFMPEG_PATH || 'ffmpeg', [
-    '-y', '-hide_banner', '-loglevel', 'error', '-i', sfx, ...inputs,
-    '-filter_complex', [
-      ...lines,
-      `${keys.map((_, i) => `[l${i}]`).join('')}amix=inputs=${keys.length}:normalize=0,apad,atrim=0:${DURATION},highpass=f=70,volume=1.6,asplit[vo][key]`,
-      '[0:a][key]sidechaincompress=threshold=0.02:ratio=6:attack=15:release=350[duck]',
-      '[duck]volume=0.6[bg]',
-      '[bg][vo]amix=inputs=2:normalize=0,alimiter=limit=0.9[out]',
-    ].join(';'),
-    '-map', '[out]', '-ar', '44100', file,
-  ], { stdio: 'inherit' });
+  mixVoice({ sfx, out: file, dir: VOICE_DIR, starts: VOICE, duration: DURATION });
   fs.unlinkSync(sfx);
   return file;
 }

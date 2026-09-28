@@ -39,6 +39,9 @@ AYAT = {                         # key -> (surah, ayah, first word index, last w
     '16:68-ittakhidhi': (16, 68, 5, 5),      # feminine imperatives addressed to the bee
     '16:69-kuli': (16, 69, 1, 1),
     '16:69-fasluki': (16, 69, 5, 5),
+    '57:25-hadid': (57, 25, 11, 17),         # «وَأَنزَلۡنَا ٱلۡحَدِيدَ … وَمَنَٰفِعُ لِلنَّاسِ»
+    '57:25-anzalna': (57, 25, 11, 12),       # «وَأَنزَلۡنَا ٱلۡحَدِيدَ»
+    '57:25-fihi': (57, 25, 13, 17),          # «فِيهِ بَأۡسٞ شَدِيدٞ وَمَنَٰفِعُ لِلنَّاسِ»
 }
 
 here = os.path.dirname(os.path.abspath(__file__))
