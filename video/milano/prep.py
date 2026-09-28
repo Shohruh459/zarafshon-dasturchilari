@@ -31,12 +31,19 @@ pad = 24
 logo.crop((box[0] - pad, box[1] - pad, box[2] + pad, box[3] + pad)).save(os.path.join(OUT, 'logo.png'))
 
 # Sushi on white backgrounds: cut out
+import cv2  # noqa: E402
+import numpy as np  # noqa: E402
 from rembg import new_session, remove  # noqa: E402
 
 session = new_session('isnet-general-use')
 for name in ['sushi-set', 'roll-1', 'roll-2', 'roll-3']:
     im = Image.open(os.path.join(SRC, f'{name}.webp')).convert('RGB')
     cut = remove(im, session=session, post_process_mask=True)
+    # the mask keeps a grey rim of the white studio background (and its shadow):
+    # shrink it by a few pixels and feather the edge
+    a = cv2.erode(np.array(cut.getchannel('A')), np.ones((5, 5), np.uint8), iterations=1)
+    a = cv2.GaussianBlur(a, (0, 0), 1.2)
+    cut.putalpha(Image.fromarray(a))
     cut = cut.crop(cut.getbbox())
     # small sources: upscale 2x so the browser only ever scales down
     cut = cut.resize((cut.width * 2, cut.height * 2), Image.LANCZOS)

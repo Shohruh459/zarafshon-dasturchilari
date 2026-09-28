@@ -47,7 +47,9 @@
   .label small { display: block; font-size: 40px; font-weight: 500; color: var(--cream); margin-top: 16px; }
 
   /* 4: sushi */
-  #sushiSet { position: absolute; left: 50%; top: 820px; width: 960px; filter: drop-shadow(0 30px 40px rgba(0,0,0,.6)); }
+  /* the source photo crops rolls at its edges: fade those out */
+  #sushiSet { position: absolute; left: 50%; top: 820px; width: 960px; filter: drop-shadow(0 30px 40px rgba(0,0,0,.6));
+              -webkit-mask-image: radial-gradient(ellipse 62% 64% at 44% 46%, #000 62%, transparent 100%); }
   .roll { position: absolute; width: 380px; filter: drop-shadow(0 20px 30px rgba(0,0,0,.6)); }
 
   /* 5: combo */
@@ -72,7 +74,7 @@
 
   /* 7: call to action */
   #map { position: absolute; left: 110px; right: 110px; top: 250px; height: 560px; border-radius: 40px; overflow: hidden; background: #f3eee6; box-shadow: 0 30px 70px rgba(0,0,0,.5); }
-  #map svg { position: absolute; inset: 0; }
+  #map > svg:first-child { position: absolute; inset: 0; }
   #pin { position: absolute; left: 390px; top: 90px; width: 120px; transform-origin: 50% 100%; }   /* tip at (450, 250) */
   #addr { top: 850px; font-size: 38px; font-weight: 500; line-height: 1.35; }
   #addr b { font-weight: 700; }
@@ -140,8 +142,8 @@
       <line x1="-70" y1="2" x2="1030" y2="904" stroke="#fff" stroke-width="40"/>
       <line x1="120" y1="0" x2="0" y2="120" stroke="#fff" stroke-width="16"/>
       <line x1="640" y1="560" x2="860" y2="400" stroke="#fff" stroke-width="16"/>
-      <text x="96" y="600" font-family="Montserrat" font-weight="600" font-size="24" fill="#8a7f72" transform="rotate(-47 96 600)">Amir Temur ko‘chasi</text>
-      <text x="36" y="80" font-family="Montserrat" font-weight="600" font-size="24" fill="#8a7f72" transform="rotate(39.4 36 80)">Yoshlik ko‘chasi</text>
+      <text x="128" y="566" font-family="Montserrat" font-weight="600" font-size="24" fill="#8a7f72" transform="rotate(-47 128 566)">Amir Temur ko‘chasi</text>
+      <text x="34" y="112" font-family="Montserrat" font-weight="600" font-size="24" fill="#8a7f72" transform="rotate(39.4 34 112)">Yoshlik ko‘chasi</text>
       <text x="560" y="200" font-family="Montserrat" font-weight="600" font-size="24" fill="#3f8a4d">6-mkr bog‘i</text>
     </svg>
     <svg id="pin" viewBox="0 0 60 80"><path d="M30 78 C30 78 4 46 4 28 A26 26 0 0 1 56 28 C56 46 30 78 30 78Z" fill="#e2231a"/><circle cx="30" cy="28" r="10" fill="#fff"/></svg>
