@@ -20,13 +20,13 @@ const path = require('path');
 // Kept in sync with the timeline T in scene.html. x0/x1: horizontal centre of
 // the 9:16 crop at the start/end of the shot, in source pixels.
 const SHOTS = [
-  { clip: 'bee-blossom', ss: 0, dur: 3.5, x0: 950, x1: 780 },  // hook
-  { clip: 'hive-entrance', ss: 1, dur: 5, x0: 600, x1: 680 },  // 16:68, "houses"
-  { clip: 'field', ss: 1, dur: 4, x0: 800, x1: 1100 },         // 16:69, "eat of all fruits"
-  { clip: 'comb', ss: 0, dur: 6.5, card: true, pre: 'crop=796:448:28:16' }, // letterboxed source; feminine verbs
-  { clip: 'bee-flower', ss: 2, dur: 5.5, card: true },         // colours of honey
-  { clip: 'hive-entrance', ss: 10, dur: 5, x0: 700, x1: 640 }, // healing
-  { clip: 'bee-blossom', ss: 6, dur: 4.5, x0: 400, x1: 560 },  // closing ayah
+  { clip: 'bee-blossom', ss: 0, dur: 5, x0: 950, x1: 600 },    // hook
+  { clip: 'hive-entrance', ss: 1, dur: 5.5, x0: 600, x1: 680 }, // 16:68, "houses"
+  { clip: 'field', ss: 1, dur: 4.6, x0: 800, x1: 1100 },       // 16:69, "eat of all fruits"
+  { clip: 'comb', ss: 0, dur: 8.8, card: true, pre: 'crop=796:448:28:16' }, // letterboxed source; feminine verbs
+  { clip: 'bee-flower', ss: 2, dur: 6.2, card: true },         // colours of honey
+  { clip: 'hive-entrance', ss: 9, dur: 5.5, x0: 700, x1: 640 }, // healing
+  { clip: 'bee-blossom', ss: 5.5, dur: 5, x0: 400, x1: 560 },  // closing ayah
 ];
 const DURATION = SHOTS.reduce((s, x) => s + x.dur, 0);
 const CARD_Y = 620;
