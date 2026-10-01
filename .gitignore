@@ -1,0 +1,12 @@
+# Sirlar
+.env
+.env.*
+
+# Vaqtinchalik / yaratilgan fayllar
+node_modules/
+__pycache__/
+*.pyc
+*.whl
+*.log
+still_*.png
+fr/
