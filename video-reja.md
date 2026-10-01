@@ -217,3 +217,29 @@ Qoida: bir vaqtda **bitta narsani** o'zgartiramiz (masalan, faqat hook), shunda 
 2. Haftada nechta video realistik (3 yoki 2)?
 3. Seriya nomi "0 dan internetga" yarashadimi?
 4. Kanal/akkaunt nomini videoga qo'shamizmi?
+
+
+## 10. Ko'rinish strategiyasi va texnologiya tanlovi (yangi)
+
+**Kuzatuv:** Yer shari → O'zbekiston → Zarafshon xaritasi bilan boshlangan video ko'proq ko'rilgan. Sabab: tomoshabin birinchi soniyada **o'z joyini** ko'radi ("bu bizning shahar haqida"). Shuning uchun har videoning boshiga **mahalliy kirish** qo'yamiz va ma'lumotni shu odamlarga yetkazamiz.
+
+**Har video tuzilishi:**
+1. **Kirish (≈7 s):** Yer → O'zbekiston → Zarafshon + "Zarafshonlik dasturchimisiz? Yoki endi boshlayapsizmi? Bu video aynan siz uchun!" (ovoz va ostyozuv 0.0 dan)
+2. **Asosiy qism (25–35 s):** bitta g'oya, har 3–4 soniyada ko'rinish o'zgarishi
+3. **Oxiri (4–5 s):** saqlash, yuborish, keyingi videoga ochiq savol
+
+**Texnologiyalar (qaysi vazifaga qaysi vosita):**
+
+| Vazifa | Vosita | Qachon ishlatamiz | Render |
+|---|---|---|---|
+| Mahalliy kirish (Yer → Zarafshon) | WebGL (three.js) + haqiqiy ma'lumot (Natural Earth, NASA teksturasi) | Har video boshida | ≈7 daqiqa / 7 s |
+| Tushuntirish (o'xshatish, diagramma) | HTML/CSS + Canvas | Ko'pchilik videolar | ≈5 daqiqa |
+| "Wow" demo (3D telefon, konfetti) | Gibrid WebGL + CSS | Haftada 1 ta | ≈15 daqiqa |
+| Haqiqiy ishlayotganini ko'rsatish (kod, server) | Haqiqiy brauzer/terminal ni yozib olish (Playwright) | Docker, server, domen videolari | ≈5 daqiqa |
+| Ovoz | Neyron o'zbek ovozi (Sardor), pauzalar qisqartirilgan | Hamma joyda | 1 daqiqa |
+| AI-video (Higgsfield) | Kredit kerak | Hozir ishlatilmaydi | – |
+
+**Qoidalar:**
+- Murakkab effekt faqat **ma'noga xizmat qilsa** ishlatiladi (globus = "bu sizga"; konfetti = "ishladi").
+- Xarita ma'lumotini manbasi bilan yozamiz; Zarafshon nuqtasi shahar markazi, aniq bino emas.
+- Mahalliy kirish matni auditoriyaga moslanadi: Zarafshon uchun "Zarafshonlik", umumiy uchun "O'zbekistonlik".

@@ -1,0 +1,152 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{margin:0;background:#04030f;overflow:hidden}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:"Liberation Sans",Arial,sans-serif;color:#fff}
+#gl{position:absolute;left:0;top:0}
+#head{position:absolute;left:0;top:70px;width:1080px;text-align:center;z-index:30;transform-origin:50% 30%}
+#head .tag{display:inline-block;background:linear-gradient(90deg,#ffd166,#ff9f6b);color:#241b3a;font-size:36px;font-weight:800;letter-spacing:2px;border-radius:30px;padding:10px 30px}
+#head .l1{font-size:96px;font-weight:800;line-height:1.06;margin-top:22px;text-shadow:0 8px 40px rgba(0,0,0,.7)}
+#head .l1 b{color:#ffd166}#head .l1{text-shadow:0 4px 0 rgba(0,0,0,.35),0 8px 40px rgba(0,0,0,.95),0 0 60px rgba(0,0,0,.8)}#vig{position:absolute;left:0;top:0;width:1080px;height:640px;z-index:10;background:linear-gradient(180deg,rgba(4,3,15,.86) 0%,rgba(4,3,15,.55) 55%,rgba(4,3,15,0) 100%);pointer-events:none}#vig2{position:absolute;left:0;bottom:0;width:1080px;height:520px;z-index:10;background:linear-gradient(0deg,rgba(4,3,15,.7),rgba(4,3,15,0));pointer-events:none}
+.lab{position:absolute;z-index:20;white-space:nowrap;font-weight:800;text-shadow:0 4px 18px rgba(0,0,0,.9);transform:translate(-50%,-50%)}
+#labUz{font-size:64px;letter-spacing:14px;color:#ffe0a0}
+.city{font-size:36px;color:#e4eeff;letter-spacing:1px}
+#pin{position:absolute;z-index:25;left:0;top:0}
+#pinbox{background:linear-gradient(135deg,rgba(255,209,102,.95),rgba(255,120,90,.95));color:#2a1a10;border-radius:40px;padding:14px 38px 14px 30px;font-size:70px;font-weight:800;letter-spacing:3px;box-shadow:0 20px 60px rgba(255,120,60,.6);white-space:nowrap}
+#pinsub{font-size:34px;font-weight:800;color:#ffe8c0;margin-top:10px;letter-spacing:2px;text-shadow:0 4px 18px rgba(0,0,0,.9)}
+#line{position:absolute;z-index:24;height:4px;background:linear-gradient(90deg,#ffd166,rgba(255,209,102,0));transform-origin:0 50%}
+#yes{position:absolute;left:100px;right:100px;top:1240px;text-align:center;z-index:30;font-size:60px;font-weight:800;background:linear-gradient(90deg,#1fa77a,#5ad9b4);color:#0c1f18;border-radius:44px;padding:16px 20px;box-shadow:0 18px 50px rgba(31,167,122,.5)}
+#cap{position:absolute;left:0;width:1080px;top:1470px;display:flex;justify-content:center;z-index:60}
+#cap div{background:rgba(14,12,30,.82);border:2px solid rgba(255,255,255,.16);border-radius:38px;padding:16px 42px;font-size:54px;font-weight:800;text-align:center;line-height:1.18;max-width:940px}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;z-index:70;pointer-events:none}
+</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script></head>
+<body><div id="stage">
+ <div id="vig"></div><div id="vig2"></div><div id="head"></div>
+ <div class="lab" id="labUz">O‘ZBEKISTON</div>
+ <div id="cities"></div>
+ <div id="line"></div>
+ <div id="pin"><div id="pinbox">📍 ZARAFSHON</div><div id="pinsub">NAVOIY VILOYATI</div></div>
+ <div id="yes">✅ Bu video aynan siz uchun</div>
+ <div id="cap"><div></div></div>
+ <div id="flash"></div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import {LineSegments2} from 'three/addons/lines/LineSegments2.js';
+import {LineSegmentsGeometry} from 'three/addons/lines/LineSegmentsGeometry.js';
+import {LineMaterial} from 'three/addons/lines/LineMaterial.js';
+import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
+import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
+import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
+import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+const W=1080,H=1920;
+const T=await (await fetch('/timing.json')).json();
+const GEO=await (await fetch('/data/geo.json')).json();
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(1);renderer.setSize(W,H);renderer.toneMapping=THREE.NoToneMapping;
+renderer.domElement.id='gl';document.getElementById('stage').prepend(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x04030f);
+const cam=new THREE.PerspectiveCamera(36,W/H,0.01,200);cam.setViewOffset(W,H,0,-150,W,H);
+const $=id=>document.getElementById(id);
+const clamp=x=>Math.min(1,Math.max(0,x)),ease=x=>{x=clamp(x);return 1-Math.pow(1-x,3)},eio=x=>{x=clamp(x);return x*x*(3-2*x)},back=x=>{x=clamp(x);const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const ll=(lon,lat,r=1)=>{const a=lon*Math.PI/180,b=lat*Math.PI/180;return new THREE.Vector3(r*Math.cos(b)*Math.cos(a),r*Math.sin(b),-r*Math.cos(b)*Math.sin(a))};
+const loadTex=u=>new Promise(r=>new THREE.TextureLoader().load(u,t=>{t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;r(t)}));
+const [dayT,nightT]=await Promise.all([loadTex('/data/blue.jpg'),loadTex('/data/night.jpg')]);
+// ---- globe
+const globeMat=new THREE.ShaderMaterial({uniforms:{dayT:{value:dayT},nightT:{value:nightT},sun:{value:new THREE.Vector3(1,.5,.6)},camPos:{value:new THREE.Vector3()},dim:{value:1}},
+ vertexShader:'varying vec2 vUv;varying vec3 vN;varying vec3 vW;void main(){vUv=uv;vN=normalize(mat3(modelMatrix)*normal);vW=(modelMatrix*vec4(position,1.0)).xyz;gl_Position=projectionMatrix*viewMatrix*vec4(vW,1.0);}',
+ fragmentShader:`varying vec2 vUv;varying vec3 vN;varying vec3 vW;uniform sampler2D dayT,nightT;uniform vec3 sun,camPos;uniform float dim;
+ void main(){vec3 N=normalize(vN);float d=dot(N,normalize(sun));vec3 day=texture2D(dayT,vUv).rgb,night=texture2D(nightT,vUv).rgb;
+  float lit=smoothstep(-0.12,0.32,d);vec3 dayC=day*(0.22+1.0*max(d,0.0));vec3 nightC=night*vec3(1.7,1.25,0.7)*1.25+day*0.035;
+  vec3 col=mix(nightC,dayC,lit);vec3 V=normalize(camPos-vW);float fres=pow(1.0-max(dot(N,V),0.0),3.0);col+=vec3(0.12,0.32,0.95)*fres*0.9;
+  gl_FragColor=vec4(col*dim,1.0);}`});
+const globe=new THREE.Mesh(new THREE.SphereGeometry(1,160,160),globeMat);scene.add(globe);
+// atmosphere
+const atm=new THREE.Mesh(new THREE.SphereGeometry(1.075,96,96),new THREE.ShaderMaterial({transparent:true,side:THREE.BackSide,blending:THREE.AdditiveBlending,depthWrite:false,
+ vertexShader:'varying vec3 vN;void main(){vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+ fragmentShader:'varying vec3 vN;void main(){float i=pow(0.74-dot(vN,vec3(0.0,0.0,1.0)),3.0);gl_FragColor=vec4(0.25,0.55,1.0,1.0)*i*1.7;}'}));scene.add(atm);
+// ---- fill overlay (soft glow fills)
+const oc=document.createElement('canvas');oc.width=4096;oc.height=2048;const ox=oc.getContext('2d');
+const P=(lon,lat)=>[(lon+180)/360*4096,(90-lat)/180*2048];
+function fillRings(rings,col,blur){ox.save();ox.fillStyle=col;ox.shadowColor=col;ox.shadowBlur=blur;rings.forEach(r=>{ox.beginPath();r.forEach((p,i)=>{const q=P(p[0],p[1]);i?ox.lineTo(q[0],q[1]):ox.moveTo(q[0],q[1])});ox.closePath();ox.fill()});ox.restore()}
+fillRings(GEO.uz,'rgba(255,170,60,0.20)',14);
+const navoi=GEO.regions.find(r=>r.name==='Navoi');
+const fillTexUz=new THREE.CanvasTexture(oc);fillTexUz.colorSpace=THREE.SRGBColorSpace;
+const fillUz=new THREE.Mesh(new THREE.SphereGeometry(1.0012,128,128),new THREE.MeshBasicMaterial({map:fillTexUz,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,opacity:0}));scene.add(fillUz);
+const oc2=document.createElement('canvas');oc2.width=4096;oc2.height=2048;const ox2=oc2.getContext('2d');
+ox2.fillStyle='rgba(60,230,255,0.26)';ox2.shadowColor='rgba(60,230,255,0.9)';ox2.shadowBlur=16;
+navoi.rings.forEach(r=>{ox2.beginPath();r.forEach((p,i)=>{const q=P(p[0],p[1]);i?ox2.lineTo(q[0],q[1]):ox2.moveTo(q[0],q[1])});ox2.closePath();ox2.fill()});
+const fillTexNv=new THREE.CanvasTexture(oc2);fillTexNv.colorSpace=THREE.SRGBColorSpace;
+const fillNv=new THREE.Mesh(new THREE.SphereGeometry(1.0016,128,128),new THREE.MeshBasicMaterial({map:fillTexNv,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,opacity:0}));scene.add(fillNv);
+// ---- fat lines
+const mats=[];
+function mkLines(polys,color,width,opacity,r=1.0025,closed=true){const seg=[];polys.forEach(poly=>{for(let i=0;i<poly.length-1;i++){const a=ll(poly[i][0],poly[i][1],r),b=ll(poly[i+1][0],poly[i+1][1],r);seg.push(a.x,a.y,a.z,b.x,b.y,b.z)}});
+ const g=new LineSegmentsGeometry();g.setPositions(seg);const m=new LineMaterial({color:new THREE.Color(color[0],color[1],color[2]),linewidth:width,transparent:true,opacity,depthWrite:false});m.resolution.set(W,H);mats.push(m);
+ const l=new LineSegments2(g,m);scene.add(l);return {l,m,base:opacity}}
+const Lworld=mkLines(GEO.world,[0.55,0.75,1.1],1.3,0.5);
+const Lneigh=mkLines(GEO.neighbors,[0.7,0.8,1.0],1.6,0.0);
+const Luz=mkLines(GEO.uz,[2.6,1.7,0.45],4.5,0.0,1.003);
+const Lreg=mkLines(GEO.regions.flatMap(r=>r.rings),[1.5,1.1,0.55],1.8,0.0,1.0028);
+const Lnv=mkLines(navoi.rings,[0.5,2.4,3.0],5.5,0.0,1.0034);
+const rivers=GEO.rivers;
+const Lzar=mkLines(rivers.filter(r=>r.name==='Zarafshon').map(r=>r.line),[0.4,2.0,3.2],4.0,0.0,1.0032);
+const Lriv=mkLines(rivers.filter(r=>/Amu|Syr/.test(r.name||'')).map(r=>r.line),[0.35,0.7,1.6],2.2,0.0,1.003);
+// ---- stars
+const NS=3500,sp=new Float32Array(NS*3);for(let i=0;i<NS;i++){const u=Math.random()*2-1,a=Math.random()*6.283,s=Math.sqrt(1-u*u);sp[i*3]=60*s*Math.cos(a);sp[i*3+1]=60*u;sp[i*3+2]=60*s*Math.sin(a)}
+const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.BufferAttribute(sp,3));scene.add(new THREE.Points(sg,new THREE.PointsMaterial({size:0.18,color:0xbfd0ff,transparent:true,opacity:.85,sizeAttenuation:true,depthWrite:false})));
+// ---- pin
+const ZAR=ll(64.2018,41.5822,1.0),ZN=ZAR.clone().normalize();
+const pin=new THREE.Group();pin.position.copy(ZAR);scene.add(pin);
+const core=new THREE.Mesh(new THREE.SphereGeometry(0.0034,24,24),new THREE.MeshBasicMaterial({color:new THREE.Color(2.2,1.6,0.6)}));pin.add(core);
+const beam=new THREE.Mesh(new THREE.CylinderGeometry(0.0009,0.0009,0.12,12),new THREE.MeshBasicMaterial({color:new THREE.Color(1.8,1.3,0.5),transparent:true,opacity:.8}));
+beam.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),ZN);beam.position.copy(ZN.clone().multiplyScalar(0.06));pin.add(beam);
+const rings=[0,1,2].map(i=>{const m=new THREE.Mesh(new THREE.RingGeometry(0.93,1.0,64),new THREE.MeshBasicMaterial({color:new THREE.Color(1.7,1.2,.45),transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false}));m.lookAt(ZN.clone().multiplyScalar(3));pin.add(m);return m});
+// cities
+const CITY={Tashkent:'Toshkent',Samarkand:'Samarqand',Bukhara:'Buxoro',Navoi:'Navoiy'};
+const cityObj=GEO.places.filter(p=>CITY[p.name]).map(p=>{const v=ll(p.lon,p.lat,1.002);const m=new THREE.Mesh(new THREE.SphereGeometry(0.0028,12,12),new THREE.MeshBasicMaterial({color:new THREE.Color(2,2.2,3)}));m.position.copy(v);scene.add(m);
+ const d=document.createElement('div');d.className='lab city';d.textContent=CITY[p.name];$('cities').appendChild(d);return {v,d,m}});
+// lights/post
+const comp=new EffectComposer(renderer);comp.addPass(new RenderPass(scene,cam));comp.addPass(new UnrealBloomPass(new THREE.Vector2(W,H),0.55,0.5,1.0));comp.addPass(new OutputPass());
+// ---- camera path (Catmull-Rom over lon, lat, log d)
+const K=[[0,8,22,Math.log(6.6)],[T.tB,40,33,Math.log(3.9)],[T.tC,62.5,41.2,Math.log(2.05)],[T.end,64.2,41.5,Math.log(1.34)],[T.end+0.5,64.2,41.5,Math.log(1.32)]];
+function camAt(t){let i=0;while(i<K.length-2&&t>=K[i+1][0])i++;const f=clamp((t-K[i][0])/(K[i+1][0]-K[i][0]));
+ const p=(j)=>K[Math.max(0,Math.min(K.length-1,j))];const cr=(a,b,c,d,u)=>0.5*((2*b)+(-a+c)*u+(2*a-5*b+4*c-d)*u*u+(-a+3*b-3*c+d)*u*u*u);
+ const o=[];for(let q=1;q<=3;q++)o.push(cr(p(i-1)[q],p(i)[q],p(i+1)[q],p(i+2)[q],f));return {lon:o[0],lat:o[1],d:Math.exp(o[2])}}
+const HEAD=['<div class="tag">🎯 ZARAFSHONLIK DASTURCHILAR UCHUN</div><div class="l1"><b>ZARAFSHONLIK</b><br>DASTURCHIMISIZ?</div>',
+ '<div class="tag">🎯 BOSHLANG‘ICH DASTURCHILAR UCHUN</div><div class="l1">YOKI DASTURLASHNI<br><b>ENDI BOSHLAYAPSIZMI?</b></div>',
+ '<div class="tag">🎯 AYNAN SIZ UCHUN</div><div class="l1"><b>BU VIDEO</b><br>SIZ UCHUN!</div>'];
+const CAPS=[[0,T.tB,T.parts[0]],[T.tB,T.tC,T.parts[1]],[T.tC,99,T.parts[2]]];
+let lastHead=-1;
+const proj=(v)=>{const p=v.clone().project(cam);return {x:(p.x+1)/2*W,y:(1-p.y)/2*H}};
+const visible=(v)=>{const n=v.clone().normalize();const c=cam.position.clone().normalize();return n.dot(c)>0.18};
+window.setGL=function(t){
+ const c=camAt(t);const dir=ll(c.lon,c.lat,1);cam.position.copy(dir.clone().multiplyScalar(c.d));
+ // slight cinematic roll/offset
+ cam.up.set(0,1,0);cam.lookAt(0,0,0);cam.rotateZ(0.05*Math.sin(t*0.6)*(c.d>2?1:0.4));
+ cam.updateMatrixWorld();
+ globeMat.uniforms.camPos.value.copy(cam.position);globeMat.uniforms.sun.value.copy(dir.clone().multiplyScalar(0.7).add(new THREE.Vector3(-0.55,0.45,0.25)));
+ globeMat.uniforms.dim.value=1-0.40*eio((3.2-c.d)/1.8);
+ globe.rotation.y=0;
+ // reveals
+ const rUz=eio((t-(T.tB-0.4))/0.9),rNv=eio((t-(T.tC-0.5))/0.9),rZar=eio((t-(T.tC-0.2))/0.8);
+ Lworld.m.opacity=0.5*(1-0.5*rUz);Lneigh.m.opacity=0.45*rUz;Luz.m.opacity=rUz;Lreg.m.opacity=0.65*rUz;Lnv.m.opacity=rNv;Lzar.m.opacity=rZar;Lriv.m.opacity=0.55*rZar;
+ fillUz.material.opacity=rUz;fillNv.material.opacity=rNv;
+ // pin
+ const pt=t-(T.tC+0.25);const pp=pt>0?back(pt/0.5):0;pin.visible=pt>0;core.scale.setScalar(Math.max(0.01,pp)*(1+0.12*Math.sin(t*9)));beam.scale.set(1,Math.max(0.01,pp),1);
+ rings.forEach((m,i)=>{const q=((t*0.8+i/3)%1);const s=0.003+0.02*q;m.scale.setScalar(s);m.material.opacity=pt>0?(1-q)*0.8:0});
+ // head
+ const hi=t<T.tB?0:t<T.tC?1:2;if(hi!==lastHead){$('head').innerHTML=HEAD[hi];lastHead=hi}
+ const hs=hi===0?0:hi===1?T.tB:T.tC;$('head').style.transform=`scale(${1+0.1*(1-ease((t-hs)/0.3))})`;
+ // labels
+ const labUz=$('labUz');const uzA=clamp((t-(T.tB+0.2))/0.5)*(1-clamp((c.d<1.95?(1.95-c.d)/0.3:0)));
+ const uzP=proj(ll(64.0,42.0,1.0));labUz.style.left=uzP.x+'px';labUz.style.top=uzP.y+'px';const ef=clamp((uzP.x-160)/120)*clamp((920-uzP.x)/120);labUz.style.opacity=visible(ll(64,42,1))?uzA*ef:0;labUz.style.transform=`translate(-50%,-50%) scale(${0.7+0.3*clamp(c.d/2.5)})`;
+ cityObj.forEach(o=>{const p=proj(o.v);const a=clamp((t-(T.tB+0.5))/0.5)*(1-clamp((t-(T.tC+0.6))/0.5));o.d.style.left=p.x+'px';o.d.style.top=(p.y-30)+'px';const ef=clamp((p.x-90)/90)*clamp((990-p.x)/90);o.d.style.opacity=visible(o.v)?a*ef:0;o.m.visible=a>0.01;o.m.scale.setScalar(1)});
+ const zp=proj(ZAR);const za=clamp((t-(T.tC+0.55))/0.4);
+ const px=Math.min(Math.max(zp.x,330),750),py=zp.y-230;$('pin').style.left=(px)+'px';$('pin').style.top=(py-60)+'px';$('pin').style.opacity=za;$('pin').style.transform=`translateX(-50%) scale(${0.8+0.2*back((t-(T.tC+0.55))/0.5)})`;$('pin').style.transformOrigin='50% 100%';$('pin').style.textAlign='center';
+ const ld=$('line');const dx=px-zp.x,dy=py+110-zp.y,len=Math.hypot(dx,dy);ld.style.left=zp.x+'px';ld.style.top=zp.y+'px';ld.style.width=len*za+'px';ld.style.transform=`rotate(${Math.atan2(dy,dx)}rad)`;ld.style.opacity=za;
+ $('yes').style.opacity=clamp((t-(T.tC+0.4))/0.3);$('yes').style.transform=`scale(${back((t-(T.tC+0.4))/0.4)})`;$('yes').style.display=t>T.tC+0.35?'block':'none';
+ const cp=CAPS.find(x=>t>=x[0]&&t<x[1])||CAPS[2];$('cap').firstElementChild.textContent=cp[2];
+ $('flash').style.opacity=0;
+ comp.render();
+};
+window.glReady=true;
+</script></body></html>

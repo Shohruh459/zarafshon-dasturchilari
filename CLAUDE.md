@@ -14,6 +14,7 @@
 - Format: 1080x1920, 30 fps, h264 + aac, ovoz -16 LUFS (`loudnorm`).
 - TTS pauzalari: ovoz nuqta/vergul/ikki nuqtadan keyin ~0.85 s jim qoladi ("ovoz uzilgan"). Har ovozga `silenceremove=start_periods=1:start_threshold=-42dB:start_silence=0.02:stop_periods=-1:stop_duration=0.30:stop_threshold=-42dB:stop_silence=0.18` qo'lla. Sahna davomiyligi = ovoz + ~0.12 s (ortiqcha jim dum qoldirma). Tayyor ovozdan `silencedetect` yoki RMS bilan 0.5 s dan uzun jimlikni tekshir.
 - Hook: 0-kadrda tayyor sarlavha, ovoz 0.0 dan, sekin kirish yo'q. 3 soniyada qiziqtir.
+- Mahalliy kirish: videoni Yer → O'zbekiston → Zarafshon uchishi bilan boshla (`manba/intro-zarafshon-globus/`). Tomoshabin o'z joyini ko'rsin.
 - **Kim uchun ekanini 3 soniyada ayt va yoz** (masalan, "🎯 Boshlang'ich dasturchilar uchun" + savol: "Dasturlashni endi boshlayapsizmi?"). Tomoshabin "bu menga kerakmi?" savoliga javob topsa, qoladi.
 - Ostyozuv har doim bo'lsin. Instagram interfeysi yopadigan joy: pastki ~20% (y > 1540) va o'ng chet. Muhim narsani shu yerga qo'yma.
 - Musiqa qo'shma (mualliflik huquqi). Foydalanuvchi Instagram kutubxonasidan qo'shadi.
@@ -47,7 +48,8 @@ Quyidagilar sinab tasdiqlangan; muhit o'zgarsa qayta tekshir.
 - Brauzer: Chromium `/opt/pw-browsers/chromium-1194/chrome-linux/chrome` (`playwright install` qilma). Python: `pip install playwright`, `launch(executable_path=..., args=['--no-sandbox'])`.
 - WebGL: `--use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader --ignore-gpu-blocklist` (dasturiy, ~0.7 s/kadr). `three` npm orqali (`npm i three@0.160.0`); CDN (cdnjs, jsdelivr) bloklangan. Modul import uchun `python3 -m http.server` (localhost ishlaydi).
 - Shriftlar: Liberation Sans/Mono (kirill, `‘`), Noto Color Emoji. Boshqa shrift yuklab bo'lmaydi.
-- Tarmoq: PyPI va npm ochiq; Hugging Face, CDN, Google yopiq.
+- Tarmoq: PyPI, npm va **raw.githubusercontent.com** ochiq (GitHub'dagi tekstura va ma'lumot fayllarini olish mumkin); Hugging Face, CDN (cdnjs/unpkg/jsdelivr), OSM/xarita tayllari, Google yopiq.
+- Xarita ma'lumoti: Natural Earth (`nvkelso/natural-earth-vector`, GitHub raw). Yer shari kirishi: `manba/intro-zarafshon-globus/` (WebGL, ≈7 daqiqa/7 s).
 - Pillow bilan chizishda `oʻ` ni emas, `‘` ni ishlat (shriftda bor).
 
 ## Bu yerda qilinmaydi
