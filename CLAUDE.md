@@ -50,6 +50,7 @@ Quyidagilar sinab tasdiqlangan; muhit o'zgarsa qayta tekshir.
 - Shriftlar: Liberation Sans/Mono (kirill, `‘`), Noto Color Emoji. Boshqa shrift yuklab bo'lmaydi.
 - Tarmoq: PyPI, npm va **raw.githubusercontent.com** ochiq (GitHub'dagi tekstura va ma'lumot fayllarini olish mumkin); Hugging Face, CDN (cdnjs/unpkg/jsdelivr), OSM/xarita tayllari, Google yopiq.
 - Xarita ma'lumoti: Natural Earth (`nvkelso/natural-earth-vector`, GitHub raw). Yer shari kirishi: `manba/intro-zarafshon-globus/` (WebGL, ≈7 daqiqa/7 s).
+- Blender: `pip install bpy` (≈20 s) ishlaydi; Cycles CPU: 1080x1920, 48 namuna ≈ 30 s/kadr (4 yadro). EEVEE ishlamaydi (libEGL yo'q). Sinov: `manba/blender-sinov/`.
 - Pillow bilan chizishda `oʻ` ni emas, `‘` ni ishlat (shriftda bor).
 
 ## Bu yerda qilinmaydi
