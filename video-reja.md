@@ -13,13 +13,13 @@
 
 | Qism | Vaqt | Nima qilamiz |
 |---|---|---|
-| **Hook** | 0–3 s | 0-kadrda tayyor sarlavha, ovoz 0.0 dan. Savol, xavf yoki "wow" natija bilan boshlaymiz. Sekin kirish yo'q. |
+| **Hook** | 0–3 s | 0-kadrda tayyor sarlavha, ovoz 0.0 dan. **Birinchi navbatda kim uchun ekanini aytamiz va yozamiz** ("Dasturlashni endi boshlayapsizmi? Bu video aynan siz uchun!"): tomoshabin "bu menga kerakmi?" degan savolga 3 soniyada javob topadi. Keyin savol, xavf yoki "wow" natija. Sekin kirish yo'q. |
 | **Va'da** | 3–6 s | "Shu videoda … o'rganasiz" (bir gap). |
 | **Tana** | 6–30 s | 3–4 qisqa bo'lak. Har bo'lakda **bitta o'xshatish** va **bitta ko'rinadigan animatsiya**. |
 | **Natija** | 30–35 s | Qisqa xulosa ("Endi bilasiz: …"). |
 | **Chaqiriq** | oxirgi 4 s | Saqlash + do'stga yuborish + **keyingi videoga ochiq savol** ("Keyingi videoda … ochib beraman"). |
 
-**Hook shablonlari** (almashtirib ishlatamiz):
+**Hook shablonlari** (almashtirib ishlatamiz; har biri oldidan "kim uchun" qatori keladi, masalan "🎯 Boshlang'ich dasturchilar uchun"):
 1. **Savol:** "Siz hozir tugma bosdingiz. Ortida nima bo'ldi?"
 2. **Xavf:** "Bu xato saytingizni hammaga ochib qo'yadi!"
 3. **Wow-natija:** "Bu serverni Claude yozdi. 15 qator xolos."

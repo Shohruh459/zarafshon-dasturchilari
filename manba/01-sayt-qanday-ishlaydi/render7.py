@@ -2,8 +2,8 @@ import sys, re, json, subprocess, wave, time
 import numpy as np
 sys.path.insert(0,'.')
 from script7 import SCENES
-FPS=30; SR=44100; TAIL=0.35
-MIN={'hook':5.0,'zal':6.0,'oshxona':5.0,'ombor':5.0,'api':9.0,'cta':7.0}
+FPS=30; SR=44100; TAIL=0.12
+MIN={'hook':5.0,'zal':3.0,'oshxona':3.0,'ombor':3.0,'api':8.8,'cta':5.0}
 def adur(i):
     o=subprocess.run(['/tmp/ffmpeg','-i',f"t_{i}.mp3"],capture_output=True,text=True).stderr
     m=re.search(r'Duration: (\d+):(\d+):([\d.]+)',o); return int(m[1])*3600+int(m[2])*60+float(m[3])
@@ -22,7 +22,8 @@ for s in SCENES:
         caps.append(dict(s=round(e,3),e=round(end if i<len(ph)-1 else s['t0']+s['dur'],3),t=p)); e=end
 TRIP=dict(t=[0,1.0,2.1,2.8,3.9,4.7,5.8,6.4,7.5],y=[585,585,925,925,1265,1265,925,925,585],arr=[0,2.1,3.9,5.8,7.5],
  b=[[0.3,1.0,'Buyurtma!'],[2.1,2.8,'Oshxonaga!'],[3.9,4.7,'Mahsulot kerak!'],[5.8,6.5,'Mana!'],[7.5,8.9,'Tayyor! ✅']])
-CFG=dict(sc=sc,caps=caps,total=TOTAL,trip=TRIP)
+SWAP=float(open('swap.txt').read())
+CFG=dict(sc=sc,caps=caps,total=TOTAL,trip=TRIP,hookSwap=SWAP)
 page=open('video7.html').read().replace('__CFG__',json.dumps(CFG,ensure_ascii=False))
 open('page.html','w').write(page)
 
@@ -32,7 +33,7 @@ def events():
     for s in SCENES:
         k=s['id']; t0=s['t0']
         if k!='hook': ev.append((t0,'whoosh'))
-        if k=='hook': ev+=[(0.02,'boom'),(0.4,'pop'),(t0+2.1,'click'),(t0+2.2,'ding')]
+        if k=='hook': ev+=[(0.02,'boom'),(0.5,'pop'),(0.7,'pop'),(0.9,'pop'),(1.9,'pop'),(SWAP,'whoosh'),(SWAP+0.12,'thud'),(t0+SWAP+1.7,'click'),(t0+SWAP+1.8,'ding')]
         if k in('zal','oshxona','ombor'):
             n={'zal':3,'oshxona':2,'ombor':2}[k]
             ev+=[(t0+0.9+j*0.55,'pop') for j in range(n)]
@@ -45,6 +46,8 @@ def synth(kind):
     def env(n,a=0.005,d=0.1):
         x=np.arange(n)/SR; return np.minimum(1,x/a)*np.exp(-x/d)
     if kind=='click': n=int(.03*SR); return rng.standard_normal(n)*env(n,.0005,.006)*.5
+    if kind=='thud':
+        n=int(.22*SR); x=np.arange(n)/SR; f=130*np.exp(-x*9)+45; return np.sin(2*np.pi*np.cumsum(f)/SR)*env(n,.002,.07)*.9
     if kind=='tick': n=int(.018*SR); return rng.standard_normal(n)*env(n,.001,.004)*.22
     if kind=='pop':
         n=int(.14*SR); x=np.arange(n)/SR; f=520+380*np.exp(-x*30); return np.sin(2*np.pi*np.cumsum(f)/SR)*env(n,.002,.04)*.55

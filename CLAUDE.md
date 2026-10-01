@@ -12,7 +12,9 @@
 
 ## Video qoidalari
 - Format: 1080x1920, 30 fps, h264 + aac, ovoz -16 LUFS (`loudnorm`).
+- TTS pauzalari: ovoz nuqta/vergul/ikki nuqtadan keyin ~0.85 s jim qoladi ("ovoz uzilgan"). Har ovozga `silenceremove=start_periods=1:start_threshold=-42dB:start_silence=0.02:stop_periods=-1:stop_duration=0.30:stop_threshold=-42dB:stop_silence=0.18` qo'lla. Sahna davomiyligi = ovoz + ~0.12 s (ortiqcha jim dum qoldirma). Tayyor ovozdan `silencedetect` yoki RMS bilan 0.5 s dan uzun jimlikni tekshir.
 - Hook: 0-kadrda tayyor sarlavha, ovoz 0.0 dan, sekin kirish yo'q. 3 soniyada qiziqtir.
+- **Kim uchun ekanini 3 soniyada ayt va yoz** (masalan, "🎯 Boshlang'ich dasturchilar uchun" + savol: "Dasturlashni endi boshlayapsizmi?"). Tomoshabin "bu menga kerakmi?" savoliga javob topsa, qoladi.
 - Ostyozuv har doim bo'lsin. Instagram interfeysi yopadigan joy: pastki ~20% (y > 1540) va o'ng chet. Muhim narsani shu yerga qo'yma.
 - Musiqa qo'shma (mualliflik huquqi). Foydalanuvchi Instagram kutubxonasidan qo'shadi.
 - Har video: bitta g'oya, oxirida "saqlash + yuborish + keyingi videoga ochiq savol".

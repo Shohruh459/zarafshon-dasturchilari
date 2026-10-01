@@ -77,6 +77,7 @@ canvas{position:absolute;left:0;top:0}
 #bigbtn .r{position:absolute;border-radius:50%;border:6px solid rgba(255,160,140,.9)}
 #finger{position:absolute;font-size:150px;z-index:23;filter:drop-shadow(0 10px 20px rgba(0,0,0,.5))}
 #cap{z-index:60}#head{z-index:50}
+#aud{position:absolute;left:0;top:830px;width:1080px;height:560px;z-index:22;text-align:center}#aud .e{font-size:260px;line-height:1}#aud .q{position:absolute;font-size:120px;font-weight:800;color:#ffd166;text-shadow:0 0 30px rgba(255,200,100,.7)}#aud .q1{left:250px;top:20px}#aud .q2{left:760px;top:40px}#aud .q3{left:520px;top:-40px}#aud .yes{position:absolute;left:100px;right:100px;top:330px;font-size:60px;font-weight:800;background:linear-gradient(90deg,#1fa77a,#5ad9b4);color:#0c1f18;border-radius:44px;padding:16px 20px;box-shadow:0 18px 50px rgba(31,167,122,.5)}
 </style></head><body>
 <div id="stage">
  <div class="blob" id="b1" style="width:800px;height:800px;left:-200px;top:100px;background:#7c5cff"></div>
@@ -89,6 +90,7 @@ canvas{position:absolute;left:0;top:0}
  <div id="nodes"></div>
  <div id="bigbtn"><div class="r" id="r1"></div><div class="r" id="r2"></div><div class="c">BOS!</div></div>
  <div id="finger">👆</div>
+ <div id="aud"><div class="e">🧑‍💻</div><div class="q q1">?</div><div class="q q2">?</div><div class="q q3">?</div><div class="yes">✅ Bu video aynan siz uchun</div></div>
  <div id="waiter">🤵</div><div id="bubble"></div>
  <canvas id="fxF" width="1080" height="1920" style="position:absolute;left:0;top:0;z-index:55"></canvas>
  <div id="cap"><div></div></div>
@@ -109,6 +111,7 @@ const nodeEls=NODES.map(n=>{const d=document.createElement('div');d.className='n
  d.innerHTML=`<div class="em">${n.em}</div><div class="col"><div class="h">${n.h}<span class="role" style="background:${n.rc}">${n.role}</span></div><div class="s">${n.s}</div><div class="chips">${n.chips.map(c=>`<div>${c}</div>`).join('')}</div></div><div class="ok">✓</div>`;
  $('nodes').appendChild(d);return d});
 const HEAD={hook:'<div class="l1">SAYT QANDAY<br>ISHLAYDI?</div><div class="chip" style="margin-top:14px">🍽️ restoran misolida</div>',
+ hook1:'<div class="tag" style="background:linear-gradient(90deg,#ffd166,#ff9f6b);color:#241b3a;font-size:36px">🎯 BOSHLANG‘ICH DASTURCHILAR UCHUN</div><div class="l1" style="font-size:90px;margin-top:22px;line-height:1.08">DASTURLASHNI<br>ENDI<br>BOSHLAYAPSIZMI?</div>',
  zal:'<div class="tag">1-QISM</div><div class="l3">Zal = Frontend</div>',
  oshxona:'<div class="tag">2-QISM</div><div class="l3">Oshxona = Backend</div>',
  ombor:'<div class="tag">3-QISM</div><div class="l3">Ombor = Ma‘lumotlar bazasi</div>',
@@ -122,7 +125,7 @@ function ambient(tt){fxB.clearRect(0,0,1080,1920);fxB.globalCompositeOperation='
 const CONF=['#ffd166','#ff6b6b','#b388ff','#5ad9b4','#ffffff','#ff9f6b'];
 const A=sc.api[0],C=sc.cta[0],H=sc.hook[0];
 const T=CFG.trip; // waiter keyframes inside api scene
-const BUR=[{t:H+2.3,x:540,y:1010,n:30,conf:false},{t:A+T.arr[1],x:600,y:925,n:18,conf:false},{t:A+T.arr[2],x:600,y:1265,n:18,conf:false},{t:A+T.arr[3],x:600,y:925,n:18,conf:false},{t:A+T.arr[4],x:600,y:585,n:26,conf:false},{t:C+0.25,x:540,y:820,n:40,conf:true}];
+const BUR=[{t:H+CFG.hookSwap+1.9,x:540,y:1010,n:30,conf:false},{t:A+T.arr[1],x:600,y:925,n:18,conf:false},{t:A+T.arr[2],x:600,y:1265,n:18,conf:false},{t:A+T.arr[3],x:600,y:925,n:18,conf:false},{t:A+T.arr[4],x:600,y:585,n:26,conf:false},{t:C+0.25,x:540,y:820,n:40,conf:true}];
 function bursts(tt){fxF.clearRect(0,0,1080,1920);fxF.globalCompositeOperation='lighter';
  BUR.forEach((b,bi)=>{const age=tt-b.t;if(age<0||age>3.2)return;
   if(!b.conf){if(age>1.0)return;for(let i=0;i<b.n;i++){const ang=rnd(bi*50+i)*6.283,sp=260+rnd(bi*50+i+7)*420,r=(1-age)*7+1;fxF.fillStyle=`rgba(255,${200+rnd(i)*55|0},${140+rnd(i+4)*80|0},${1-age})`;fxF.beginPath();fxF.arc(b.x+Math.cos(ang)*sp*age,b.y+Math.sin(ang)*sp*age+200*age*age,r,0,7);fxF.fill()}
@@ -142,8 +145,9 @@ window.setT=function(tt){
  $('b2').style.transform=`translate(${Math.cos(tt*.45)*110}px,${Math.sin(tt*.6)*100}px)`;
  $('b3').style.transform=`translate(${Math.sin(tt*.35+2)*140}px,${Math.cos(tt*.5)*80}px)`;
  $('floor').style.backgroundPosition=`0px ${tt*150}px`;
- if(k!==lastScene){$('head').innerHTML=HEAD[k];lastScene=k}
- const hp=ease(lt/0.28);$('head').style.transform=`scale(${1+0.14*(1-hp)})`;
+ const S=CFG.hookSwap;const hk=(k==='hook'&&lt<S)?'hook1':k;const hs=(k==='hook'&&lt>=S)?S:0;
+ if(hk!==lastScene){$('head').innerHTML=HEAD[hk];lastScene=hk}
+ const hp=ease((lt-hs)/0.28);$('head').style.transform=`scale(${1+0.14*(1-hp)})`;
  // defaults
  let nodeOp=[.2,.2,.2],glow=[0,0,0],showChips=false,okT=[0,0,0],nsc=[1,1,1];
  const act=k==='zal'?0:k==='oshxona'?1:k==='ombor'?2:-1;
@@ -163,7 +167,7 @@ window.setT=function(tt){
   T.arr.forEach((ta,i)=>{if(i>0){const ni=i===1?1:i===2?2:i===3?1:0;const f=Math.max(0,1-(lt-ta)/0.8);if(lt>=ta&&f>0){glow[ni]=Math.max(glow[ni],f*0.9);nsc[ni]=1+0.04*f}}});
   if(lt>=T.arr[4])okT=[T.arr[4]+0.2,0,0]}
  if(k==='cta')okT=[0.3,0.6,0.9];
- for(let i=0;i<3;i++){const ap=back((lt-i*0.12)/0.4);const op=k==='hook'?nodeOp[i]*clamp(ap):nodeOp[i];setNode(i,op,nsc[i]*(k==='hook'?0.95+0.05*clamp(ap):1),glow[i],showChips,k==='api'||k==='cta'?-5:(act>=0?0.9:0),lt,okT[i])}
+ for(let i=0;i<3;i++){const ap=back((lt-i*0.12)/0.4);const apH=back((lt-S-i*0.12)/0.4);const op=k==='hook'?nodeOp[i]*clamp(apH):nodeOp[i];setNode(i,op,nsc[i]*(k==='hook'?0.95+0.05*clamp(apH):1),glow[i],showChips,k==='api'||k==='cta'?-5:(act>=0?0.9:0),lt,okT[i])}
  // lane + waiter
  const laneOn=(k==='api'||k==='cta'||k==='hook')?1:0.0;
  $('lane').style.opacity=k==='hook'?0.25:(k==='api'||k==='cta')?1:0.2;$('lanelit').style.opacity=k==='api'?1:0;
@@ -172,12 +176,14 @@ window.setT=function(tt){
  $('waiter').style.top=(wy-48+Math.sin(tt*9)*(k==='api'&&bubOn?4:0))+'px';
  $('bubble').style.display=(k==='api'&&bubOn)?'block':'none';if(k==='api'&&bubOn){$('bubble').textContent=bub;$('bubble').style.top=(wy-34)+'px'}
  if(k==='cta'){$('waiter').style.top=(LANE_Y[0]-48+Math.sin(tt*5)*6)+'px'}
+ // audience screen (hook, first part)
+ const au=$('aud');if(k==='hook'&&lt<S){au.style.display='block';const e=au.querySelector('.e');e.style.transform=`translateY(${Math.sin(lt*5)*14}px) scale(${1+0.04*Math.sin(lt*9)})`;au.querySelectorAll('.q').forEach((q,i)=>{const p=back((lt-0.5-i*0.2)/0.4);q.style.transform=`scale(${Math.max(0.01,p)}) rotate(${Math.sin(lt*4+i)*12}deg)`;q.style.opacity=clamp(p*2)});const y=au.querySelector('.yes');const yp=back((lt-1.9)/0.4);y.style.transform=`scale(${Math.max(0.01,yp)})`;y.style.opacity=clamp(yp*2)}else au.style.display='none';
  // big button (hook)
  const bb=$('bigbtn'),fg=$('finger');
  if(k==='hook'){bb.style.display='block';fg.style.display='block';
-  const press=lt>=2.1&&lt<2.3;const p=ease(lt/0.3);bb.style.transform=`scale(${(0.9+0.1*p)*(press?0.92:1)})`;bb.style.opacity=lt<3.2?1:Math.max(0,1-(lt-3.2)/0.5);
-  const fx=900-(900-640)*eio((lt-0.9)/1.1),fy=1330-(1330-1010)*eio((lt-0.9)/1.1)+(press?30:0);fg.style.left=fx+'px';fg.style.top=fy+'px';fg.style.opacity=lt<3.2?1:Math.max(0,1-(lt-3.2)/0.4);
-  const r=(lt-2.1);[['r1',0],['r2',0.25]].forEach(([id,d])=>{const q=clamp((r-d)/0.9);const e=$(id);e.style.display=r>=d&&q<1?'block':'none';const s=300+q*320;e.style.width=s+'px';e.style.height=s+'px';e.style.left=(250-s/2)+'px';e.style.top=(250-s/2)+'px';e.style.opacity=1-q})}
+  const L=lt-S;const press=L>=1.7&&L<1.9;const p=ease(L/0.3);bb.style.display=lt>=S?'block':'none';bb.style.transform=`scale(${(0.9+0.1*p)*(press?0.92:1)})`;bb.style.opacity=L<2.9?1:Math.max(0,1-(L-2.9)/0.5);
+  const fx=900-(900-640)*eio((L-0.5)/1.1),fy=1330-(1330-1010)*eio((L-0.5)/1.1)+(press?30:0);fg.style.left=fx+'px';fg.style.top=fy+'px';fg.style.opacity=lt<S?0:(L<2.9?1:Math.max(0,1-(L-2.9)/0.4));
+  const r=(L-1.7);[['r1',0],['r2',0.25]].forEach(([id,d])=>{const q=clamp((r-d)/0.9);const e=$(id);e.style.display=r>=d&&q<1?'block':'none';const s=300+q*320;e.style.width=s+'px';e.style.height=s+'px';e.style.left=(250-s/2)+'px';e.style.top=(250-s/2)+'px';e.style.opacity=1-q})}
  else{bb.style.display='none';fg.style.display='none'}
  ambient(tt);bursts(tt);
  const c=capAt(tt);$('cap').firstElementChild.textContent=c.t;

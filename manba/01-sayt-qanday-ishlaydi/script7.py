@@ -1,5 +1,5 @@
 SCENES=[
- dict(id='hook', say="Siz hozir bitta tugma bosdingiz. Ortida nima bo'ldi? Restoran misolida ko'rsataman!"),
+ dict(id='hook', say="Dasturlashni endi boshlayapsizmi? Bu video aynan siz uchun! Sayt ichida nima bo'lishini restoran misolida ko'rsataman!"),
  dict(id='zal', say="Frontend, bu zal. Siz ko'rasiz va bosasiz: tugma, rasm, matn."),
  dict(id='oshxona', say="Backend, bu oshxona. Buyurtmani qabul qiladi va tayyorlaydi."),
  dict(id='ombor', say="Ma'lumotlar bazasi, bu ombor. Hamma narsa shu yerda saqlanadi."),
