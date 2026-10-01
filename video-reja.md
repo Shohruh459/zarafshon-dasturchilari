@@ -243,3 +243,35 @@ Qoida: bir vaqtda **bitta narsani** o'zgartiramiz (masalan, faqat hook), shunda 
 - Murakkab effekt faqat **ma'noga xizmat qilsa** ishlatiladi (globus = "bu sizga"; konfetti = "ishladi").
 - Xarita ma'lumotini manbasi bilan yozamiz; Zarafshon nuqtasi shahar markazi, aniq bino emas.
 - Mahalliy kirish matni auditoriyaga moslanadi: Zarafshon uchun "Zarafshonlik", umumiy uchun "O'zbekistonlik".
+
+
+## 11. Kirish g'oyalari kutubxonasi (har video o'ziga xos boshlansin)
+
+**Qoida:** kirish (0–5 s) uchta ishni qiladi: (1) **kim uchun** ekanini aytadi, (2) mavzuning **ko'rinadigan "obrazi"** ni ko'rsatadi, (3) **harakat** bilan ushlab turadi. Globus bu qoidaning faqat bitta ko'rinishi edi.
+
+| # | G'oya | Qanday boshlanadi (0–3 s) | Qaysi mavzularga mos | Narx |
+|---|---|---|---|---|
+| A | **Ichiga kirish (zoom-through)** | Telefondagi "BOS!" tugmasidan kamera ichkariga tushadi, kod/tarmoq/oshxonaga aylanadi | Backend, API, baza | yuqori (WebGL) |
+| B | **Xato ekrani** | Qizil `404`, `ERR_CONNECTION_REFUSED`, "Site can't be reached": "Siz ham shuni ko'rdingizmi?" | Domen, DNS, Docker, server xatolari | past |
+| C | **Chat/Telegram xabari** | Boshlovchining savoli: "Ustoz, saytim ochilmayapti…" → javob beramiz (fiktiv ism) | Kundalik muammolar, FAQ | past |
+| D | **Hisoblagich/chaqiriq** | Katta taymer: "Serverga joylash: 5 qadam, 60 soniya" (haqiqiy vaqt yoki "tezlashtirilgan" belgisi bilan) | Server, Docker, domen | o'rta |
+| E | **Oldin → keyin** | Ekran ikkiga bo'linadi: chap bo'sh sahifa, o'ng tayyor sayt | Frontend, "o'zingiz yasang" | past |
+| F | **Ma'lumot yo'li** | Yuborilgan paket Yerdan serverga chiziq bo'ylab uchadi | DNS, domen, server, API | yuqori (globus qayta ishlatiladi) |
+| G | **Xavf signali** | Qizil "OCHIQ!" ogohlantirishi: token, parol, port | Xavfsizlik videolari | past |
+| H | **Terminal** | Haqiqiy buyruq yoziladi, ENTER, natija chiqadi | Docker, Git, server | past |
+| I | **Restoran olami (seriya "dunyosi")** | Kamera restoranning kerakli xonasiga kiradi: zal, oshxona, ombor, ofitsiant | Hamma asos mavzular | o'rta |
+| J | **Keyingi videoga ko'prik** | Oldingi videoning oxirgi savoli keyingisining birinchi kadri bo'ladi | Hamma | past |
+
+**Maslahat:** qimmat kirish (A, F) faqat 3 videodan 1 tasiga; qolganlariga arzon (B, C, E, G, H). Shunda sifat ham, tezlik ham saqlanadi. **I** (restoran olami) seriyaga **tanish ko'rinish** beradi, tomoshabin "bu o'sha seriya" deb taniydi.
+
+### Navbatdagi videolar uchun taklif
+
+| Video | Kirish g'oyasi | Birinchi 3 soniya (ovoz va yozuv) |
+|---|---|---|
+| 3. Backend nima? | **J + A + I**: 2-videoning savoli ("ma'lumot qayerga ketadi?") javobi; "BOS!" → paket yo'lga chiqadi → oshxonaga kiradi | "Tugma bosdingiz. Ma'lumot qayerga ketdi? 🎯 Boshlovchilar uchun" |
+| 4. Baza nima? | **I**: kamera ombor eshigini ochadi, javonlar | "Sayt ma'lumotni qayerda saqlaydi?" |
+| 5. API nima? | **C**: chat: "API nima, tushunmadim" | "‘API’ so'zini eshitib, tushunmadingizmi?" |
+| 21. Docker | **B**: "Menda ishlayapti!" + qizil xato | "‘Menda ishlayapti’ — shu gapni eshitganmisiz?" |
+| 27. Serverga joylash | **D**: taymer 60 s | "5 qadamda saytni internetga chiqaramiz" |
+| 29. Domen/DNS | **B + F**: "Sayt ochilmayapti" → paket yo'li | "Sayt tayyor, lekin ochilmayapti. Sabab?" |
+| Xavf (token) | **G**: qizil "OCHIQ" | "Bu xato botingizni hammaga ochib qo'yadi!" |
