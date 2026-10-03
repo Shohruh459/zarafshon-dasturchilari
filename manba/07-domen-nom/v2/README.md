@@ -6,3 +6,6 @@ mp4 repoga qo'shilmaydi.
 
 ## v3: DNS sahnasi = telefon kontaktlari (CSS)
 `video17.html` + `render17.py` (port 8817): Yer shari o'rniga kontaktlar ro'yxati. `globe_dns.html` 8-video (HTTPS) uchun saqlangan. Kadr namunalari tasdiq kutmoqda.
+
+## v4: hook "Har kuni ishlatasiz, lekin e'tibor bermaysiz" (qiziqish bo'shlig'i)
+`script17.py`, `tts17.py`, `video17.html`, `render17.py`: manzil satri halqa bilan belgilanadi ("Shu nima?"), keyin ikki foyda. Kadr namunalari tasdiq kutmoqda.

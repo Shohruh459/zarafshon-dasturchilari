@@ -1,7 +1,7 @@
 import sys, re, json, subprocess, wave, time, os
 import numpy as np
 sys.path.insert(0,'.')
-from script16 import SC
+from script17 import SC
 FPS=30; SR=44100
 TM=json.load(open('timing.json'))
 def disp(t): return re.sub(r"(?<=[oOgGmM])'","‘",t).replace("'","’")
@@ -18,7 +18,7 @@ for s in SC:
         st=t0+TM[k]['starts'][i]; en=t0+(TM[k]['starts'][i+1] if i<len(s['parts'])-1 else sc[k][1])
         caps.append(dict(s=round(st,3),e=round(en,3),t=disp(p)))
 H=TM['hook']; RQ=sc['raqam'][0]; DM=sc['domen'][0]; DN=sc['dns'][0]; C=sc['cta'][0]
-BUR=[dict(t=H['starts'][1]+1.7,x=540,y=700,n=28,conf=False),
+BUR=[dict(t=H['starts'][2]+0.4,x=540,y=700,n=28,conf=False),
      dict(t=DM+1.2,x=540,y=850,n=34,conf=False),
      dict(t=DN+TM['dns']['starts'][1]+1.9,x=540,y=720,n=30,conf=False),
      dict(t=C+0.3,x=540,y=820,n=40,conf=True)]
@@ -43,7 +43,7 @@ def synth(k):
         return o/(np.abs(o).max()+1e-9)*np.sin(np.pi*x/.4)**2*.4
 def events():
     RS=TM['raqam']['starts']; MS=TM['domen']['starts']; NS=TM['dns']['starts']; CS=TM['cta']['starts']; HS=TM['hook']['starts']
-    ev=[(0.02,'boom')]+[(0.1+0.13*i,'tick') for i in range(12)]+[(HS[1]+0.5,'click')]+[(HS[1]+0.5+0.11*i,'tick') for i in range(8)]+[(HS[1]+1.6,'ding'),(HS[1]+1.8,'pop'),(HS[1]+2.5,'pop'),(HS[1]+3.2,'pop')]
+    ev=[(0.02,'boom')]+[(0.1+0.13*i,'tick') for i in range(12)]+[(0.4,'pop'),(HS[1]+0.1,'whoosh'),(HS[2]+0.5,'click')]+[(HS[2]+0.5+0.11*i,'tick') for i in range(8)]+[(HS[2]+1.6,'ding'),(HS[2]+0.3,'pop'),(HS[2]+1.2,'pop'),(HS[2]+2.1,'pop')]
     ev+=[(RQ,'whoosh'),(RQ+0.4,'pop'),(RQ+1.0,'pop'),(RQ+RS[1]+0.3,'pop')]+[(RQ+RS[1]+0.9+0.1*i,'tick') for i in range(10)]+[(RQ+RS[1]+2.4,'thud')]
     ev+=[(DM,'whoosh'),(DM+0.1,'pop'),(DM+0.8,'whoosh'),(DM+1.2,'boom'),(DM+1.25,'ding'),(DM+MS[1]+0.4,'pop'),(DM+MS[2]+0.1,'pop')]
     ev+=[(DN,'whoosh')]+[(DN+0.1+0.14*i,'tick') for i in range(8)]+[(DN+0.5,'pop'),(DN+NS[1]+0.4,'click')]+[(DN+NS[1]+0.4+0.15*i,'tick') for i in range(5)]+[(DN+NS[1]+1.1,'pop'),(DN+NS[1]+1.9,'ding'),(DN+NS[1]+1.9,'boom'),(DN+NS[2],'whoosh'),(DN+NS[2]+0.9,'pop'),(DN+NS[2]+1.9,'ding')]

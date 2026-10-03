@@ -153,7 +153,7 @@ function bursts(tt){fxF.clearRect(0,0,1080,1920);fxF.globalCompositeOperation='l
   else{fxF.globalCompositeOperation='source-over';for(let i=0;i<b.n*3;i++){const ang=-Math.PI*(0.05+0.9*rnd(bi*90+i)),sp=600+rnd(bi*90+i+5)*900,x=b.x+Math.cos(ang)*sp*age,y=b.y+Math.sin(ang)*sp*age+1500*age*age*0.5,w=14+rnd(i+1)*14,h=8+rnd(i+2)*8,rot=rnd(i+3)*6.28+age*(rnd(i+4)*18-9);
    if(y>1980)continue;fxF.save();fxF.translate(x,y);fxF.rotate(rot);fxF.fillStyle=CONF[i%CONF.length];fxF.globalAlpha=Math.min(1,(3.2-age)/0.6);fxF.fillRect(-w/2,-h/2,w,h);fxF.restore()}fxF.globalAlpha=1;fxF.globalCompositeOperation='lighter'}})}
 const TAG='<div class="tag" style="background:linear-gradient(90deg,#ffd166,#ff9f6b);color:#241b3a;font-size:36px">🎯 BOSHLANG‘ICH DASTURCHILAR UCHUN</div>';
-const HEAD={hook:TAG+'<div class="l1" style="font-size:84px;margin-top:22px;line-height:1.06">SAYT NOMI QAYERDAN<br><span style="color:#ffd166">KELADI?</span></div>',
+const HEAD={hook:TAG+'<div class="l1" style="font-size:68px;margin-top:22px;line-height:1.12">HAR KUNI ISHLATASIZ,<br><span style="color:#ffd166">LEKIN E‘TIBOR BERMAYSIZ</span></div>',
  raqam:'<div class="tag">1 · MUAMMO</div><div class="l3">Raqamni eslab bo‘lmaydi</div>',
  domen:'<div class="tag">2 · DOMEN</div><div class="l3">Binoning nomi</div>',
  dns:'<div class="tag">3 · DNS = KONTAKTLAR</div><div class="l3">Nom raqamga aylanadi</div>',
@@ -171,6 +171,8 @@ hkChip.innerHTML='<div style="display:inline-block;background:rgba(255,255,255,.
 const chk=(t,top)=>el('chk','<b>'+ico('check',56,'#5ad9b4')+'</b><span>'+t+'</span>',{top:top+'px',fontSize:'40px'});
 const hkC1=chk('Domen nima ekanini bilasiz',1050),hkC2=chk('Nega raqam emas, nom yozilishini tushunasiz',1200);
 const hkOver=el('','Oxirigacha qoling 👇',{left:'0',width:'1080px',top:'1340px',textAlign:'center',fontSize:'46px',fontWeight:800,color:'#ffd166'});
+const hkRing=el('','',{left:'190px',top:'431px',width:'800px',height:'62px',borderRadius:'31px',border:'4px solid #ffd166'});
+const hkQ2=el('','Shu nima? ☝️',{left:'610px',top:'505px',fontSize:'38px',fontWeight:800,color:'#2a1a10',background:'linear-gradient(90deg,#ffd166,#ff9f6b)',borderRadius:'26px',padding:'8px 26px',boxShadow:'0 10px 30px rgba(255,150,80,.5)'});
 function bw(url,mono,locked,page){$('bwl').innerHTML=ico(locked?'lock':'lock-open',34,locked?'#5ad9b4':'#ff9f6b');$('bwu').textContent=url;$('bwp').innerHTML=page}
 const SITE='<div style="font-size:84px;line-height:1">'+ico('globe',120,'#ffd166')+'</div><div style="font-size:60px">Mening saytim</div><div style="background:linear-gradient(90deg,#ffd166,#ff9f6b);color:#241b3a;border-radius:30px;padding:10px 38px;font-size:36px">Xush kelibsiz</div>';
 const LOAD='<div style="font-size:50px;color:#cfc8f5">'+ico('wifi',100,'#cfc8f5')+'</div><div style="font-size:40px;color:#cfc8f5">yuklanmoqda...</div>';
@@ -211,7 +213,7 @@ const recEls=RECL.map((r,i)=>el('',ico(r[0],54,r[2])+' <span style="vertical-ali
 const pc=$('pcard');pc.style.zIndex=25;pc.style.top='1030px';pc.firstElementChild.nextElementSibling.textContent='Domen nima? Binoning nomi misolida tushuntir va DNS ni telefon kitobiga o‘xshat.';
 const capAt=tt=>{for(const c of CFG.caps){if(tt>=c.s&&tt<c.e)return c}return CFG.caps[CFG.caps.length-1]};
 function show(d,on,a,sc_){d.style.display=on?'block':'none';if(on){d.style.opacity=clamp(a*2);d.style.transform=`scale(${Math.max(0.01,sc_===undefined?a:sc_)})`}}
-const ALL=[dnUrl,dnPh,dnSrv,dnOk,BW,hkChip,hkC1,hkC2,hkOver,PH,rqTag,dmOld,dmArr,dmNew,dmTag,dmTxt,dmFee,ctaBig,...recEls];
+const ALL=[hkRing,hkQ2,dnUrl,dnPh,dnSrv,dnOk,BW,hkChip,hkC1,hkC2,hkOver,PH,rqTag,dmOld,dmArr,dmNew,dmTag,dmTxt,dmFee,ctaBig,...recEls];
 window.setT=async function(tt){
  const k=sceneAt(tt),t0=sc[k][0],D=sc[k][1],lt=tt-t0,P=CFG.parts[k],St=P.starts;
  ['b1','b2','b3','floorWrap'].forEach(id=>$(id).style.display='block');
@@ -222,14 +224,16 @@ window.setT=async function(tt){
  ALL.forEach(d=>d.style.display='none');
  if(k==='hook'){
   show(BW,true,1,1);BW.style.transform=`translateY(${Math.sin(tt*2)*6}px)`;
-  const IP='203.0.113.10',DM='misol.uz';let url,page,locked=false,mono=true;
-  if(lt<St[1]){const n=Math.min(IP.length,Math.floor(lt/0.13));url=IP.slice(0,n)+(Math.floor(lt*4)%2?'|':'');page=lt<St[1]-0.3?BLANK:LOAD}
-  else if(lt<St[1]+0.5){const n=Math.floor(IP.length*(1-(lt-St[1])/0.5));url=IP.slice(0,n);page=BLANK}
-  else{const n=Math.min(DM.length,Math.floor((lt-St[1]-0.5)/0.11));url=DM.slice(0,n)+((lt-St[1]-0.5)<0.9?(Math.floor(lt*4)%2?'|':''):'');page=(lt-St[1]-0.5)<1.1?LOAD:SITE;locked=(lt-St[1]-0.5)>=1.1}
-  bw(url,mono,locked,page);
+  const IP='203.0.113.10',DM='misol.uz';let url,page,locked=false;
+  if(lt<St[2]){const n=Math.min(IP.length,Math.floor(lt/0.13));url=IP.slice(0,n)+(Math.floor(lt*4)%2?'|':'');page=lt<1.8?BLANK:LOAD}
+  else if(lt<St[2]+0.5){const n=Math.floor(IP.length*(1-(lt-St[2])/0.5));url=IP.slice(0,n);page=BLANK}
+  else{const n=Math.min(DM.length,Math.floor((lt-St[2]-0.5)/0.11));url=DM.slice(0,n)+((lt-St[2]-0.5)<0.9?(Math.floor(lt*4)%2?'|':''):'');page=(lt-St[2]-0.5)<1.1?LOAD:SITE;locked=(lt-St[2]-0.5)>=1.1}
+  bw(url,true,locked,page);
+  show(hkRing,lt>=0.3&&lt<St[2]+0.4,clamp((lt-0.3)*4),1);hkRing.style.boxShadow=`0 0 ${20+16*Math.sin(lt*8)**2}px rgba(255,209,102,.9)`;
+  show(hkQ2,lt>=0.5&&lt<St[2]+0.4,back((lt-0.5)/0.4));
   show(hkChip,true,1,1);
-  show(hkC1,lt>=St[1]+1.8,back((lt-St[1]-1.8)/0.4));show(hkC2,lt>=St[1]+2.5,back((lt-St[1]-2.5)/0.4));
-  show(hkOver,lt>=St[1]+3.2,clamp((lt-St[1]-3.2)*3),1);
+  show(hkC1,lt>=St[2]+0.3,back((lt-St[2]-0.3)/0.4));show(hkC2,lt>=St[2]+1.2,back((lt-St[2]-1.2)/0.4));
+  show(hkOver,lt>=St[2]+2.1,clamp((lt-St[2]-2.1)*3),1);
  }
  if(k==='raqam'){
   show(PH,true,back((lt-0.05)/0.45));
