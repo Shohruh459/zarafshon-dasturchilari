@@ -1,0 +1,83 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{margin:0;background:#04030f;overflow:hidden}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:"Liberation Sans",Arial,sans-serif;color:#fff}
+.nl{position:absolute;white-space:nowrap;font-weight:800;transform:translate(-50%,-100%);text-align:center}
+.nl .p{display:inline-block;border-radius:30px;padding:8px 22px;font-size:34px;border:3px solid rgba(255,255,255,.4);background:rgba(14,12,30,.85)}
+.nl .s{font-size:24px;color:#cfc8f5;margin-top:4px;text-shadow:0 2px 8px #000}
+#pk{position:absolute;white-space:nowrap;font-weight:800;font-size:34px;font-family:"Liberation Mono",monospace;background:#fff;color:#1a1530;border-radius:26px;padding:6px 18px;transform:translate(-50%,-150%);box-shadow:0 8px 30px rgba(255,255,255,.5)}
+#sch{position:absolute;left:0;width:1080px;top:1390px;text-align:center;font-size:26px;font-weight:700;color:#bfb8e8}
+#vg{position:absolute;left:0;top:0;width:1080px;height:560px;background:linear-gradient(180deg,rgba(4,3,15,.9),rgba(4,3,15,0));pointer-events:none}
+</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script></head>
+<body><div id="stage"><div id="vg"></div>
+<div class="nl" id="nB"><div class="p" style="border-color:#ffd166">Brauzer</div><div class="s">Zarafshon (namuna)</div></div>
+<div class="nl" id="nD"><div class="p" style="border-color:#b388ff">DNS</div><div class="s">telefon kitobi</div></div>
+<div class="nl" id="nS"><div class="p" style="border-color:#5ad9b4">Server</div></div>
+<div id="pk"></div><div id="sch">sxematik ko‘rinish: haqiqiy yo‘l har safar boshqacha</div></div>
+<script type="module">
+import * as THREE from 'three';
+import {LineSegments2} from 'three/addons/lines/LineSegments2.js';
+import {LineSegmentsGeometry} from 'three/addons/lines/LineSegmentsGeometry.js';
+import {LineMaterial} from 'three/addons/lines/LineMaterial.js';
+import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
+import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
+import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
+import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+const W=1080,H=1920;const GEO=await (await fetch('/data/geo.json')).json();
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(1);renderer.setSize(W,H);renderer.toneMapping=THREE.NoToneMapping;
+document.getElementById('stage').prepend(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x04030f);
+const cam=new THREE.PerspectiveCamera(36,W/H,0.01,200);cam.setViewOffset(W,H,0,-120,W,H);
+const $=id=>document.getElementById(id);
+const clamp=x=>Math.min(1,Math.max(0,x)),eio=x=>{x=clamp(x);return x*x*(3-2*x)},back=x=>{x=clamp(x);const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const ll=(lon,lat,r=1)=>{const a=lon*Math.PI/180,b=lat*Math.PI/180;return new THREE.Vector3(r*Math.cos(b)*Math.cos(a),r*Math.sin(b),-r*Math.cos(b)*Math.sin(a))};
+const loadTex=u=>new Promise(r=>new THREE.TextureLoader().load(u,t=>{t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;r(t)}));
+const [dayT,nightT]=await Promise.all([loadTex('/data/blue.jpg'),loadTex('/data/night.jpg')]);
+const globeMat=new THREE.ShaderMaterial({uniforms:{dayT:{value:dayT},nightT:{value:nightT},sun:{value:new THREE.Vector3(1,.5,.6)},camPos:{value:new THREE.Vector3()}},
+ vertexShader:'varying vec2 vUv;varying vec3 vN;varying vec3 vW;void main(){vUv=uv;vN=normalize(mat3(modelMatrix)*normal);vW=(modelMatrix*vec4(position,1.0)).xyz;gl_Position=projectionMatrix*viewMatrix*vec4(vW,1.0);}',
+ fragmentShader:`varying vec2 vUv;varying vec3 vN;varying vec3 vW;uniform sampler2D dayT,nightT;uniform vec3 sun,camPos;
+ void main(){vec3 N=normalize(vN);float d=dot(N,normalize(sun));vec3 day=texture2D(dayT,vUv).rgb,night=texture2D(nightT,vUv).rgb;
+  float lit=smoothstep(-0.12,0.32,d);vec3 dayC=day*(0.22+1.0*max(d,0.0));vec3 nightC=night*vec3(1.7,1.25,0.7)*1.25+day*0.035;
+  vec3 col=mix(nightC,dayC,lit)*0.5;vec3 V=normalize(camPos-vW);float fres=pow(1.0-max(dot(N,V),0.0),3.0);col+=vec3(0.12,0.32,0.95)*fres*0.9;gl_FragColor=vec4(col,1.0);}`});
+scene.add(new THREE.Mesh(new THREE.SphereGeometry(1,160,160),globeMat));
+const P=(lon,lat)=>[(lon+180)/360*4096,(90-lat)/180*2048];
+const oc=document.createElement('canvas');oc.width=4096;oc.height=2048;const ox=oc.getContext('2d');
+ox.fillStyle='rgba(255,170,60,0.10)';ox.shadowColor='rgba(255,170,60,0.9)';ox.shadowBlur=8;GEO.uz.forEach(r=>{ox.beginPath();r.forEach((p,i)=>{const q=P(p[0],p[1]);i?ox.lineTo(q[0],q[1]):ox.moveTo(q[0],q[1])});ox.closePath();ox.fill()});
+const ft=new THREE.CanvasTexture(oc);ft.colorSpace=THREE.SRGBColorSpace;scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.0012,128,128),new THREE.MeshBasicMaterial({map:ft,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false})));
+function mkLines(polys,color,width,opacity,r=1.0025){const seg=[];polys.forEach(poly=>{for(let i=0;i<poly.length-1;i++){const a=ll(poly[i][0],poly[i][1],r),b=ll(poly[i+1][0],poly[i+1][1],r);seg.push(a.x,a.y,a.z,b.x,b.y,b.z)}});
+ const g=new LineSegmentsGeometry();g.setPositions(seg);const m=new LineMaterial({color:new THREE.Color(color[0],color[1],color[2]),linewidth:width,transparent:true,opacity,depthWrite:false});m.resolution.set(W,H);scene.add(new LineSegments2(g,m))}
+mkLines(GEO.world,[0.55,0.75,1.1],1.3,0.5);mkLines(GEO.neighbors,[0.7,0.8,1.0],1.6,0.4);mkLines(GEO.uz,[1.5,1.0,0.3],4.0,1.0,1.003);mkLines(GEO.regions.flatMap(r=>r.rings),[0.8,0.6,0.3],1.6,0.5,1.0028);
+mkLines(GEO.rivers.filter(r=>r.name==='Zarafshon').map(r=>r.line),[0.4,2.0,3.2],4.0,0.8,1.0032);
+const NS=2500,sp=new Float32Array(NS*3);for(let i=0;i<NS;i++){const u=Math.random()*2-1,a=Math.random()*6.283,s=Math.sqrt(1-u*u);sp[i*3]=60*s*Math.cos(a);sp[i*3+1]=60*u;sp[i*3+2]=60*s*Math.sin(a)}
+const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.BufferAttribute(sp,3));scene.add(new THREE.Points(sg,new THREE.PointsMaterial({size:0.18,color:0xbfd0ff,transparent:true,opacity:.85,sizeAttenuation:true,depthWrite:false})));
+// nodes
+const PB=ll(64.2018,41.5822,1.004),PD=ll(69.24,41.30,1.004),PS=ll(66.96,39.65,1.004);
+function node(v,c){const m=new THREE.Mesh(new THREE.SphereGeometry(0.0075,24,24),new THREE.MeshBasicMaterial({color:new THREE.Color(...c)}));m.position.copy(v);scene.add(m);return m}
+const nB=node(PB,[2.2,1.6,0.6]),nD=node(PD,[1.6,1.0,2.6]),nS=node(PS,[0.5,2.2,1.6]);
+function arcPts(a,b,u1,h=0.05,n=48){const A=a.clone().normalize(),B=b.clone().normalize();const om=Math.acos(Math.min(1,A.dot(B)));const pts=[];for(let i=0;i<=n*u1;i++){const u=i/n;const s=Math.sin(om);const v=A.clone().multiplyScalar(Math.sin((1-u)*om)/s).add(B.clone().multiplyScalar(Math.sin(u*om)/s));pts.push(v.multiplyScalar(1.004+h*Math.sin(Math.PI*u)))}return pts}
+function mkArc(color,w){const g=new LineSegmentsGeometry();g.setPositions([0,0,0,0.001,0,0]);const m=new LineMaterial({color:new THREE.Color(...color),linewidth:w,transparent:true,opacity:1,depthWrite:false});m.resolution.set(W,H);const l=new LineSegments2(g,m);l.frustumCulled=false;scene.add(l);return {l,g,m}}
+function setArc(A,pts){if(pts.length<2){A.l.visible=false;return}A.l.visible=true;const seg=[];for(let i=0;i<pts.length-1;i++)seg.push(pts[i].x,pts[i].y,pts[i].z,pts[i+1].x,pts[i+1].y,pts[i+1].z);A.g.dispose();const g=new LineSegmentsGeometry();g.setPositions(seg);A.l.geometry=g;A.g=g}
+const A1=mkArc([2.2,1.6,0.6],5),A2=mkArc([1.6,1.0,2.6],5),A3=mkArc([0.6,2.4,1.8],5.5);
+const pkt=new THREE.Mesh(new THREE.SphereGeometry(0.009,20,20),new THREE.MeshBasicMaterial({color:new THREE.Color(3,3,3)}));scene.add(pkt);
+const comp=new EffectComposer(renderer);comp.addPass(new RenderPass(scene,cam));comp.addPass(new UnrealBloomPass(new THREE.Vector2(W,H),0.25,0.4,1.25));comp.addPass(new OutputPass());
+const proj=v=>{const p=v.clone().project(cam);return {x:(p.x+1)/2*W,y:(1-p.y)/2*H}};
+const place=(el,v,dy,a)=>{const p=proj(v);el.style.left=p.x+'px';el.style.top=(p.y+dy)+'px';el.style.opacity=a;el.style.transform=`translate(-50%,${dy>0?'0':'-100%'}) scale(${0.8+0.2*clamp(a)})`};
+window.setGL=function(lt,S){
+ const c0=ll(66.6,40.7,1),d=2.05-0.03*lt;cam.position.copy(c0.clone().multiplyScalar(d));cam.up.set(0,1,0);cam.lookAt(0,0,0);cam.rotateZ(0.03*Math.sin(lt*0.5));cam.updateMatrixWorld();
+ globeMat.uniforms.camPos.value.copy(cam.position);globeMat.uniforms.sun.value.copy(c0.clone().multiplyScalar(0.7).add(new THREE.Vector3(-0.55,0.45,0.25)));
+ const aB=clamp((lt-0.1)/0.4),aD=clamp((lt-(S[1]-0.2))/0.4),aS=clamp((lt-(S[2]-0.2))/0.4);
+ nB.scale.setScalar(Math.max(0.01,aB)*(1+0.2*Math.sin(lt*8)));nD.scale.setScalar(Math.max(0.01,aD)*(1+(lt>S[1]+1.0&&lt<S[1]+2.4?0.5*Math.sin((lt-S[1])*10)**2:0)));nS.scale.setScalar(Math.max(0.01,aS)*(1+(lt>S[2]+1.1?0.4*Math.sin(lt*8)**2:0)));
+ place($('nB'),PB,-26,aB);place($('nD'),PD,-26,aD);place($('nS'),PS,90,aS);
+ // arc1 browser->dns (query), then reply on A2 (dns->browser), arc3 browser->server
+ const q=eio((lt-S[1])/1.0),r=eio((lt-(S[1]+1.5))/1.0),f=eio((lt-S[2])/1.1);
+ setArc(A1,lt>S[1]?arcPts(PB,PD,q):[]);setArc(A2,lt>S[1]+1.5?arcPts(PD,PB,r,0.075):[]);setArc(A3,lt>S[2]?arcPts(PB,PS,f,0.04):[]);
+ let pv=null,txt='';
+ if(lt>S[1]&&lt<S[1]+1.0){pv=arcPts(PB,PD,q,0.05).slice(-1)[0];txt='misol.uz ?'}
+ else if(lt>=S[1]+1.0&&lt<S[1]+1.5){pv=PD.clone();txt=''}
+ else if(lt>=S[1]+1.5&&lt<S[1]+2.5){pv=arcPts(PD,PB,r,0.075).slice(-1)[0];txt='203.0.113.10'}
+ else if(lt>=S[2]&&lt<S[2]+1.1){pv=arcPts(PB,PS,f,0.04).slice(-1)[0];txt='GET /'}
+ pkt.visible=!!pv;if(pv){pkt.position.copy(pv);const p=proj(pv);const k=$('pk');k.style.display=txt?'block':'none';k.textContent=txt;k.style.left=p.x+'px';k.style.top=p.y+'px'}else $('pk').style.display='none';
+ comp.render();
+};
+window.glReady=true;
+</script></body></html>
