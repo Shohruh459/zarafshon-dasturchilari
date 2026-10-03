@@ -9,3 +9,6 @@ mp4 repoga qo'shilmaydi.
 
 ## v4: hook "Har kuni ishlatasiz, lekin e'tibor bermaysiz" (qiziqish bo'shlig'i)
 `script17.py`, `tts17.py`, `video17.html`, `render17.py`: manzil satri halqa bilan belgilanadi ("Shu nima?"), keyin ikki foyda. Kadr namunalari tasdiq kutmoqda.
+
+## Yakuniy render
+`python3 render17.py out17.mp4` (port 8817, shu papkada `python3 -m http.server 8817`), keyin `loudnorm`. 39.7 s. Yuklash: 9.10.2026.
