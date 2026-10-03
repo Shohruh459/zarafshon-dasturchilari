@@ -169,8 +169,8 @@ const S=$('sc');
 function el(cls,html,css){const d=document.createElement('div');d.className='a '+cls;d.innerHTML=html||'';Object.assign(d.style,css||{});S.appendChild(d);return d}
 function kt(txt,top,size,col){return el('kt',txt,{top:top+'px',fontSize:size+'px',color:col||'#fff'})}
 // hook kinetic
-const K1=kt('HAR KUNI',190,180),K2=kt('KO‘RASIZ',380,180,'#ffd166');
-const K3=kt('LEKIN',190,124,'#cfc8f5'),K4=kt('E‘TIBOR',320,180,'#ff9f6b'),K5=kt('BERMAYSIZ',510,156,'#ff9f6b');
+const K1=kt('HAR KUNI',190,172),K2=kt('KO‘RASIZ',372,172,'#ffd166');
+const K3=kt('LEKIN',190,124,'#cfc8f5'),K4=kt('E‘TIBOR',320,172,'#ff9f6b'),K5=kt('BERMAYSIZ',500,150,'#ff9f6b');
 const LK=el('','',{left:'0',top:'0',width:'380px',height:'380px',color:'#ffd166'});LK.innerHTML='<span class="ic" style="width:100%;height:100%;display:block;color:#ffd166;filter:drop-shadow(0 0 40px rgba(255,209,102,.7))">'+ICONS['lock']+'</span>';
 const T3=kt('SHU QULFNI BIRGA<br>KO‘RAMIZ',230,92,'#fff');
 const BW=el('bw','<div class="top"><div class="dot" style="background:#ff6b6b"></div><div class="dot" style="background:#ffd166"></div><div class="dot" style="background:#5ad9b4"></div><div class="url"><span id="bwl"></span><span id="bwu">https://misol.uz</span></div></div><div class="page" id="bwp"></div>',{left:'70px',top:'520px',width:'940px',height:'484px'});
@@ -208,7 +208,7 @@ const recEls=RECL.map((r,i)=>el('',ico(r[0],50,r[2])+' <span style="vertical-ali
 const pc=$('pcard');pc.style.zIndex=25;pc.style.top='1040px';pc.firstElementChild.nextElementSibling.textContent='HTTPS nima? Muhrlangan konvert misolida tushuntir va qulf nimani bildirmasligini ayt.';
 const capAt=tt=>{for(const c of CFG.caps){if(tt>=c.s&&tt<c.e)return c}return CFG.caps[CFG.caps.length-1]};
 function show(d,on,a,sc_){d.style.display=on?'block':'none';if(on){d.style.opacity=clamp(a*2);d.style.transform=`scale(${Math.max(0.01,sc_===undefined?a:sc_)})`}}
-const slam=(x)=>{x=clamp(x);return 1+0.18*(1-ease(x*1.0))};
+const slam=(x)=>{x=clamp(x);return 1+0.07*(1-ease(x*1.0))};
 const ALL=[K1,K2,K3,K4,K5,LK,T3,BW,hkRing,hkQ2,hkC1,hkC2,hkOver,hkChip,...nodeEls,...nodeLab,pathLine,letter,eyeE,eyeT,sampleTag,bigHttps,qOk1,qOk2,qNo,qTip,ctaBig,...recEls];
 window.setT=async function(tt){
  const k=sceneAt(tt),t0=sc[k][0],D=sc[k][1],lt=tt-t0,P=CFG.parts[k],St=P.starts;
