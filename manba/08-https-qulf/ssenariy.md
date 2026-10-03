@@ -4,9 +4,9 @@ Yuklash sanasi: **10.10.2026** (keyingi: 9-video 11.10).
 Uslub: CSS (7-video kabi), qiziqish bo'shlig'i hook'i + 3 soniyada kim uchun. ~36–40 s, 1080x1920, 30 fps.
 Bitta g'oya: qulf = xabar yo'lda muhrlangan (shifrlangan). Halollik: qulf "sayt ishonchli" degani EMAS.
 
-## 1. HOOK (0–7 s)
-Ekranda 0-kadrdan: "🎯 BOSHLANG‘ICH DASTURCHILAR UCHUN" + "HAR KUNI KO‘RASIZ, LEKIN E‘TIBOR BERMAYSIZ" + brauzer: manzil yonidagi 🔒 qulf halqa ichida, "Shu nima?".
-- Ovoz: "Boshlang'ich dasturchilar uchun: har kuni ko'rasiz, lekin e'tibor bermaysiz. Bugun shu qulfni birga ko'ramiz."
+## 1. HOOK (0–7.4 s) — v2: "kim uchun" yozuvi/ovozi olib tashlandi, katta harakatli yozuv
+Hammaga qiziq bo'lishi uchun "Boshlang'ich dasturchilar uchun" yo'q. 0-kadrdan katta yozuv: "HAR KUNI KO‘RASIZ" (+ katta 🔒), ovoz bilan zarba: "LEKIN E‘TIBOR BERMAYSIZ", keyin qulf manzil satriga uchib kiradi, "Shu nima?", ikki foyda.
+- Ovoz: "Har kuni ko'rasiz, lekin e'tibor bermaysiz. Bugun shu qulfni birga ko'ramiz. Oxirigacha qoling!"
 - Foydalar: "✔ Qulf nimani bildirishini bilasiz" | "✔ Nimani bildirmasligini ham tushunasiz" | "Oxirigacha qoling 👇"
 
 ## 2. MUAMMO: OCHIQ XAT (7–15 s)
