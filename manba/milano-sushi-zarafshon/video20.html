@@ -232,7 +232,7 @@ window.setT=async function(tt){
   fly(fl3,720,1240,1400,1300,30,clamp((lt-1.4)/0.8),8,8*Math.sin(tt*2+2));
  }
  ambient(tt);bursts(tt);
- const c=capAt(tt);$('cap').firstElementChild.textContent=c.t;
+ const c=capAt(tt);$('cap').firstElementChild.textContent=c.t;$('cap').firstElementChild.style.fontSize=c.t.length>56?'43px':'';
  $('flash').style.opacity=(k!=='globe'&&lt<0.14)?0.6*(1-lt/0.14):0;
 };
 (async()=>{while(!(glf.contentWindow&&glf.contentWindow.glReady))await new Promise(r=>setTimeout(r,200));
