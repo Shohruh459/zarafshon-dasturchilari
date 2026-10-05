@@ -215,10 +215,10 @@ const svCard=el('card','<div style="display:flex;flex-direction:column;align-ite
 const svPk=el('','<span style="display:inline-block;background:linear-gradient(135deg,#7c5cff,#b388ff);border-radius:30px;padding:10px 30px;font-size:44px;font-weight:800">'+ico('package',50,'#fff')+' paket</span>',{left:'0',top:'0',zIndex:'30'});
 const svOk=el('','<span style="display:inline-block;border-radius:34px;padding:12px 40px;font-size:56px;font-weight:800;background:rgba(20,90,70,.92);border:3px solid #5ad9b4">'+ico('check',60,'#5ad9b4')+' ishlayapti</span>',{left:'0',width:'1080px',top:'1070px',textAlign:'center',zIndex:'25'});
 // cta
-const ctaBig=el('','Docker = dastur + kerakli<br>hamma narsa bitta paketda',{left:'40px',width:'1000px',top:'370px',textAlign:'center',fontSize:'52px',fontWeight:800,lineHeight:1.15,color:'#fff'});
+const ctaBig=el('','Docker = dastur + kerakli<br>hamma narsa bitta paketda',{left:'40px',width:'1000px',top:'340px',textAlign:'center',fontSize:'50px',fontWeight:800,lineHeight:1.15,color:'#fff'});
 const RECL=[['utensils','Zal = Frontend','#ffd166'],['chef-hat','Oshxona = Backend','#ff9f6b'],['database','Ombor = Baza','#5ad9b4'],['concierge-bell','Ofitsiant = API','#fff'],['building-2','Bino = Server','#b388ff'],['tag','Nom = Domen','#ffd166'],['lock','Qulf = HTTPS','#5ad9b4'],['package','Paket = Docker','#b388ff']];
-const recEls=RECL.map((r,i)=>el('',ico(r[0],46,r[2])+' <span style="vertical-align:middle">'+r[1]+'</span> '+ico('check',38,r[2]),{left:'0',width:'1080px',top:(520+i*58)+'px',textAlign:'center',fontSize:'42px',fontWeight:800,color:r[2]}));
-const pc=$('pcard');pc.style.zIndex=25;pc.style.top='1010px';pc.firstElementChild.nextElementSibling.textContent='Docker nima? Konteyner nimaligini oddiy tushuntir va "menda ishlayapti" muammosini ayt.';
+const recEls=RECL.map((r,i)=>el('',ico(r[0],46,r[2])+' <span style="vertical-align:middle">'+r[1]+'</span> '+ico('check',38,r[2]),{left:'0',width:'1080px',top:(560+i*56)+'px',textAlign:'center',fontSize:'41px',fontWeight:800,color:r[2]}));
+const pc=$('pcard');pc.style.zIndex=25;pc.style.top='1060px';pc.firstElementChild.nextElementSibling.textContent='Docker nima? Konteyner nimaligini oddiy tushuntir va "menda ishlayapti" muammosini ayt.';
 const capAt=tt=>{for(const c of CFG.caps){if(tt>=c.s&&tt<c.e)return c}return CFG.caps[CFG.caps.length-1]};
 function show(d,on,a,sc_){d.style.display=on?'block':'none';if(on){d.style.opacity=clamp(a*2);d.style.transform=`scale(${Math.max(0.01,sc_===undefined?a:sc_)})`}}
 function lapShow(d,on,u,x,y,fromX,rot,fl){d.style.display=on&&u>0?'block':'none';if(!(on&&u>0))return;const e=back(u);d.style.opacity=clamp(u*5);place(d,fromX+(x-fromX)*e,y,rot*(1-e),fl)}
