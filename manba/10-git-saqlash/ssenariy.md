@@ -4,10 +4,10 @@ Yuklash sanasi: **12.10.2026** (keyingi: 11-video 13.10).
 Uslub: CSS + Blender noutbuk (9-video kabi), metaforasiz aniq tushuntirish, yangi hook formulasi ("Kelishganimizdek, bugun siz bilan X ni o'rganamiz"), "kim uchun" yozuvisiz. ~42–45 s, 1080x1920, 30 fps.
 Bitta g'oya: Git = dastur fayllaridagi o'zgarishlar tarixini saqlaydi; xohlagan saqlash nuqtasiga qaytish mumkin.
 
-## 1. HOOK (0–9 s) — kinetik
+## 1. HOOK (0–8 s) — kinetik
 0-kadrdan katta: "KELISHGANIMIZDEK / BUGUN SIZ BILAN **GIT** NIMALIGINI O‘RGANAMIZ". Keyin Blender noutbuk ekranida fayl ro'yxati: sayt.html, sayt_yangi.html, sayt_yangi2.html, sayt_OXIRGI.html, sayt_OXIRGI_haqiqiy.html (namuna).
-- Ovoz: "Kelishganimizdek, bugun siz bilan Git nimaligini o'rganamiz. Fayl nomiga oxirgi, haqiqiy oxirgi deb yozganmisiz? Git shu muammoni hal qiladi. Oxirigacha qoling!"
-- Foydalar: "✔ Git nima ekanini bilasiz" | "✔ Eski nusxaga qanday qaytishni tushunasiz" | "Oxirigacha qoling 👇"
+- Ovoz: "Kelishganimizdek, bugun siz bilan Git nimaligini o'rganamiz. Fayl nomiga oxirgi, haqiqiy oxirgi deb yozganmisiz? Git shu muammoni hal qiladi."
+- v2: foydalar ro'yxati ("✔ ... bilasiz") va "Oxirigacha qoling" OLIB TASHLANDI: mavzu aytilgach tomoshabin zerikmasin, to'g'ri mazmunga o'tamiz.
 
 ## 2. MUAMMO (9–16 s)
 Fayl ro'yxati kattalashadi, fayllar ko'payadi, "qaysi biri to'g'ri?" belgisi.
