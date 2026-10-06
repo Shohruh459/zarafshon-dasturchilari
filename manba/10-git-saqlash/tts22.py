@@ -2,7 +2,7 @@ import certifi, asyncio, re, subprocess, json
 certifi.where=lambda:'/root/.ccr/ca-bundle.crt'
 import edge_tts
 from script22 import SC
-def fixuz(t): return re.sub(r"(?<=[oOgG])['’‘ʼ`´]",'ʻ',t)
+def fixuz(t): t=t.replace('GitHub','Git xab').replace('commit','kommit'); return re.sub(r"(?<=[oOgG])['’‘ʼ`´]",'ʻ',t)
 CLEAN="silenceremove=start_periods=1:start_threshold=-42dB:start_silence=0.02:stop_periods=-1:stop_duration=0.30:stop_threshold=-42dB:stop_silence=0.18"
 def dur(p):
     r=subprocess.run(['/tmp/ffmpeg','-i',p],capture_output=True,text=True).stderr
