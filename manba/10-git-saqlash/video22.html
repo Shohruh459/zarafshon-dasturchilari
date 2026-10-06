@@ -1,0 +1,126 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{margin:0;background:#fff;overflow:hidden}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:#fff;font-family:"Liberation Sans",Arial,sans-serif;color:#12142b}
+#sc{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:20}
+.a{position:absolute;box-sizing:border-box}
+.kt{position:absolute;left:0;width:1080px;text-align:center;font-weight:800;letter-spacing:1px;line-height:1;white-space:nowrap}
+.card{background:#f6f7fc;border:2px solid #e2e4f0;border-radius:36px;box-shadow:0 18px 50px rgba(30,30,80,.12)}
+#head{position:absolute;left:0;top:70px;width:1080px;text-align:center;z-index:30;transform-origin:50% 30%}
+#head .tag{display:inline-block;background:#6a4dff;color:#fff;font-size:34px;font-weight:800;letter-spacing:2px;border-radius:30px;padding:10px 30px}
+#head .l3{font-size:56px;font-weight:800;margin-top:20px;color:#12142b}
+#head .l1{font-size:110px;font-weight:800;line-height:1.05;color:#12142b}
+#head .acc{color:#ff7a2e}
+#pbar{position:absolute;left:60px;top:18px;width:960px;height:10px;border-radius:5px;background:#e6e7f2;z-index:70}
+#pfill{height:100%;width:0;border-radius:5px;background:linear-gradient(90deg,#ff7a2e,#ffb347)}
+#cap{position:absolute;left:0;width:1080px;top:1470px;display:flex;justify-content:center;z-index:60}
+#cap div{background:#14152b;color:#fff;border:2px solid #14152b;border-radius:38px;padding:16px 42px;font-size:54px;font-weight:800;text-align:center;line-height:1.18;max-width:940px}
+#fxF{position:absolute;left:0;top:0;z-index:55;pointer-events:none}
+.ic{display:inline-block;vertical-align:middle}.ic svg{width:100%;height:100%;display:block}
+.lp{position:absolute;z-index:22}.lp img{position:absolute;left:0;top:0;display:block}
+.lp .scr{position:absolute;left:0;top:0;transform-origin:0 0;overflow:hidden;border-radius:6px}
+.lp .sh{position:absolute;left:8%;right:2%;bottom:-6%;height:12%;background:radial-gradient(ellipse at center,rgba(20,20,60,.35),transparent 70%);filter:blur(10px);z-index:-1}
+.mono{font-family:"Liberation Mono",monospace}
+</style></head><body><div id="stage">
+<div id="pbar"><div id="pfill"></div></div><div id="head"></div><div id="sc"></div><canvas id="fxF" width="1080" height="1920"></canvas><div id="cap"><div></div></div></div>
+<script>window.CFG=__CFG__;
+const CFG=window.CFG,sc=CFG.sc;const ICONS={"utensils": "<svg\n  class=\"lucide lucide-utensils\"\n  xmlns=\"http://www.w3.org/2000/svg\"\n \n \n  viewBox=\"0 0 24 24\"\n  fill=\"none\"\n  stroke=\"currentColor\"\n  stroke-width=\"2.2\"\n  stroke-linecap=\"round\"\n  stroke-linejoin=\"round\"\n>\n  <path d=\"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2\" />\n  <path d=\"M7 2v20\" />\n  <path d=\"M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7\" />\n</svg>", "chef-hat": "<svg\n  class=\"lucide lucide-chef-hat\"\n  xmlns=\"http://www.w3.org/2000/svg\"\n \n \n  viewBox=\"0 0 24 24\"\n  fill=\"none\"\n  stroke=\"currentColor\"\n  stroke-width=\"2.2\"\n  stroke-linecap=\"round\"\n  stroke-linejoin=\"round\"\n>\n  <path d=\"M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z\" />\n  <path d=\"M6 17h12\" />\n</svg>", "database": "<svg\n  class=\"lucide lucide-database\"\n  xmlns=\"http://www.w3.org/2000/svg\"\n \n \n  viewBox=\"0 0 24 24\"\n  fill=\"none\"\n  stroke=\"currentColor\"\n  stroke-width=\"2.2\"\n  stroke-linecap=\"round\"\n  stroke-linejoin=\"round\"\n>\n  <ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\" />\n  <path d=\"M3 5V19A9 3 0 0 0 21 19V5\" />\n  <path d=\"M3 12A9 3 0 0 0 21 12\" />\n</svg>", "concierge-bell": "<svg\n  class=\"lucide lucide-concierge-bell\"\n  xmlns=\"http://www.w3.org/2000/svg\"\n \n \n  viewBox=\"0 0 24 24\"\n  fill=\"none\"\n  stroke=\"currentColor\"\n  stroke-width=\"2.2\"\n  stroke-linecap=\"round\"\n  stroke-linejoin=\"round\"\n>\n  <path d=\"M3 20a1 1 0 0 1-1-1v-1a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1Z\" />\n  <path d=\"M20 16a8 8 0 1 0-16 0\" />\n  <path d=\"M12 4v4\" />\n  <path d=\"M10 4h4\" />\n</svg>", "building-2": "<svg\n  class=\"lucide lucide-building-2\"\n  xmlns=\"http://www.w3.org/2000/svg\"\n \n \n  viewBox=\"0 0 24 24\"\n  fill=\"none\"\n  stroke=\"currentColor\"\n  stroke-width=\"2.2\"\n  stroke-linecap=\"round\"\n  stroke-linejoin=\"round\"\n>\n  <path d=\"M10 12h4\" />\n  <path d=\"M10 8h4\" />\n  <path d=\"M14 21v-3a2 2 0 0 0-4 0v3\" />\n  <path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\" />\n  <path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\" />\n</svg>", "tag": "<svg\n  class=\"lucide lucide-tag\"\n  xmlns=\"http://www.w3.org/2000/svg\"\n \n \n  viewBox=\"0 0 24 24\"\n  fill=\"none\"\n  stroke=\"currentColor\"\n  stroke-width=\"2.2\"\n  stroke-linecap=\"round\"\n  stroke-linejoin=\"round\"\n>\n  <path d=\"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z\" />\n  <circle cx=\"7.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\" />\n</svg>", "lock": "<svg\n  class=\"lucide lucide-lock\"\n  xmlns=\"http://www.w3.org/2000/svg\"\n \n \n  viewBox=\"0 0 24 24\"\n  fill=\"none\"\n  stroke=\"currentColor\"\n  stroke-width=\"2.2\"\n  stroke-linecap=\"round\"\n  stroke-linejoin=\"round\"\n>\n  <rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\" />\n  <path d=\"M7 11V7a5 5 0 0 1 10 0v4\" />\n</svg>", "package": "<svg\n  class=\"lucide lucide-package\"\n  xmlns=\"http://www.w3.org/2000/svg\"\n \n \n  viewBox=\"0 0 24 24\"\n  fill=\"none\"\n  stroke=\"currentColor\"\n  stroke-width=\"2.2\"\n  stroke-linecap=\"round\"\n  stroke-linejoin=\"round\"\n>\n  <path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\" />\n  <path d=\"M12 22V12\" />\n  <polyline points=\"3.29 7 12 12 20.71 7\" />\n  <path d=\"m7.5 4.27 9 5.15\" />\n</svg>", "git-branch": "<svg\n  class=\"lucide lucide-git-branch\"\n  xmlns=\"http://www.w3.org/2000/svg\"\n \n \n  viewBox=\"0 0 24 24\"\n  fill=\"none\"\n  stroke=\"currentColor\"\n  stroke-width=\"2.2\"\n  stroke-linecap=\"round\"\n  stroke-linejoin=\"round\"\n>\n  <path d=\"M15 6a9 9 0 0 0-9 9V3\" />\n  <circle cx=\"18\" cy=\"6\" r=\"3\" />\n  <circle cx=\"6\" cy=\"18\" r=\"3\" />\n</svg>", "git-commit-horizontal": "<svg\n  class=\"lucide lucide-git-commit-horizontal\"\n  xmlns=\"http://www.w3.org/2000/svg\"\n \n \n  viewBox=\"0 0 24 24\"\n  fill=\"none\"\n  stroke=\"currentColor\"\n  stroke-width=\"2.2\"\n  stroke-linecap=\"round\"\n  stroke-linejoin=\"round\"\n>\n  <circle cx=\"12\" cy=\"12\" r=\"3\" />\n  <line x1=\"3\" x2=\"9\" y1=\"12\" y2=\"12\" />\n  <line x1=\"15\" x2=\"21\" y1=\"12\" y2=\"12\" />\n</svg>", "file-text": "<svg\n  class=\"lucide lucide-file-text\"\n  xmlns=\"http://www.w3.org/2000/svg\"\n \n \n  viewBox=\"0 0 24 24\"\n  fill=\"none\"\n  stroke=\"currentColor\"\n  stroke-width=\"2.2\"\n  stroke-linecap=\"round\"\n  stroke-linejoin=\"round\"\n>\n  <path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\" />\n  <path d=\"M14 2v5a1 1 0 0 0 1 1h5\" />\n  <path d=\"M10 9H8\" />\n  <path d=\"M16 13H8\" />\n  <path d=\"M16 17H8\" />\n</svg>", "check": "<svg\n  class=\"lucide lucide-check\"\n  xmlns=\"http://www.w3.org/2000/svg\"\n \n \n  viewBox=\"0 0 24 24\"\n  fill=\"none\"\n  stroke=\"currentColor\"\n  stroke-width=\"2.2\"\n  stroke-linecap=\"round\"\n  stroke-linejoin=\"round\"\n>\n  <path d=\"M20 6 9 17l-5-5\" />\n</svg>", "x": "<svg\n  class=\"lucide lucide-x\"\n  xmlns=\"http://www.w3.org/2000/svg\"\n \n \n  viewBox=\"0 0 24 24\"\n  fill=\"none\"\n  stroke=\"currentColor\"\n  stroke-width=\"2.2\"\n  stroke-linecap=\"round\"\n  stroke-linejoin=\"round\"\n>\n  <path d=\"M18 6 6 18\" />\n  <path d=\"m6 6 12 12\" />\n</svg>", "terminal": "<svg\n  class=\"lucide lucide-terminal\"\n  xmlns=\"http://www.w3.org/2000/svg\"\n \n \n  viewBox=\"0 0 24 24\"\n  fill=\"none\"\n  stroke=\"currentColor\"\n  stroke-width=\"2.2\"\n  stroke-linecap=\"round\"\n  stroke-linejoin=\"round\"\n>\n  <path d=\"M12 19h8\" />\n  <path d=\"m4 17 6-6-6-6\" />\n</svg>", "undo-2": "<svg\n  class=\"lucide lucide-undo-2\"\n  xmlns=\"http://www.w3.org/2000/svg\"\n \n \n  viewBox=\"0 0 24 24\"\n  fill=\"none\"\n  stroke=\"currentColor\"\n  stroke-width=\"2.2\"\n  stroke-linecap=\"round\"\n  stroke-linejoin=\"round\"\n>\n  <path d=\"M9 14 4 9l5-5\" />\n  <path d=\"M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11\" />\n</svg>"};const LAP={"W": 958, "H": 696, "A": {"TL": [388.73, 37.04000000000002], "TR": [915.5, 71.13], "BR": [839.31, 463.0], "BL": [317.22, 369.65999999999997]}, "B": {"TL": [42.5, 71.13], "TR": [569.27, 37.04000000000002], "BR": [640.78, 369.65999999999997], "BL": [118.69000000000005, 463.0]}};
+const clamp=x=>Math.min(1,Math.max(0,x)),ease=x=>{x=clamp(x);return 1-Math.pow(1-x,3)},eio=x=>{x=clamp(x);return x*x*(3-2*x)};
+const back=x=>{x=clamp(x);const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const $=id=>document.getElementById(id);
+const order=['hook','muammo','git','buyruq','cta'];
+const sceneAt=tt=>{for(const k of order){if(tt<sc[k][0]+sc[k][1])return k}return 'cta'};
+const rnd=i=>{const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)};
+const ico=(n,px,col)=>'<span class="ic" style="width:'+px+'px;height:'+px+'px;color:'+(col||'#12142b')+'">'+ICONS[n]+'</span>';
+const INK='#12142b',PUR='#6a4dff',ORA='#ff7a2e',GRN='#12a37f',RED='#e5384f',GRY='#5b5f7a';
+const fxF=$('fxF').getContext('2d');const CONF=['#ff7a2e','#6a4dff','#12a37f','#e5384f','#ffb347','#3fa9f5'];
+function bursts(tt){fxF.clearRect(0,0,1080,1920);
+ CFG.bur.forEach((b,bi)=>{const age=tt-b.t;if(age<0||age>3.2)return;
+  if(!b.conf){if(age>1.0)return;for(let i=0;i<b.n;i++){const ang=rnd(bi*50+i)*6.283,sp=260+rnd(bi*50+i+7)*420,r=(1-age)*7+2;fxF.fillStyle=CONF[i%CONF.length];fxF.globalAlpha=1-age;fxF.beginPath();fxF.arc(b.x+Math.cos(ang)*sp*age,b.y+Math.sin(ang)*sp*age+200*age*age,r,0,7);fxF.fill()}fxF.globalAlpha=1}
+  else{for(let i=0;i<b.n*3;i++){const ang=-Math.PI*(0.05+0.9*rnd(bi*90+i)),sp=600+rnd(bi*90+i+5)*900,x=b.x+Math.cos(ang)*sp*age,y=b.y+Math.sin(ang)*sp*age+1500*age*age*0.5,w=14+rnd(i+1)*14,h=8+rnd(i+2)*8,rot=rnd(i+3)*6.28+age*(rnd(i+4)*18-9);
+   if(y>1980)continue;fxF.save();fxF.translate(x,y);fxF.rotate(rot);fxF.fillStyle=CONF[i%CONF.length];fxF.globalAlpha=Math.min(1,(3.2-age)/0.6);fxF.fillRect(-w/2,-h/2,w,h);fxF.restore()}fxF.globalAlpha=1}})}
+const HEAD={hook:'',muammo:'<div class="tag">1 · MUAMMO</div><div class="l3">Fayllar ko‘payib ketadi</div>',git:'<div class="tag">2 · GIT</div><div class="l3">O‘zgarishlar tarixi</div>',buyruq:'<div class="tag">3 · BUYRUQLAR</div><div class="l3">Terminalda</div>',cta:'<div class="l1">Saqlab qo‘ying</div><div class="l3 acc" style="font-size:46px">Keyingi video: GitHub</div>'};
+let lastHead='';
+const S=$('sc');
+function el(cls,html,css){const d=document.createElement('div');d.className='a '+cls;d.innerHTML=html||'';Object.assign(d.style,css||{});S.appendChild(d);return d}
+function kt(txt,top,size,col){return el('kt',txt,{top:top+'px',fontSize:size+'px',color:col||INK})}
+const slam=x=>{x=clamp(x);return 1+0.07*(1-ease(x))};
+function show(d,on,a,sc_){d.style.display=on?'block':'none';if(on){d.style.opacity=clamp(a*2);d.style.transform=`scale(${Math.max(0.01,sc_===undefined?a:sc_)})`}}
+// homography
+function h3(w,h,q){const src=[[0,0],[w,0],[w,h],[0,h]],dst=[q.TL,q.TR,q.BR,q.BL];const A=[],B=[];
+ for(let i=0;i<4;i++){const [x,y]=src[i],[X,Y]=dst[i];A.push([x,y,1,0,0,0,-X*x,-X*y]);B.push(X);A.push([0,0,0,x,y,1,-Y*x,-Y*y]);B.push(Y)}
+ const n=8;for(let i=0;i<n;i++){let m=i;for(let r=i+1;r<n;r++)if(Math.abs(A[r][i])>Math.abs(A[m][i]))m=r;[A[i],A[m]]=[A[m],A[i]];[B[i],B[m]]=[B[m],B[i]];for(let r=i+1;r<n;r++){const f=A[r][i]/A[i][i];for(let c=i;c<n;c++)A[r][c]-=f*A[i][c];B[r]-=f*B[i]}}
+ const s=new Array(n);for(let i=n-1;i>=0;i--){let t=B[i];for(let c=i+1;c<n;c++)t-=A[i][c]*s[c];s[i]=t/A[i][i]}
+ const [a,b,c,d,e,f,g,hh]=s;return `matrix3d(${a},${d},0,${g},${b},${e},0,${hh},0,0,1,0,${c},${f},0,1)`}
+const SW=960,SH=600;
+const LPT=el('lp','',{width:LAP.W+'px',height:LAP.H+'px',transformOrigin:'0 0'});LPT.innerHTML='<div class="sh"></div><img src="/laptopA.png" width="'+LAP.W+'" height="'+LAP.H+'"><div class="scr" style="width:'+SW+'px;height:'+SH+'px;transform:'+h3(SW,SH,LAP.A)+'"></div>';
+const LS=LPT.querySelector('.scr');const LW=720,LSC=LW/LAP.W;
+function placeL(x,y,rot){const cx=LAP.W*LSC/2,cy=LAP.H*LSC/2;LPT.style.transform=`translate(${x}px,${y}px) translate(${cx}px,${cy}px) rotate(${rot||0}deg) translate(${-cx}px,${-cy}px) scale(${LSC})`}
+function screenFiles(){LS.style.background='#1b1d2e';LS.innerHTML='<div class="mono" style="padding:34px 40px;font-size:52px;line-height:1.35;color:#d8dcf5;font-weight:700">sayt.html<br>sayt_yangi.html<br>sayt_yangi2.html<br><span style="color:#ff8a8a">sayt_OXIRGI.html</span><br><span style="color:#ff6b6b">sayt_OXIRGI_haqiqiy.html</span><br><span style="color:#ff5252">sayt_final_final.html</span></div>'}
+function screenGit(){LS.style.background='#101a24';LS.innerHTML='<div class="mono" style="padding:34px 40px;font-size:54px;line-height:1.4;color:#d8dcf5;font-weight:700">sayt.html <span style="color:#5ad9b4">✔</span><div style="margin-top:22px;font-size:46px;color:#7fe0c3">● rang o‘zgardi<br>● tugma qo‘shildi<br>● birinchi sahifa</div></div>'}
+// hook texts
+const K1=kt('KELISHGANIMIZDEK,',190,70,GRY),K2=kt('BUGUN SIZ BILAN',280,92),K3=kt('GIT',380,300,PUR),K4=kt('NIMALIGINI O‘RGANAMIZ',730,76);
+const F1=kt('FAYL NOMIGA',200,92),F2=kt('«OXIRGI, HAQIQIY OXIRGI»',320,62,ORA),F3=kt('DEB YOZGANMISIZ?',420,92);
+const G1=kt('GIT SHU MUAMMONI',210,92),G2=kt('HAL QILADI',320,150,GRN);
+// muammo: file list
+const FN=['sayt.html','sayt_yangi.html','sayt_yangi2.html','sayt_yangi2_tuzatildi.html','sayt_OXIRGI.html','sayt_OXIRGI_haqiqiy.html','sayt_OXIRGI_haqiqiy2.html','sayt_final_final.html'];
+const mCard=el('card','',{left:'90px',top:'400px',width:'900px',height:'800px'});
+const mRows=FN.map((n,i)=>el('mono',ico('file-text',44,i>3?RED:GRY)+' <span style="vertical-align:middle;color:'+(i>3?RED:INK)+'">'+n+'</span>',{left:'130px',top:(430+i*72)+'px',fontSize:'38px',fontWeight:700,whiteSpace:'nowrap',zIndex:'23'}));
+const mQ=el('','Qaysi biri to‘g‘ri? 🤷',{left:'0',width:'1080px',top:'1240px',textAlign:'center',fontSize:'60px',fontWeight:800,color:RED});
+const mTag=el('','namuna fayl nomlari',{left:'0',width:'1080px',top:'1190px',textAlign:'center',fontSize:'26px',fontWeight:700,color:GRY});
+// git timeline
+const TL=el('','',{left:'150px',top:'757px',width:'780px',height:'8px',background:'#d6d8ea',borderRadius:'4px'});
+const NXs=[200,540,880],NL=['birinchi sahifa','tugma qo‘shildi','rang o‘zgardi'];
+const nodes=NXs.map((x,i)=>el('','<div style="width:64px;height:64px;border-radius:50%;background:'+PUR+';border:8px solid #fff;box-shadow:0 8px 24px rgba(106,77,255,.45)"></div>',{left:(x-32)+'px',top:'729px',zIndex:'24'}));
+const nLab=NL.map((t,i)=>el('',t,{left:(NXs[i]-150)+'px',width:'300px',top:'815px',textAlign:'center',fontSize:'34px',fontWeight:800,color:INK}));
+const cmBadge=el('','<span style="display:inline-block;background:'+ORA+';color:#fff;border-radius:28px;padding:10px 30px;font-size:44px;font-weight:800">COMMIT</span>',{left:'390px',width:'300px',top:'600px',textAlign:'center',zIndex:'26'});
+const cmNote=el('','commit = saqlash nuqtasi + xabar',{left:'0',width:'1080px',top:'900px',textAlign:'center',fontSize:'42px',fontWeight:800,color:PUR});
+const headMk=el('','<div style="background:'+GRN+';color:#fff;border-radius:22px;padding:8px 22px;font-size:34px;font-weight:800;text-align:center">hozir ▼</div>',{left:'0',top:'650px',width:'160px',zIndex:'27'});
+const gBack=el('card','<div style="padding:26px 34px;text-align:center"><div class="mono" style="font-size:44px;font-weight:800">sayt.html</div><div style="margin-top:12px;font-size:40px;font-weight:800;color:'+GRN+'">'+ico('undo-2',46,GRN)+' orqaga qaytdi: tugma qo‘shildi</div></div>',{left:'130px',top:'1000px',width:'820px',height:'190px'});
+const gTag=el('','namuna saqlash xabarlari',{left:'0',width:'1080px',top:'1215px',textAlign:'center',fontSize:'26px',fontWeight:700,color:GRY});
+// terminal
+const TERM=el('','',{left:'60px',top:'420px',width:'960px',height:'760px',background:'#12132a',borderRadius:'30px',boxShadow:'0 24px 60px rgba(20,20,60,.35)',overflow:'hidden'});
+TERM.innerHTML='<div style="height:62px;background:#1f2140;display:flex;align-items:center;gap:12px;padding:0 24px"><span style="width:18px;height:18px;border-radius:50%;background:#ff6b6b"></span><span style="width:18px;height:18px;border-radius:50%;background:#ffd166"></span><span style="width:18px;height:18px;border-radius:50%;background:#5ad9b4"></span><span class="mono" style="margin-left:14px;color:#8e92b8;font-size:28px;font-weight:700">terminal · sayt/</span></div><div id="tl" class="mono" style="padding:26px 30px;font-size:43px;line-height:1.5;font-weight:700;color:#e8eaff;white-space:pre"></div>';
+const tl=TERM.querySelector('#tl');
+const TNote=el('','namuna chiqish (commit raqamlari soxta)',{left:'0',width:'1080px',top:'1200px',textAlign:'center',fontSize:'28px',fontWeight:700,color:GRY});
+// timeline of terminal lines: [startOffsetKey,idx,type,text]
+function termLines(lt,St){const L=[];
+ L.push([0.3,'c','git init']);L.push([1.4,'o','Initialized empty Git repository']);
+ L.push([St[1]+0.2,'c','git add .']);
+ L.push([St[1]+1.2,'c','git commit -m "tugma qo\'shildi"']);L.push([St[1]+2.3,'o','[main 3f2a1c9] tugma qo\'shildi']);
+ L.push([St[2]+0.2,'c','git log --oneline']);L.push([St[2]+1.3,'o','3f2a1c9 tugma qo\'shildi\na81b0e2 birinchi sahifa']);
+ let out='';for(const [t,ty,tx] of L){if(lt<t)break;if(ty==='c'){const n=Math.min(tx.length,Math.floor((lt-t)/0.045));out+='<span style="color:#7fe0c3">$ </span><span>'+tx.slice(0,n).replace(/</g,'&lt;')+'</span>'+(n<tx.length?'▌':'')+'\n'}else out+='<span style="color:#ffd166">'+tx+'</span>\n'}return out}
+// cta
+const ctaBig=el('','Git = o‘zgarishlar tarixi',{left:'40px',width:'1000px',top:'360px',textAlign:'center',fontSize:'56px',fontWeight:800,lineHeight:1.15,color:INK});
+const RECL=[['utensils','Zal = Frontend',ORA],['chef-hat','Oshxona = Backend','#d9731a'],['database','Ombor = Baza',GRN],['concierge-bell','Ofitsiant = API',INK],['building-2','Bino = Server',PUR],['tag','Nom = Domen',ORA],['lock','Qulf = HTTPS',GRN],['package','Paket = Docker',PUR],['git-branch','Tarix = Git',GRN]];
+const recEls=RECL.map((r,i)=>el('',ico(r[0],42,r[2])+' <span style="vertical-align:middle">'+r[1]+'</span> '+ico('check',36,r[2]),{left:'0',width:'1080px',top:(480+i*52)+'px',textAlign:'center',fontSize:'38px',fontWeight:800,color:r[2]}));
+const pcard=el('card','<div style="padding:22px 34px"><div style="font-size:28px;font-weight:800;letter-spacing:3px;color:'+PUR+';margin-bottom:10px">📋 PROMPT (IZOHDAN NUSXA OLING)</div><div class="mono" style="font-size:36px;line-height:1.3;font-weight:700">Git nima? Commit nimaligini oddiy tushuntir va git log nima qilishini ayt.</div></div>',{left:'90px',top:'1010px',width:'900px'});
+const capAt=tt=>{for(const c of CFG.caps){if(tt>=c.s&&tt<c.e)return c}return CFG.caps[CFG.caps.length-1]};
+const ALL=[K1,K2,K3,K4,F1,F2,F3,G1,G2,LPT,mCard,...mRows,mQ,mTag,TL,...nodes,...nLab,cmBadge,cmNote,headMk,gBack,gTag,TERM,TNote,ctaBig,...recEls,pcard];
+window.setT=async function(tt){
+ const k=sceneAt(tt),t0=sc[k][0],lt=tt-t0,P=CFG.parts[k],St=P.starts;
+ if(k!==lastHead){$('head').innerHTML=HEAD[k];lastHead=k}
+ $('head').style.transform=`scale(${1+(k==='hook'?0:0.14)*(1-ease(lt/0.28))})`;
+ $('pfill').style.width=(100*clamp(tt/CFG.total))+'%';
+ ALL.forEach(d=>d.style.display='none');
+ if(k==='hook'){const S1=St[1],S2=St[2];
+  if(lt<S1){show(K1,true,1,slam(lt/0.2));show(K2,true,1,slam((lt-0.1)/0.2));show(K3,true,1,slam((lt-0.2)/0.3));show(K4,true,1,slam((lt-0.6)/0.2));[K1,K2,K3,K4].forEach(d=>d.style.opacity=1)}
+  else if(lt<S2){const u=lt-S1;show(F1,true,1,slam(u/0.2));show(F2,u>=0.5,1,slam((u-0.5)/0.2));show(F3,u>=1.0,1,slam((u-1.0)/0.2));F1.style.opacity=1;F2.style.opacity=u>=0.5?1:0;F3.style.opacity=u>=1.0?1:0;
+   const a=clamp((u-0.2)/0.7),e=back(a);LPT.style.display=a>0?'block':'none';LPT.style.opacity=clamp(a*5);screenFiles();placeL(180+(1)*0,640+(1-e)*500,(1-e)*-8+0)}
+  else{const u=lt-S2;show(G1,true,1,slam(u/0.2));show(G2,u>=0.25,1,slam((u-0.25)/0.2));G1.style.opacity=1;G2.style.opacity=u>=0.25?1:0;
+   LPT.style.display='block';LPT.style.opacity=1;if(u<0.8)screenFiles();else screenGit();placeL(180,640+4*Math.sin(tt*2.2),0)}
+ }
+ if(k==='muammo'){show(mCard,lt>=0.05,clamp(lt*5),1);mRows.forEach((r,i)=>{const s=0.2+i*0.32;show(r,lt>=s,clamp((lt-s)*5),1)});
+  show(mTag,lt>=2.2,clamp((lt-2.2)*3),1);show(mQ,lt>=St[1]+1.0,clamp((lt-St[1]-1.0)*4),1)}
+ if(k==='git'){show(TL,true,clamp(lt*4),1);
+  nodes.forEach((n,i)=>{const s=0.5+i*0.9;show(n,lt>=s,clamp((lt-s)/0.35))});nLab.forEach((n,i)=>{const s=0.6+i*0.9;show(n,lt>=s,clamp((lt-s)*4),1)});
+  show(cmBadge,lt>=St[1]+0.1,clamp((lt-St[1]-0.1)/0.4));show(cmNote,lt>=St[1]+0.5,clamp((lt-St[1]-0.5)*4),1);
+  const hx=lt<St[2]?NXs[2]:NXs[2]+(NXs[1]-NXs[2])*eio((lt-St[2]-0.3)/0.9);
+  headMk.style.display=lt>=2.8?'block':'none';headMk.style.opacity=clamp((lt-2.8)*4);headMk.style.left=(hx-80)+'px';headMk.style.transform='none';
+  show(gBack,lt>=St[2]+1.4,clamp((lt-St[2]-1.4)*4),1);show(gTag,lt>=1.0,clamp((lt-1.0)*3),1)}
+ if(k==='buyruq'){show(TERM,true,clamp(lt*5),1);tl.innerHTML=termLines(lt,St);show(TNote,lt>=1.0,clamp((lt-1.0)*3),1)}
+ if(k==='cta'){show(ctaBig,true,clamp(lt*4),1);recEls.forEach((e,i)=>show(e,lt>=0.5+i*0.18,clamp((lt-0.5-i*0.18)*5),1));show(pcard,lt>=St[1],clamp((lt-St[1])*4),1);pcard.style.transform='none'}
+ bursts(tt);
+ const c=capAt(tt);$('cap').firstElementChild.textContent=c.t;$('cap').firstElementChild.style.fontSize=c.t.length>56?'43px':'';
+};
+(async()=>{await Promise.all([...document.querySelectorAll('#sc img')].map(i=>i.decode?i.decode().catch(()=>{}):0));await window.setT(0);window.glReady=true})();
+</script></body></html>
