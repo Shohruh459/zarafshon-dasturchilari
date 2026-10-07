@@ -8,7 +8,7 @@
 - Asosiy til: o'zbek (lotin). Oddiy so'zlar, qisqa gaplar. Jargonni birinchi marta aytganda darhol oddiy so'z bilan izohla.
 - Foydalanuvchiga javob: o'zbek tilida, qisqa va aniq.
 - Ekrandagi matnda `o‘` va `g‘` uchun `‘` (U+2018) ishlat.
-- **Ovozga (TTS) beriladigan matnda** `o'` va `g'` ni `oʻ` va `gʻ` (U+02BB) ga almashtir. Oddiy `'` bilan ovoz "o"/"g" deb o'qiydi (sinab tasdiqlangan). Qo'shimchalardagi apostrof (`Claude'ga`) o'zgarmaydi. **Ovoz imlosi (foydalanuvchi eshitib tasdiqlagan):** ovozga `commit` -> `kommit`, `GitHub` -> `Git xab` yoz (ekranda asl yozuv). Aks holda TTS "tommit" va "kuchuk" kabi o'qiydi. Yangi inglizcha so'z qo'shsang, avval bir necha imlo variantini yasab foydalanuvchiga eshittir.
+- **Ovozga (TTS) beriladigan matnda** `o'` va `g'` ni `oʻ` va `gʻ` (U+02BB) ga almashtir. Oddiy `'` bilan ovoz "o"/"g" deb o'qiydi (sinab tasdiqlangan). Qo'shimchalardagi apostrof (`Claude'ga`) o'zgarmaydi. **Ovoz imlosi (foydalanuvchi eshitib tasdiqlagan):** ovozga `commit` -> `kommit`, `GitHub` -> `Git xab`, `push` -> `pash`, `clone` -> `klon`, `token` -> `tokin`, `Claude` -> `Klod` yoz (ekranda asl yozuv). Aks holda TTS "tommit" va "kuchuk" kabi o'qiydi. Yangi inglizcha so'z qo'shsang, avval bir necha imlo variantini yasab foydalanuvchiga eshittir.
 
 ## Video qoidalari
 - Format: 1080x1920, 30 fps, h264 + aac, ovoz -16 LUFS (`loudnorm`).
