@@ -10,3 +10,10 @@ __pycache__/
 *.log
 still_*.png
 fr/
+
+# 11-video: vaqtinchalik render fayllari
+manba/11-github-ombor/*.mp3
+manba/11-github-ombor/*.wav
+manba/11-github-ombor/*.mp4
+manba/11-github-ombor/list.txt
+manba/11-github-ombor/page.html
