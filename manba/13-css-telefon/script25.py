@@ -7,17 +7,19 @@ SC=[
  dict(id='cta',parts=["Xulosa: viewport, max-width va media.","Saqlab qo'ying.","Keyingi videoda: tugma bosilganda nima bo'lishini o'rganamiz!"],gaps=[0.2,0.25]) ]
 # Haqiqiy sahifa: videoda ko'rsatiladigan kod va telefonda render qilinadigan kod BIR XIL manba
 VIEW=['  <meta name="viewport"','        content="width=device-width,','        initial-scale=1">']
-PIC_OLD=['    .pic{','      width:600px;','      height:140px;','      background:#6366F1}']
-PIC_NEW=['    .pic{','      width:600px;','      max-width:100%;','      height:140px;','      background:#6366F1}']
+PIC_OLD=['    .pic{','      width:600px;','      height:140px;','      border-radius:16px;','      background:linear-gradient(#6366F1,#A855F7)}']
+PIC_NEW=['    .pic{','      width:600px;','      max-width:100%;','      height:140px;','      border-radius:16px;','      background:linear-gradient(#6366F1,#A855F7)}']
 MEDIA=['    @media (max-width:600px){','      .cards{flex-direction:column}','    }']
 def page(level):
     """level 0: oldin (viewport yo'q); 1: +viewport; 2: +max-width; 3: +@media"""
     L=['<!DOCTYPE html>','<html>','<head>','  <meta charset="UTF-8">']
     if level>=1: L+=VIEW
-    L+=['  <style>','    body{font-family:sans-serif;margin:0;padding:24px}']+(PIC_NEW if level>=2 else PIC_OLD)
+    L+=['  <style>','    body{font-family:sans-serif;margin:0;padding:24px;background:#F8FAFF;color:#0B1020}',
+        '    h1{margin:0 0 4px;font-size:34px}','    p{margin:0 0 18px;color:#667085;font-size:20px}']+(PIC_NEW if level>=2 else PIC_OLD)
     L+=['    .cards{display:flex;gap:12px;margin-top:16px}',
-        '    .card{flex:1;background:#EEF2FF;padding:18px 10px;border-radius:12px;font-size:20px;text-align:center}']
+        '    .card{flex:1;background:#EEF2FF;padding:18px 8px;border-radius:14px;font-size:18px;font-weight:bold;text-align:center;line-height:1.6}',
+        '    .card:nth-child(2){background:#FFF1EC}','    .card:nth-child(3){background:#E8FAF1}']
     if level>=3: L+=MEDIA
-    L+=['  </style>','</head>','<body>','  <h1>Mening sahifam</h1>','  <div class="pic"></div>','  <div class="cards">',
-        '    <div class="card">Frontend</div>','    <div class="card">Backend</div>','    <div class="card">Baza</div>','  </div>','</body></html>']
+    L+=['  </style>','</head>','<body>','  <h1>Mening sahifam</h1>','  <p>Frontend, backend va baza</p>','  <div class="pic"></div>','  <div class="cards">',
+        '    <div class="card">🎨<br>Frontend</div>','    <div class="card">⚙️<br>Backend</div>','    <div class="card">🗄️<br>Baza</div>','  </div>','</body></html>']
     return "\n".join(L)

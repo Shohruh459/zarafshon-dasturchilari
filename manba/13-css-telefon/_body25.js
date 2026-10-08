@@ -58,7 +58,7 @@ const qP=[ // [oldin rasm, keyin rasm, oldin tag, keyin tag, top, h, chipsTop]
  ['m0.png','m1.png',['Mayda',RED],['Matn normal ✓',GRN],700,740],
  ['m1.png','m2.png',['Rasm kesilgan','#DC6803'],['Rasm sig‘di ✓',GRN],790,650],
  ['m2.png','m3.png',['Kartalar tor','#DC6803'],['Tagma-tag ✓',GRN],700,740]];
-const qPh=qP.map((p,i)=>{const top=i===1?840:740,h=i===1?600:700;return {old:phone(72,top,430,h,p[0],0,p[2][1],p[2][0]),nw:phone(578,top,430,h,p[1],0,p[3][1],p[3][0]),chO:pillTag('OLDIN',RED,72,top-72),chN:pillTag('KEYIN',GRN,578,top-72),arr:el('','<div style="display:flex;justify-content:center">'+ico('arrow-right',64,IND)+'</div>',{left:'495px',top:(top+h/2-32)+'px',width:'90px',zIndex:'30'})}});
+const qPh=qP.map((p,i)=>{const top=i===1?860:740,h=i===1?580:700;return {old:phone(72,top,430,h,p[0],0,p[2][1],p[2][0]),nw:phone(578,top,430,h,p[1],0,p[3][1],p[3][0]),chO:pillTag('OLDIN',RED,72,top-72),chN:pillTag('KEYIN',GRN,578,top-72),arr:el('','<div style="display:flex;justify-content:center">'+ico('arrow-right',64,IND)+'</div>',{left:'495px',top:(top+h/2-32)+'px',width:'90px',zIndex:'30'})}});
 // ---- CTA
 const cL=el('','XULOSA',{left:'72px',top:'140px',fontSize:'30px',fontWeight:800,letterSpacing:'.2em',color:MUT});
 const cT=kl('3 qadam: <span class="grad">tayyor</span>',200,92,'',INK);
