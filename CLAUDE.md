@@ -20,7 +20,7 @@
 - Musiqa qo'shma (mualliflik huquqi). Foydalanuvchi Instagram kutubxonasidan qo'shadi.
 - Har video: bitta g'oya, oxirida "saqlash + yuborish + keyingi videoga ochiq savol".
 - Jarayon: avval ssenariy -> foydalanuvchi tasdiqlaydi -> kadr namunalarini ko'rsat -> to'liq render. Tasdiqsiz uzoq render qilma.
-- Tayyor videoni `SendUserFile` bilan yubor va kerak bo'lsa izoh (caption) matnini ham ber.
+- Tayyor videoni `SendUserFile` bilan yubor. **Izohni (Instagram caption) har safar matnli javobda ``` kod blokida ber** (nusxa olish uchun), faqat fayl captionida qoldirma. Yuklash sanasini ham yoz.
 
 ## Aniqlik va halollik
 - Narx, versiya, qonun/qoidaga oid faktni tekshirilmagan holda "aniq" deb yozma. "O'zgarishi mumkin" de yoki tekshirishni so'ra.
